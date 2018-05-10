@@ -29,8 +29,8 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
 		console.log('this.el.nativeElement:', this.el.nativeElement);
 	}
 	private ngUnsubscribe: Subject<void> = new Subject();
-	public title: string = 'Ng2NodeStarter (Ng2NS)';
-	public description: string = 'Angular, NodeJS';
+	public title: string = 'Password Manager';
+	public description: string = 'Encrypted passwords storage';
 	public chartOptions: object = {
 		chart: {
 			type: 'pieChart',
@@ -109,15 +109,6 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
 		);
 	}
 
-	private emitSpinnerStartEvent(): void {
-		console.log('root spinner start event emitted');
-		this.emitter.emitEvent({spinner: 'start'});
-	}
-	private emitSpinnerStopEvent(): void {
-		console.log('root spinner stop event emitted');
-		this.emitter.emitEvent({spinner: 'stop'});
-	}
-
 	public showModal: boolean = false;
 	public toggleModal(): void {
 		if (this.showModal) {
@@ -130,7 +121,7 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
 
 	public ngOnInit(): void {
 		console.log('ngOnInit: AppSummaryComponent initialized');
-		this.emitSpinnerStartEvent();
+		this.emitter.emitSpinnerStartEvent();
 		this.emitter.emitEvent({appInfo: 'show'});
 
 		this.ws.onopen = (evt: any): void => {
@@ -169,7 +160,7 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
 
 		this.getPublicData((/*publicData*/) => {
 			this.getServerStaticData((/*serverStaticData*/) => {
-				this.emitSpinnerStopEvent();
+				this.emitter.emitSpinnerStopEvent();
 			});
 		});
 

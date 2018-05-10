@@ -123,21 +123,9 @@ describe('AppSummaryComponent', () => {
 		expect(this.component.ws).toEqual(jasmine.any(WebSocket));
 		expect(this.component.getServerStaticData).toBeDefined();
 		expect(this.component.getPublicData).toBeDefined();
-		expect(this.component.emitSpinnerStartEvent).toBeDefined();
-		expect(this.component.emitSpinnerStopEvent).toBeDefined();
 		expect(this.component.nvd3).toEqual(jasmine.any(NvD3Component));
 		expect(this.component.ngOnInit).toBeDefined();
 		expect(this.component.ngOnDestroy).toBeDefined();
-	});
-
-	it('emitSpinnerStartEvent should send respective event emitter message', () => {
-		this.component.emitSpinnerStartEvent();
-		expect(this.eventEmitterSrv.emitEvent).toHaveBeenCalledWith({ spinner: 'start' });
-	});
-
-	it('emitSpinnerStopEvent should send respective event emitter message', () => {
-		this.component.emitSpinnerStopEvent();
-		expect(this.eventEmitterSrv.emitEvent).toHaveBeenCalledWith({ spinner: 'stop' });
 	});
 
 	it('should be properly destroyed', () => {

@@ -43,8 +43,6 @@ describe('AppLoginComponent', () => {
 		}).compileComponents().then(() => {
 			this.fixture = TestBed.createComponent(AppLoginComponent);
 			this.component = this.fixture.componentInstance;
-			spyOn(this.component, 'emitSpinnerStartEvent').and.callThrough();
-			spyOn(this.component, 'emitSpinnerStopEvent').and.callThrough();
 			spyOn(this.component.router, 'navigate').and.callThrough();
 			this.eventEmitterSrv = TestBed.get(EventEmitterService) as EventEmitterService;
 			spyOn(this.eventEmitterSrv, 'emitEvent').and.callThrough();
@@ -66,20 +64,8 @@ describe('AppLoginComponent', () => {
 		expect(this.component.resetForm).toEqual(jasmine.any(Function));
 		expect(this.component.submitForm).toEqual(jasmine.any(Function));
 		expect(this.component.errorMessage).toBeUndefined();
-		expect(this.component.emitSpinnerStartEvent).toEqual(jasmine.any(Function));
-		expect(this.component.emitSpinnerStopEvent).toEqual(jasmine.any(Function));
 		expect(this.component.ngOnInit).toEqual(jasmine.any(Function));
 		expect(this.component.ngOnDestroy).toEqual(jasmine.any(Function));
-	});
-
-	it('emitSpinnerStartEvent should send respective event emitter message', () => {
-		this.component.emitSpinnerStartEvent();
-		expect(this.eventEmitterSrv.emitEvent).toHaveBeenCalledWith({ spinner: 'start' });
-	});
-
-	it('emitSpinnerStopEvent should send respective event emitter message', () => {
-		this.component.emitSpinnerStopEvent();
-		expect(this.eventEmitterSrv.emitEvent).toHaveBeenCalledWith({ spinner: 'stop' });
 	});
 
 	it('should reset form on a respective method call', () => {

@@ -31,7 +31,7 @@ describe('AppNavComponent', () => {
 			declarations: [ TranslatePipe, AppNavComponent, DummyComponent ],
 			imports: [ NoopAnimationsModule, FlexLayoutModule, CustomMaterialModule, RouterTestingModule.withRoutes([
 				{path: 'login', component: DummyComponent},
-				{path: 'intro', component: DummyComponent},
+				{path: 'summary', component: DummyComponent},
 				{path: 'data', component: DummyComponent},
 				{path: '', redirectTo: 'login', pathMatch: 'full'},
 				{path: '**', redirectTo: 'login'}

@@ -30,7 +30,7 @@ export class AppDataComponent implements OnInit, OnDestroy {
 	private ngUnsubscribe: Subject<void> = new Subject();
 	public usersList: any[] = [];
 	public errorMessage: string;
-	private getUsersList(callback?: any): Promise<boolean> {
+	private getUsersList(): Promise<boolean> {
 		/*
 		*	this function can be provided a callback function to be executed after data is retrieved
 		*	or
@@ -46,10 +46,7 @@ export class AppDataComponent implements OnInit, OnDestroy {
 				this.errorMessage = error as any;
 				def.reject(false);
 			},
-			() => {
-				console.log('getUserList done');
-				if (callback) { callback(this.usersList); }
-			}
+			() => console.log('getUserList done')
 		);
 		return def.promise;
 	}
@@ -117,46 +114,22 @@ export class AppDataComponent implements OnInit, OnDestroy {
 		this.datePicker.open();
 	}
 
-/*
-*	spinner
-*/
-	private emitSpinnerStartEvent() {
-		console.log('root spinner start event emitted');
-		this.emitter.emitEvent({sys: 'start spinner'});
-	}
-	private emitSpinnerStopEvent() {
-		console.log('root spinner stop event emitted');
-		this.emitter.emitEvent({sys: 'stop spinner'});
-	}
-
 	public ngOnInit() {
-		console.log('ngOnInit: DashboardDetailsComponent initialized');
-		this.emitSpinnerStartEvent();
+		console.log('ngOnInit: AppDataComponent initialized');
+		this.emitter.emitSpinnerStartEvent();
 		this.emitter.emitEvent({appInfo: 'hide'});
 		this.emitter.getEmitter().takeUntil(this.ngUnsubscribe).subscribe((message: any) => {
 			console.log('/data consuming event:', JSON.stringify(message));
 			// TODO
 		});
 
-		/*
-		*	functions sequence with callbacks
-		*
-		this.getUsersList((userlList) => {
-			console.log('users list:', userlList);
-			this.emitSpinnerStopEvent();
-		});
-		*/
-
-		/*
-		*	functions chaining with .then()
-		*/
 		this.getUsersList().then(() => {
 			console.log('all models updated');
-			this.emitSpinnerStopEvent();
+			this.emitter.emitSpinnerStopEvent();
 		});
 	}
 	public ngOnDestroy() {
-		console.log('ngOnDestroy: DashboardDetailsComponent destroyed');
+		console.log('ngOnDestroy: AppDataComponent destroyed');
 		this.ngUnsubscribe.next();
 		this.ngUnsubscribe.complete();
 	}

@@ -24,10 +24,8 @@ export class AppLoginComponent implements OnInit, OnDestroy {
 		private router: Router,
 		private userService: UserService
 	) {
-		console.log('this.el.nativeElement:', this.el.nativeElement);
-		console.log('localStorage.userService', JSON.stringify(localStorage.userService));
 		const restoredModel: any = this.userService.getUser();
-		console.log('restoredModel use model', restoredModel);
+		// console.log('restoredModel use model', restoredModel);
 		this.loginForm = this.fb.group({
 			email: [restoredModel.email, Validators.compose([Validators.required, Validators.email, Validators.minLength(7)])],
 			password: ['', Validators.compose([Validators.required, Validators.minLength(1)])]
@@ -54,20 +52,11 @@ export class AppLoginComponent implements OnInit, OnDestroy {
 	}
 	public errorMessage: string;
 
-	private emitSpinnerStartEvent(): void {
-		console.log('root spinner start event emitted');
-		this.emitter.emitEvent({spinner: 'start'});
-	}
-	private emitSpinnerStopEvent(): void {
-		console.log('root spinner stop event emitted');
-		this.emitter.emitEvent({spinner: 'stop'});
-	}
-
 	public ngOnInit(): void {
 		console.log('ngOnInit: AppLoginComponent initialized');
-		this.emitSpinnerStartEvent();
+		this.emitter.emitSpinnerStartEvent();
 		this.emitter.emitEvent({appInfo: 'hide'});
-		this.emitSpinnerStopEvent();
+		this.emitter.emitSpinnerStopEvent();
 	}
 	public ngOnDestroy(): void {
 		console.log('ngOnDestroy: AppLoginComponent destroyed');
