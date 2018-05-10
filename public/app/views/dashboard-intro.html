@@ -1,0 +1,23 @@
+<h3>{{title}} <a (click)="toggleModal()"><i class="fas fa-cogs"></i></a></h3>
+<p>{{ 'title' | translate }}: {{description}}</p>
+
+<nvd3 #chart [options]="chartOptions" [data]="appUsageData"></nvd3>
+
+<span id="modal" *ngIf="showModal">
+	<button type="button" class="close" (click)="toggleModal()"><span>&times;</span></button>
+	<h4>{{ 'diag' | translate }}</h4>
+	<table>
+		<tbody>
+			<tr *ngFor="let unit of serverData.static">
+				<td>{{unit.name}}</td>
+				<td>{{unit.value}}</td>
+			</tr>
+		</tbody>
+		<tbody>
+			<tr *ngFor="let unit of serverData.dynamic">
+				<td>{{unit.name}}</td>
+				<td>{{unit.value}}</td>
+			</tr>
+		</tbody>
+	</table>
+</span>
