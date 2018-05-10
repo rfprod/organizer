@@ -24,13 +24,13 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import '../../../node_modules/hammerjs/hammer.js';
 import { CustomMaterialModule } from '../../../public/app/custom-material.module';
 
-import { DashboardIntroComponent } from '../../../public/app/components/dashboard-intro.component';
+import { AppSummaryComponent } from '../../../public/app/components/app-summary.component';
 
-describe('DashboardIntroComponent', () => {
+describe('AppSummaryComponent', () => {
 
 	beforeEach((done) => {
 		TestBed.configureTestingModule({
-			declarations: [ TranslatePipe, NvD3Component, DashboardIntroComponent, NvD3Component ],
+			declarations: [ TranslatePipe, NvD3Component, AppSummaryComponent, NvD3Component ],
 			imports: [ BrowserDynamicTestingModule, NoopAnimationsModule, CustomMaterialModule, FlexLayoutModule ],
 			providers: [
 				{ provide: 'Window', useValue: { location: { host: 'localhost', protocol: 'http' } } },
@@ -62,7 +62,7 @@ describe('DashboardIntroComponent', () => {
 			],
 			schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
 		}).compileComponents().then(() => {
-			this.fixture = TestBed.createComponent(DashboardIntroComponent);
+			this.fixture = TestBed.createComponent(AppSummaryComponent);
 			this.component = this.fixture.componentInstance;
 			spyOn(this.component, 'emitSpinnerStartEvent').and.callThrough();
 			spyOn(this.component, 'emitSpinnerStopEvent').and.callThrough();

@@ -24,9 +24,9 @@ import { CustomMaterialModule } from './custom-material.module';
 import { AppComponent } from './app.component';
 import { AppNavComponent } from './components/app-nav.component';
 import { AppInfoComponent } from './components/app-info.component';
-import { DashboardIntroComponent } from './components/dashboard-intro.component';
-import { DashboardLoginComponent } from './components/dashboard-login.component';
-import { DashboardDataComponent } from './components/dashboard-data.component';
+import { AppSummaryComponent } from './components/app-summary.component';
+import { AppLoginComponent } from './components/app-login.component';
+import { AppDataComponent } from './components/app-data.component';
 
 import { TRANSLATION_PROVIDERS, TranslatePipe, TranslateService } from './translate/index';
 
@@ -44,7 +44,7 @@ import { PublicDataService } from './services/public-data.service';
 import { NvD3Component } from 'ng2-nvd3';
 
 @NgModule({
-	declarations: [ AppComponent, TranslatePipe, AppNavComponent, AppInfoComponent, DashboardIntroComponent, DashboardLoginComponent, DashboardDataComponent, NvD3Component ],
+	declarations: [ AppComponent, TranslatePipe, AppNavComponent, AppInfoComponent, AppSummaryComponent, AppLoginComponent, AppDataComponent, NvD3Component ],
 	imports 		: [ BrowserModule, BrowserAnimationsModule, FlexLayoutModule, CustomMaterialModule, FormsModule, ReactiveFormsModule, HttpModule, RouterModule.forRoot(APP_ROUTES) ],
 	providers 	: [ {provide: APP_BASE_HREF, useValue: '/'}, {provide: LocationStrategy, useClass: PathLocationStrategy}, { provide: 'Window', useValue: window }, TRANSLATION_PROVIDERS, TranslateService, CustomServiceWorkerService, CustomDeferredService, CustomHttpHandlersService, EventEmitterService, WebsocketService, UserService, AuthGuardGeneral, AnonimousGuard, UsersListService, ServerStaticDataService, PublicDataService ],
 	schemas 		: [ CUSTOM_ELEMENTS_SCHEMA ],

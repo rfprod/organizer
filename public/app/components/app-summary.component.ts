@@ -12,13 +12,13 @@ import 'rxjs/add/operator/first';
 declare let d3: any;
 
 @Component({
-	selector: 'dashboard-intro',
-	templateUrl: '/public/app/views/dashboard-intro.html',
+	selector: 'app-summary',
+	templateUrl: '/public/app/views/app-summary.html',
 	host: {
 		class: 'mat-body-1'
 	}
 })
-export class DashboardIntroComponent implements OnInit, OnDestroy {
+export class AppSummaryComponent implements OnInit, OnDestroy {
 	constructor(
 		private el: ElementRef,
 		private emitter: EventEmitterService,
@@ -129,7 +129,7 @@ export class DashboardIntroComponent implements OnInit, OnDestroy {
 	@ViewChild ('chart') private nvd3: any;
 
 	public ngOnInit(): void {
-		console.log('ngOnInit: DashboardIntroComponent initialized');
+		console.log('ngOnInit: AppSummaryComponent initialized');
 		this.emitSpinnerStartEvent();
 		this.emitter.emitEvent({appInfo: 'show'});
 
@@ -175,7 +175,7 @@ export class DashboardIntroComponent implements OnInit, OnDestroy {
 
 	}
 	public ngOnDestroy(): void {
-		console.log('ngOnDestroy: DashboardIntroComponent destroyed');
+		console.log('ngOnDestroy: AppSummaryComponent destroyed');
 		this.ngUnsubscribe.next();
 		this.ngUnsubscribe.complete();
 		this.ws.close();

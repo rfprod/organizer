@@ -10,13 +10,13 @@ import 'rxjs/add/operator/takeUntil';
 import 'rxjs/add/operator/first';
 
 @Component({
-	selector: 'dashboard-login',
-	templateUrl: '/public/app/views/dashboard-login.html',
+	selector: 'app-login',
+	templateUrl: '/public/app/views/app-login.html',
 	host: {
 		class: 'mat-body-1'
 	}
 })
-export class DashboardLoginComponent implements OnInit, OnDestroy {
+export class AppLoginComponent implements OnInit, OnDestroy {
 	constructor(
 		private el: ElementRef,
 		private emitter: EventEmitterService,
@@ -64,13 +64,13 @@ export class DashboardLoginComponent implements OnInit, OnDestroy {
 	}
 
 	public ngOnInit(): void {
-		console.log('ngOnInit: DashboardLoginComponent initialized');
+		console.log('ngOnInit: AppLoginComponent initialized');
 		this.emitSpinnerStartEvent();
 		this.emitter.emitEvent({appInfo: 'hide'});
 		this.emitSpinnerStopEvent();
 	}
 	public ngOnDestroy(): void {
-		console.log('ngOnDestroy: DashboardLoginComponent destroyed');
+		console.log('ngOnDestroy: AppLoginComponent destroyed');
 		this.ngUnsubscribe.next();
 		this.ngUnsubscribe.complete();
 	}

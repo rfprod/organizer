@@ -225,7 +225,7 @@ body {
 		}
 	}
 
-	dashboard-intro {
+	app-summary {
 		flex: 1 1 auto;
 		align-self: stretch;
 		display: flex;
@@ -294,7 +294,7 @@ body {
 		}
 	}
 
-	dashboard-login {
+	app-login {
 		flex: 1 1 auto;
 		align-self: stretch;
 		display: flex;
@@ -325,7 +325,7 @@ body {
 		}
 	}
 
-	dashboard-data {
+	app-data {
 		flex: 1 1 auto;
 		align-self: stretch;
 		display: flex;
@@ -352,7 +352,7 @@ body {
 			}
 		}
 
-		#dashboard-data {
+		#app-data {
 			flex: 1 1 auto;
 			align-self: stretch;
 			min-height: 1em;
