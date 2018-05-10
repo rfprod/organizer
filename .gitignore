@@ -36,3 +36,9 @@ sessions/*.*
 
 # desktop builds
 desktop/
+
+# application data
+data/*.*
+!data/*.gitkeep
+data/**/*.*
+!data/**/*.gitkeep

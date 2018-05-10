@@ -96,11 +96,11 @@ app.all('/*', function(req, res, next) {
 });
 
 const SrvInfo = require('./app/utils/srv-info.js');
-const DBmocks = {
-	users: require('./app/models/users').users()
+const appData = {
+	user: require('./app/models/users')(cwd).user
 };
 
-routes(app, cwd, fs, SrvInfo, DBmocks);
+routes(app, cwd, fs, SrvInfo, appData);
 
 const port = process.env.PORT || 8079,
 	ip = process.env.IP;

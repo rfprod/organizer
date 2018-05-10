@@ -7,9 +7,9 @@
  * @param {object} cwd Current working directory
  * @param {object} fs Filesystem access module
  * @param {object} SrvInfo Server information
- * @param {object} DBmocks Database mocks
+ * @param {object} appData User data
  */
-module.exports = function(app, cwd, fs, SrvInfo, DBmocks) {
+module.exports = function(app, cwd, fs, SrvInfo, appData) {
 
 	/**
 	 * Serves Application root (index page).
@@ -139,13 +139,13 @@ module.exports = function(app, cwd, fs, SrvInfo, DBmocks) {
 	});
 
 	/**
-	 * Returns mocked users list.
-	 * @name Users List
-	 * @path {GET} /api/users
+	 * Returns application user.
+	 * @name Application user
+	 * @path {GET} /api/user
 	 * @code {200}
-	 * @response {array} [] Array of objects
+	 * @response {object} {} object
 	 */
-	app.get('/api/users', (req, res) => {
-		res.json(DBmocks.users);
+	app.get('/api/user', (req, res) => {
+		res.json(appData.user());
 	});
 };
