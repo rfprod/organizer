@@ -15,7 +15,7 @@ export class AnonimousGuard implements CanActivate {
 		const token: string = this.userService.isLoggedIn();
 		if (token) {
 			console.log('>> ROUTER GUARD, AnonimousGuard: token present');
-			this.router.navigate(['profile']);
+			this.router.navigate(['summary']);
 		}
 		return (!token) ? true : false;
 	}

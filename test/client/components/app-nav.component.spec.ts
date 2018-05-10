@@ -67,8 +67,7 @@ describe('AppNavComponent', () => {
 	it('should have variables and methods defined', () => {
 		expect(this.component.ngUnsubscribe).toEqual(jasmine.any(Subject));
 		expect(this.component.navButtonState).toEqual(jasmine.objectContaining({
-			help: false,
-			intro: false,
+			summary: false,
 			login: false,
 			data: false
 		}));
@@ -85,11 +84,11 @@ describe('AppNavComponent', () => {
 	});
 
 	it('should switch nav buttons correctly', () => {
-		this.component.switchNavButtons({ url: 'intro'});
-		expect(this.component.navButtonState.intro).toBeTruthy();
+		this.component.switchNavButtons({ url: 'summary'});
+		expect(this.component.navButtonState.summary).toBeTruthy();
 
-		this.component.switchNavButtons({ url: 'intro?arg=random'});
-		expect(this.component.navButtonState.intro).toBeTruthy();
+		this.component.switchNavButtons({ url: 'summary?arg=random'});
+		expect(this.component.navButtonState.summary).toBeTruthy();
 
 		this.component.switchNavButtons({ url: 'login'});
 		expect(this.component.navButtonState.login).toBeTruthy();
@@ -97,8 +96,6 @@ describe('AppNavComponent', () => {
 		this.component.switchNavButtons({ url: 'data'});
 		expect(this.component.navButtonState.data).toBeTruthy();
 
-		this.component.switchNavButtons({ url: 'data'}, 'help');
-		expect(this.component.navButtonState.help).toBeTruthy();
 	});
 
 	it('should emit websocket control message on stopWS method call', () => {

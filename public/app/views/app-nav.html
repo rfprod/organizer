@@ -2,16 +2,12 @@
 	<span><h1>{{ 'title' | translate}} <small><mat-slide-toggle [checked]="serviceWorkerRegistered" (click)="toggleServiceWorker()">service worker</mat-slide-toggle></small></h1></span>
 	<span class="spacer"></span>
 	<span class="mat-toolbar-tools">
-		<button (click)="switchNavButtons($event, 'help');" mat-button [ngClass]="{selected: navButtonState.help, inactive: !navButtonState.help}" [fxHide.xs]="true" [fxHide.sm]="true">
-			<i class="fas fa-question-circle"></i> {{ 'help' | translate }}
-		</button>
-
 		<button [routerLink]="['login']" (click)="switchNavButtons($event, 'login')" mat-button [ngClass]="{selected: navButtonState.login, inactive: !navButtonState.login}" [fxHide.xs]="true" [fxHide.sm]="true" *ngIf="!userService.getUser().token">
 			<i class="fas fa-user"></i> {{ 'login' | translate }}
 		</button>
 
-		<button [routerLink]="['intro']" (click)="switchNavButtons($event, 'intro')" mat-button [ngClass]="{selected: navButtonState.intro, inactive: !navButtonState.intro}" [fxHide.xs]="true" [fxHide.sm]="true" *ngIf="userService.getUser().token">
-			<i class="fas fa-tachometer-alt"></i> {{ 'intro' | translate }}
+		<button [routerLink]="['summary']" (click)="switchNavButtons($event, 'summary')" mat-button [ngClass]="{selected: navButtonState.summary, inactive: !navButtonState.summary}" [fxHide.xs]="true" [fxHide.sm]="true" *ngIf="userService.getUser().token">
+			<i class="fas fa-tachometer-alt"></i> {{ 'summary' | translate }}
 		</button>
 		<button [routerLink]="['data']" (click)="switchNavButtons($event, 'data')" mat-button [ngClass]="{selected: navButtonState.data, inactive: !navButtonState.data}" [fxHide.xs]="true" [fxHide.sm]="true" *ngIf="userService.getUser().token">
 			<i class="fas fa-database"></i> {{ 'data' | translate }}
@@ -32,17 +28,12 @@
 			<i class="fas fa-ellipsis-v"></i>
 		</button>
 		<mat-menu #mobileMenu="matMenu" [fxHide.md]="true" [fxHide.lg]="true">
-			<button (click)="switchNavButtons($event, 'help');" mat-menu-item [ngClass]="{selected: navButtonState.help, inactive: !navButtonState.help}">
-			<i class="fas fa-question-circle-o"></i> {{ 'help' | translate }}
-			</button>
-			<hr>
-
 			<button [routerLink]="['login']" (click)="switchNavButtons($event, 'login')" mat-menu-item [ngClass]="{selected: navButtonState.login, inactive: !navButtonState.login}" *ngIf="!userService.getUser().token">
 				<i class="fas fa-user"></i> {{ 'login' | translate }}
 			</button>
 
-			<button [routerLink]="['intro']" (click)="switchNavButtons($event, 'intro')" mat-menu-item [ngClass]="{selected: navButtonState.intro, inactive: !navButtonState.intro}" *ngIf="userService.getUser().token">
-				<i class="fas fa-tachometer"></i> {{ 'intro' | translate }}
+			<button [routerLink]="['summary']" (click)="switchNavButtons($event, 'summary')" mat-menu-item [ngClass]="{selected: navButtonState.summary, inactive: !navButtonState.summary}" *ngIf="userService.getUser().token">
+				<i class="fas fa-tachometer"></i> {{ 'summary' | translate }}
 			</button>
 			<button [routerLink]="['data']" (click)="switchNavButtons($event, 'data')" mat-menu-item [ngClass]="{selected: navButtonState.data, inactive: !navButtonState.data}" *ngIf="userService.getUser().token">
 				<i class="fas fa-database"></i> {{ 'data' | translate }}

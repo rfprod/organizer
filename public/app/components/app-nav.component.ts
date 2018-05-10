@@ -31,8 +31,7 @@ export class AppNavComponent implements OnInit, OnDestroy {
 	private ngUnsubscribe: Subject<void> = new Subject();
 
 	public navButtonState: any = {
-		help: false,
-		intro: false,
+		summary: false,
 		login: false,
 		data: false
 	};

@@ -3,7 +3,7 @@ export const LANG_RU_NAME = 'ru';
 // keys map for Russian language
 export const LANG_RU_TRANSLATIONS = {
 	help: 'Помощь',
-	intro: 'Панель управления',
+	summary: 'Менеджер',
 	title: 'Менеджер паролей',
 	language: 'Язык',
 	diag: 'Диагностика платформы',

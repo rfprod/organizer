@@ -47,7 +47,7 @@ export class AppLoginComponent implements OnInit, OnDestroy {
 		if (this.loginForm.valid) {
 			this.errorMessage = null;
 			this.userService.SaveUser({ email: this.loginForm.controls.email.value, token: 'mockedToken' });
-			this.router.navigate(['data']);
+			this.router.navigate(['summary']);
 		} else {
 			this.errorMessage = 'Invalid form input';
 		}
