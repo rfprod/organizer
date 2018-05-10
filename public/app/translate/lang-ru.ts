@@ -3,8 +3,8 @@ export const LANG_RU_NAME = 'ru';
 // keys map for Russian language
 export const LANG_RU_TRANSLATIONS = {
 	help: 'Помощь',
-	intro: 'Введение',
-	title: 'Основа приложения',
+	intro: 'Панель управления',
+	title: 'Менеджер паролей',
 	language: 'Язык',
 	diag: 'Диагностика платформы',
 	login: 'Вход в систему',
@@ -15,9 +15,6 @@ export const LANG_RU_TRANSLATIONS = {
 	forget_my_address: 'Забудь мой адрес',
 	submit: 'Отправить',
 	data: 'Данные',
-	map: 'Карта',
-	world_map: 'Карта Мира',
-	russia_map: 'Российская Федерация',
 	country: 'Страна',
 	regions: 'Регионы',
 	name: 'Имя',

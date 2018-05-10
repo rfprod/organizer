@@ -12,13 +12,13 @@ import 'rxjs/add/operator/takeUntil';
 import 'rxjs/add/operator/first';
 
 @Component({
-	selector: 'dashboard-details',
-	templateUrl: '/public/app/views/dashboard-details.html',
+	selector: 'dashboard-data',
+	templateUrl: '/public/app/views/dashboard-data.html',
 	host: {
 		class: 'mat-body-1'
 	}
 })
-export class DashboardDetailsComponent implements OnInit, OnDestroy {
+export class DashboardDataComponent implements OnInit, OnDestroy {
 	constructor(
 		private el: ElementRef,
 		private emitter: EventEmitterService,

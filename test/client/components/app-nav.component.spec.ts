@@ -17,6 +17,9 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import '../../../node_modules/hammerjs/hammer.js';
 import { CustomMaterialModule } from '../../../public/app/custom-material.module';
 
+import { AuthGuardGeneral } from '../../../public/app/services/auth-guard-general.service';
+import { AnonimousGuard } from '../../../public/app/services/anonimous-guard.service';
+
 import { DummyComponent } from '../mocks/index';
 
 import { AppNavComponent } from '../../../public/app/components/app-nav.component';
@@ -27,11 +30,11 @@ describe('AppNavComponent', () => {
 		TestBed.configureTestingModule({
 			declarations: [ TranslatePipe, AppNavComponent, DummyComponent ],
 			imports: [ NoopAnimationsModule, FlexLayoutModule, CustomMaterialModule, RouterTestingModule.withRoutes([
-				{path: 'intro', component: DummyComponent},
 				{path: 'login', component: DummyComponent},
+				{path: 'intro', component: DummyComponent},
 				{path: 'data', component: DummyComponent},
-				{path: '', redirectTo: 'intro', pathMatch: 'full'},
-				{path: '**', redirectTo: 'intro'}
+				{path: '', redirectTo: 'login', pathMatch: 'full'},
+				{path: '**', redirectTo: 'login'}
 			]) ],
 			providers: [
 				{ provide: 'Window', useValue: window },
@@ -63,11 +66,12 @@ describe('AppNavComponent', () => {
 
 	it('should have variables and methods defined', () => {
 		expect(this.component.ngUnsubscribe).toEqual(jasmine.any(Subject));
-		expect(this.component.navButtonsState).toEqual(jasmine.any(Array));
-		expect(this.component.navButtonsState.length).toEqual(4);
-		expect(this.component.navButtonsState.reduce((a, b) => !b ? a + 1 : a, 0)).toEqual(5);
-		expect(this.component.hideNavbar).toEqual(jasmine.any(Boolean));
-		expect(this.component.hideNavbar).toBeFalsy();
+		expect(this.component.navButtonState).toEqual(jasmine.objectContaining({
+			help: false,
+			intro: false,
+			login: false,
+			data: false
+		}));
 		expect(this.component.supportedLanguages).toEqual([
 			{ key: 'en', name: 'English' },
 			{ key: 'ru', name: 'Russian' }
@@ -81,25 +85,20 @@ describe('AppNavComponent', () => {
 	});
 
 	it('should switch nav buttons correctly', () => {
-		expect(this.component.navButtonsState.filter((item) => item).length).toEqual(0);
 		this.component.switchNavButtons({ url: 'intro'});
-		expect(this.component.hideNavbar).toBeFalsy();
-		expect(this.component.navButtonsState[1]).toBeTruthy();
+		expect(this.component.navButtonState.intro).toBeTruthy();
 
 		this.component.switchNavButtons({ url: 'intro?arg=random'});
-		expect(this.component.hideNavbar).toBeFalsy();
-		expect(this.component.navButtonsState[1]).toBeTruthy();
+		expect(this.component.navButtonState.intro).toBeTruthy();
 
 		this.component.switchNavButtons({ url: 'login'});
-		expect(this.component.navButtonsState[2]).toBeTruthy();
+		expect(this.component.navButtonState.login).toBeTruthy();
 
 		this.component.switchNavButtons({ url: 'data'});
-		expect(this.component.hideNavbar).toBeFalsy();
-		expect(this.component.navButtonsState[3]).toBeTruthy();
+		expect(this.component.navButtonState.data).toBeTruthy();
 
 		this.component.switchNavButtons({ url: 'data'}, 'help');
-		expect(this.component.hideNavbar).toBeFalsy();
-		expect(this.component.navButtonsState[0]).toBeTruthy();
+		expect(this.component.navButtonState.help).toBeTruthy();
 	});
 
 	it('should emit websocket control message on stopWS method call', () => {
@@ -117,11 +116,10 @@ describe('AppNavComponent', () => {
 		expect(this.component.router.navigate).toHaveBeenCalledWith(['']);
 	});
 
-	it('should listen to router events and take action if condition is met on init', (done) => {
+	it('should listen to router events and take action', (done) => {
 		this.component.ngOnInit();
 		this.component.router.navigate(['']).then(() => {
 			expect(this.component.switchNavButtons).toHaveBeenCalled();
-			expect(this.component.navButtonsState[1]).toBeTruthy();
 			done();
 		});
 	});

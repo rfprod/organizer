@@ -29,9 +29,13 @@ export class AppNavComponent implements OnInit, OnDestroy {
 	) {}
 
 	private ngUnsubscribe: Subject<void> = new Subject();
-	public navButtonsState: boolean[] = [false, false, false, false];
 
-	public hideNavbar: boolean = false;
+	public navButtonState: any = {
+		help: false,
+		intro: false,
+		login: false,
+		data: false
+	};
 
 	public supportedLanguages: any[] = [
 		{ key: 'en', name: 'English' },
@@ -43,39 +47,17 @@ export class AppNavComponent implements OnInit, OnDestroy {
 		*	accepts router event, and optionally path which contains name of activated path
 		*	if path parameter is passed, event parameter will be ignored
 		*/
-		let index: string;
 		console.log('switchNavButtons:', event);
 		const route: string = (event.route) ? event.route : (typeof event.urlAfterRedirects === 'string') ? event.urlAfterRedirects : event.url;
 		// remove args from route if present
 		path = (!path) ? route.replace(/\?.*$/, '').substring(route.lastIndexOf('/') + 1, route.length) : path;
 		console.log(' >> PATH', path);
-		if (path === 'intro') {
-			index = '1';
-			this.hideNavbar = false;
-		} else if (path === 'login') {
-			index = '2';
-			this.hideNavbar = false;
-		} else if (path === 'data') {
-			index = '3';
-			this.hideNavbar = false;
-		} else if (path === 'map') {
-			index = '4';
-			this.hideNavbar = false;
-		} else {
-			index = '0';
-			this.hideNavbar = false;
-		}
-		// check if user was redirected to /login
-		if (this.router.url === '/login') {
-			index = '2';
-			this.hideNavbar = false;
-		}
-		for (const b in this.navButtonsState) {
-			if (typeof this.navButtonsState[b] === 'boolean') {
-				this.navButtonsState[b] = (b === index) ? true : false;
+		for (const b in this.navButtonState) {
+			if (typeof this.navButtonState[b] === 'boolean') {
+				this.navButtonState[b] = (b === path) ? true : false;
 			}
 		}
-		console.log('navButtonsState:', this.navButtonsState);
+		console.log('navButtonState:', this.navButtonState);
 	}
 
 	public stopWS(): void {

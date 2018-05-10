@@ -3,8 +3,8 @@ export const LANG_EN_NAME = 'en';
 // keys map for English language
 export const LANG_EN_TRANSLATIONS = {
 	help: 'Help',
-	intro: 'Intro',
-	title: 'Application core',
+	intro: 'Dashboard',
+	title: 'Password Manager',
 	language: 'Language',
 	diag: 'Platform Diagnostics',
 	login: 'Log in',
@@ -15,9 +15,6 @@ export const LANG_EN_TRANSLATIONS = {
 	forget_my_address: 'Forget my address',
 	submit: 'Submit',
 	data: 'Data',
-	map: 'Map',
-	world_map: 'World Map',
-	russia_map: 'Russian Federation',
 	country: 'Country',
 	regions: 'Regions',
 	name: 'Name',
