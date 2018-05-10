@@ -136,7 +136,7 @@
 		"clean-webdriver": "webdriver-manager clean",
 		"preprotractor": "npm run update-webdriver",
 		"protractor": "protractor test/protractor.conf.js",
-		"electron": "electron .",
+		"electron": "gulp compile-and-build-electron && electron .",
 		"electron-clear-dist": "rm -rf ./desktop",
 		"tsc": "tsc",
 		"tsc:w": "tsc -w"

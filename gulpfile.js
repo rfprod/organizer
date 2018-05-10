@@ -496,12 +496,20 @@ gulp.task('compile-and-test', (done) => {
 /*
 *	build sequences
 */
-gulp.task('compile-and-build', (done) => {
-	runSequence('tsc', 'build-system-js', 'pack-vendor-js', 'pack-vendor-css', 'move-vendor-fonts', 'sass-autoprefix-minify-css', 'hashsum', done);
-});
-
 gulp.task('build', (done) => {
 	runSequence('build-system-js', 'pack-vendor-js', 'pack-vendor-css', 'move-vendor-fonts', 'sass-autoprefix-minify-css', 'hashsum', done);
+});
+
+gulp.task('compile-and-build', (done) => {
+	runSequence('tsc', 'build', 'create-env-development', done);
+});
+
+gulp.task('compile-and-build-production', (done) => {
+	runSequence('tsc', 'build', 'create-env-production', done);
+});
+
+gulp.task('compile-and-build-electron', (done) => {
+	runSequence('tsc', 'build', 'create-env-electron', done);
 });
 
 gulp.task('rebuild-app', (done) => { // should be used in watcher to rebuild the app on *.ts file changes
