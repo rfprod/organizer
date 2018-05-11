@@ -2,9 +2,11 @@
 	{{errorMessage}}
 </div>
 
-<form fxFlex="100" fxLayout="row wrap" fxLayoutAlign="start stretch" [formGroup]="initForm" (ngSubmit)="submitForm()" novalidate>
+<form fxFlex="100" fxLayout="row wrap" fxLayoutAlign="start stretch" fxFlayoutGap="10px" [formGroup]="initForm" (ngSubmit)="submitForm()" novalidate>
 
-	<legend>{{ 'initialization' | translate }}</legend>
+	<legend fxFlex="100">
+		<h2>{{ 'initialization' | translate }}</h2>
+	</legend>
 
 	<mat-form-field fxFlex="100">
 		<input matInput type="text" name="name" [formControl]="initForm.controls.name" placeholder="{{ 'name' | translate }}" required />
