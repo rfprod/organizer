@@ -2,7 +2,7 @@ import { Injectable, EventEmitter } from '@angular/core';
 
 @Injectable()
 export class EventEmitterService {
-	
+
 	private emitter: EventEmitter<object> = new EventEmitter();
 
 	public getEmitter(): EventEmitter<object> {

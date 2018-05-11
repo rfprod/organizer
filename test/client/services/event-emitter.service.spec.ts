@@ -26,7 +26,7 @@ describe('EventEmitterService', () => {
 	it('should have variables and methods defined', () => {
 		expect(this.service.emitter).toBeDefined();
 		expect(this.service.getEmitter).toEqual(jasmine.any(Function));
-		expect(this.service.emitEvent).toEqual(jasmine.any(Function))		
+		expect(this.service.emitEvent).toEqual(jasmine.any(Function));
 		expect(this.service.emitSpinnerStartEvent).toEqual(jasmine.any(Function));
 		expect(this.service.emitSpinnerStopEvent).toEqual(jasmine.any(Function));
 	});
