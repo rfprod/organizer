@@ -530,11 +530,11 @@ gulp.task('spawn-rebuild-app', (done) => {
 *	start sequences
 */
 gulp.task('default', (done) => {
-	runSequence('lint', 'compile-and-build', 'create-env-development', 'server', 'watch', done);
+	runSequence('lint', 'compile-and-build', 'server', 'watch', done);
 });
 
 gulp.task('production-start', (done) => {
-	runSequence('compile-and-build', 'create-env-production', 'server', done);
+	runSequence('compile-and-build', 'server', done);
 });
 
 /*
