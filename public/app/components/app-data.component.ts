@@ -5,7 +5,7 @@ import { MatDatepicker } from '@angular/material';
 
 import { TranslateService } from '../translate/translate.service';
 
-import { UsersListService } from '../services/users-list.service';
+import { UserAPIService } from '../services/user-api.service';
 
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/takeUntil';
@@ -19,37 +19,38 @@ import 'rxjs/add/operator/first';
 	}
 })
 export class AppDataComponent implements OnInit, OnDestroy {
+
 	constructor(
 		private el: ElementRef,
 		private emitter: EventEmitterService,
-		private usersListService: UsersListService,
+		private userAPIService: UserAPIService,
 		private translateService: TranslateService
 	) {
 		// console.log('this.el.nativeElement:', this.el.nativeElement);
 	}
+
 	private ngUnsubscribe: Subject<void> = new Subject();
-	public usersList: any[] = [];
+
+	public user: any = {};
+
 	public errorMessage: string;
-	private getUsersList(): Promise<boolean> {
-		/*
-		*	this function can be provided a callback function to be executed after data is retrieved
-		*	or
-		*	callback can be chained with .then()
-		*/
+
+	private getUser(): Promise<boolean> {
 		const def = new CustomDeferredService<boolean>();
-		this.usersListService.getUsersList().first().subscribe(
-			(data) => {
-				this.usersList = data;
+		this.userAPIService.getUser().first().subscribe(
+			(data: any) => {
+				this.user = data;
 				def.resolve(true);
 			},
-			(error) => {
-				this.errorMessage = error as any;
+			(error: string) => {
+				this.errorMessage = error;
 				def.reject(false);
 			},
-			() => console.log('getUserList done')
+			() => console.log('getUser done')
 		);
 		return def.promise;
 	}
+
 	public mouseEntered(event) {
 		console.log('mouse enter', event);
 	}
@@ -68,8 +69,8 @@ export class AppDataComponent implements OnInit, OnDestroy {
 		this.searchValue = val;
 	}
 	public hideElement(index) {
-		console.log(' > hideElement:', index, this.usersList[index].firstName);
-		const result = this.usersList[index].firstName.indexOf(this.searchValue) === -1;
+		console.log(' > hideElement:', index, this.user.passwords[index].name);
+		const result = this.user.passwords[index].name.indexOf(this.searchValue) === -1;
 		console.log('result', result);
 		return (this.searchValue) ? result : false;
 	}
@@ -89,18 +90,18 @@ export class AppDataComponent implements OnInit, OnDestroy {
 	}
 	private performSorting(val: string): void {
 		if (val === 'registered') {
-			this.usersList.sort((a, b) => parseInt(a[val], 10) - parseInt(b[val], 10));
+			this.user.passwords.sort((a, b) => parseInt(a[val], 10) - parseInt(b[val], 10));
 		} else if (val === 'role') {
-			this.usersList.sort((a, b) => {
+			this.user.passwords.sort((a, b) => {
 				if (a[val] < b[val]) { return -1; }
 				if (a[val] > b[val]) { return 1; }
 				return 0;
 			});
 		} else if (val === '') {
 			/*
-			*	sort by id if sorting is set to none
+			*	sort by name if sorting is set to none
 			*/
-			this.usersList.sort((a, b) => parseInt(a.id, 10) - parseInt(b.id, 10));
+			this.user.passwords.sort((a, b) => a.name - b.name);
 		}
 	}
 
@@ -117,13 +118,12 @@ export class AppDataComponent implements OnInit, OnDestroy {
 	public ngOnInit() {
 		console.log('ngOnInit: AppDataComponent initialized');
 		this.emitter.emitSpinnerStartEvent();
-		this.emitter.emitEvent({appInfo: 'hide'});
-		this.emitter.getEmitter().takeUntil(this.ngUnsubscribe).subscribe((message: any) => {
-			console.log('/data consuming event:', JSON.stringify(message));
+		this.emitter.getEmitter().takeUntil(this.ngUnsubscribe).subscribe((event: any) => {
+			console.log('/data consuming event:', JSON.stringify(event));
 			// TODO
 		});
 
-		this.getUsersList().then(() => {
+		this.getUser().then(() => {
 			console.log('all models updated');
 			this.emitter.emitSpinnerStopEvent();
 		});

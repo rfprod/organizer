@@ -13,7 +13,8 @@ module.exports = (cwd) => {
 		name: '',
 		email: '',
 		password: '',
-		salt: ''
+		salt: '',
+		passwords: []
 	};
 
 	return {
@@ -54,11 +55,22 @@ module.exports = (cwd) => {
 					} else {
 						const user = JSON.parse(data.toString());
 						if (newValues) {
-							for (const [key, value] of Object.entries(user)) {
-								user[key] = newValues[key] ? value : user[key];
+							console.log('config, newValues', newValues);
+							for (const [key, value] of Object.entries(newValues)) {
+								if (user.hasOwnProperty(key)) {
+									user[key] = value;
+								}
 							}
 						}
-						resolve(user);
+						console.log('updated user', user);
+						fs.writeFile(cwd + '/data/user.json', JSON.stringify(user), (err) => {
+							if (err) {
+								console.log('# > error updating user', err);
+								resolve(JSON.parse(data.toString()));
+							}
+							console.log(`# > ${cwd}/data/user.json was updated`);
+							resolve(user);
+						});
 					}
 				});
 			});

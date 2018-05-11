@@ -2,14 +2,20 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { Http, BaseRequestOptions, Response, ResponseOptions, Headers } from '@angular/http';
+import { MockBackend, MockConnection } from '@angular/http/testing';
 import { FormsModule, ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 
 import { EventEmitterService } from '../../../public/app/services/event-emitter.service';
 import { UserService } from '../../../public/app/services/user.service';
+import { CustomHttpHandlersService } from '../../../public/app/services/custom-http-handlers.service';
+import { CustomDeferredService } from '../../../public/app/services/custom-deferred.service';
+import { UserAPIService } from '../../../public/app/services/user-api.service';
 
 import { TranslateService, TranslatePipe, TRANSLATION_PROVIDERS } from '../../../public/app/translate/index';
 
+import { Observable } from 'rxjs/Rx';
 import { Subject } from 'rxjs/Subject';
 
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -28,8 +34,9 @@ describe('AppLoginComponent', () => {
 			imports: [ BrowserDynamicTestingModule, NoopAnimationsModule, FormsModule, ReactiveFormsModule,
 				CustomMaterialModule, FlexLayoutModule,
 				RouterTestingModule.withRoutes([
-					{path: 'login', component: AppLoginComponent},
-					{path: 'profile', component: DummyComponent}
+					{ path: 'login', component: AppLoginComponent },
+					{ path: 'summary', component: DummyComponent },
+					{ path: 'data', component: DummyComponent }
 				])
 			],
 			providers: [
@@ -37,7 +44,19 @@ describe('AppLoginComponent', () => {
 				EventEmitterService,
 				TRANSLATION_PROVIDERS,
 				TranslateService,
-				UserService
+				UserService,
+				CustomHttpHandlersService,
+				BaseRequestOptions,
+				MockBackend,
+				{ provide: Http,
+					useFactory: (mockedBackend, requestOptions) => new Http(mockedBackend, requestOptions),
+					deps: [MockBackend, BaseRequestOptions]
+				},
+				{
+					provide: UserAPIService,
+					useFactory: (http, win, handlers) => new UserAPIService(http, win, handlers),
+					deps: [Http, 'Window', CustomHttpHandlersService]
+				}
 			],
 			schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
 		}).compileComponents().then(() => {
@@ -50,9 +69,14 @@ describe('AppLoginComponent', () => {
 			spyOn(this.userService, 'ResetUser').and.callThrough();
 			spyOn(this.userService, 'SaveUser').and.callThrough();
 			this.translateService = TestBed.get(TranslateService) as TranslateService;
+			this.userAPIService = TestBed.get(UserAPIService) as UserAPIService;
+			spyOn(this.userAPIService, 'login').and.callThrough();
+			this.backend = TestBed.get(MockBackend) as MockBackend;
 			done();
 		});
 	});
+
+	afterEach(() => this.backend.verifyNoPendingRequests());
 
 	it('should be defined', () => {
 		expect(this.component).toBeDefined();
@@ -82,8 +106,7 @@ describe('AppLoginComponent', () => {
 		};
 		this.component.loginForm.patchValue({ email: dummy.email, password: dummy.password });
 		this.component.submitForm();
-		expect(this.userService.SaveUser).toHaveBeenCalled();
-		expect(this.component.router.navigate).toHaveBeenCalledWith(['data']);
+		expect(this.userAPIService.login).toHaveBeenCalled();
 	});
 
 	it('should not submit a form on a respective method call if login form is not valid', () => {
@@ -93,8 +116,7 @@ describe('AppLoginComponent', () => {
 		};
 		this.component.loginForm.patchValue({ email: dummy.email, password: dummy.password });
 		this.component.submitForm();
-		expect(this.userService.SaveUser).not.toHaveBeenCalled();
-		expect(this.component.errorMessage).toEqual('Invalid form input');
+		expect(this.userAPIService.login).not.toHaveBeenCalled();
 	});
 
 	it('should be properly destroyed', () => {

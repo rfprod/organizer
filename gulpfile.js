@@ -76,7 +76,7 @@ gulp.task('create-env-development', (done) => {
 	*/
 	const pkg = require('./package.json');
 	fs.readFile('./.env', (err, data) => {
-		const env = 'PORT=8079\nAPP_URL=http://localhost:8079/\nAPP_VERSION=' + pkg.version + '\nDEV_MODE=true\n';
+		const env = 'PORT=8079\nAPP_URL=http://localhost:8079/\nAPP_VERSION=' + pkg.version + '\nDEV_MODE=false\n';
 		if (err) {
 			createEnvFile(env, done);
 		} else {
@@ -96,7 +96,7 @@ gulp.task('create-env-development-cluster', (done) => {
 	*/
 	const pkg = require('./package.json');
 	fs.readFile('./.env', (err, data) => {
-		const env = 'PORT=8079\nAPP_URL=http://localhost:8079/\nAPP_VERSION=' + pkg.version + '\nDEV_MODE=false\n';
+		const env = 'PORT=8079\nAPP_URL=http://localhost:8079/\nAPP_VERSION=' + pkg.version + '\nDEV_MODE=true\n';
 		if (err) {
 			createEnvFile(env, done);
 		} else {

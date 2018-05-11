@@ -7,6 +7,8 @@ import { RouterTestingModule } from '@angular/router/testing';
 
 import { EventEmitterService } from '../../../public/app/services/event-emitter.service';
 import { CustomServiceWorkerService } from '../../../public/app/services/custom-service-worker.service';
+import { CustomHttpHandlersService } from '../../../public/app/services/custom-http-handlers.service';
+import { CustomDeferredService } from '../../../public/app/services/custom-deferred.service';
 import { UserService } from '../../../public/app/services/user.service';
 
 import { TranslateService, TranslatePipe, TRANSLATION_PROVIDERS } from '../../../public/app/translate/index';

@@ -34,14 +34,4 @@ describe('WebsocketService', () => {
 		expect(this.service.generateUrl('/test')).toMatch('ws://localhost:[0-9]{4}/test');
 	});
 
-	it('generateUrl must return a valid websocket url according to provided parameters', () => {
-		this.service.host = 'c9users';
-		expect(this.service.generateUrl('/test')).toEqual('ws://c9users/test');
-	});
-
-	it('generateUrl must return a valid websocket url according to provided parameters', () => {
-		this.service.host = 'rhcloud';
-		expect(this.service.generateUrl('/test')).toEqual('ws://rhcloud:8000/test');
-	});
-
 });

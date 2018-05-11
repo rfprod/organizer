@@ -135,11 +135,35 @@ module.exports = function(app, cwd, fs, SrvInfo, appData) {
 			}
 			clearInterval(sender);
 		});
-		ws.on('error', () => {console.log('Persistent websocket: ERROR');});
+		ws.on('error', () => {
+			console.log('Persistent websocket: ERROR');
+		});
 	});
 
 	/**
-	 * Returns application user.
+	 * User login endpoint.
+	 * @name User login
+	 * @path {POST} /api/user/login
+	 * @code {200}
+	 * @code {500} error logging user in
+	 * @response {object} {} object with session token
+	 */
+	app.post('/api/user/login', async(req, res) => {
+		const user = await appData.user();
+		if (Object.keys(user).length) {
+			if (user.email === req.body.email && user.password === req.body.password) {
+				const tk = 'tokenMock';
+				res.json({ token : tk });
+			} else {
+				res.status(401).json({ error: 'Invalid username and/or password' });
+			}
+		} else {
+			res.status(500).json({ error: 'Error logging user in, check server logs for details'});
+		}
+	});
+
+	/**
+	 * Application user.
 	 * @name Application user
 	 * @path {GET} /api/user
 	 * @code {200}
@@ -156,6 +180,28 @@ module.exports = function(app, cwd, fs, SrvInfo, appData) {
 	});
 
 	/**
+	 * Application user status.
+	 * @name Application user status
+	 * @path {GET} /api/user/status
+	 * @code {200}
+	 * @code {500} error getting user status
+	 * @response {object} {} Current user status object
+	 */
+	app.get('/api/user/status', async(req, res) => {
+		const user = await appData.user();
+		if (Object.keys(user).length) {
+			const status = {
+				initialized: user.email && user.password ? true : false,
+				encryption: user.salt ? true : false,
+				passwords: user.passwords.length || 0
+			};
+			res.json(status);
+		} else {
+			res.status(500).json({ error: 'Error getting user status, check server logs for details'});
+		}
+	});
+
+	/**
 	 * Application user config, sets user values.
 	 * @name Application user config
 	 * @path {POST} /api/user/config
@@ -164,7 +210,8 @@ module.exports = function(app, cwd, fs, SrvInfo, appData) {
 	 * @response {object} {} Updated user object
 	 */
 	app.post('/api/user/config', async(req, res) => {
-		const user = await appData.config();
+		console.log('req.body', req.body);
+		const user = await appData.config(req.body);
 		if (Object.keys(user).length) {
 			res.json(user);
 		} else {

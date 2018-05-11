@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
 
 import { EventEmitterService } from '../services/event-emitter.service';
+import { CustomDeferredService } from '../services/custom-deferred.service';
 import { ServerStaticDataService } from '../services/server-static-data.service';
 import { PublicDataService } from '../services/public-data.service';
 import { WebsocketService } from '../services/websocket.service';
@@ -19,6 +20,7 @@ declare let d3: any;
 	}
 })
 export class AppSummaryComponent implements OnInit, OnDestroy {
+
 	constructor(
 		private el: ElementRef,
 		private emitter: EventEmitterService,
@@ -26,11 +28,14 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
 		private serverStaticDataService: ServerStaticDataService,
 		private publicDataService: PublicDataService
 	) {
-		console.log('this.el.nativeElement:', this.el.nativeElement);
+		// console.log('this.el.nativeElement:', this.el.nativeElement);
 	}
+
 	private ngUnsubscribe: Subject<void> = new Subject();
+
 	public title: string = 'Password Manager';
 	public description: string = 'Encrypted passwords storage';
+
 	public chartOptions: object = {
 		chart: {
 			type: 'pieChart',
@@ -56,6 +61,7 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
 			},
 		},
 	};
+
 	public appUsageData: any[] = [
 		{
 			key: 'Default',
@@ -78,35 +84,39 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
 			y: 1,
 		}
 	];
+
 	public serverData: any = {
 		static: [],
 		dynamic: [],
 	};
+
 	private wsEndpoint: string = '/api/app-diag/dynamic';
 	private ws: WebSocket = new WebSocket(this.websocket.generateUrl(this.wsEndpoint));
+
 	public errorMessage: string;
-	private getServerStaticData(callback): void {
+
+	private getServerStaticData(): Promise<any> {
+		const def = new CustomDeferredService<any>();
 		this.serverStaticDataService.getData().first().subscribe(
-			(data: any): void => this.serverData.static = data,
-			(error: any): void => this.errorMessage = error as any,
-			() => {
-				console.log('getServerStaticData done, data:', this.serverData.static);
-				callback(this.serverData.static);
-			}
+			(data: any): void => {
+				this.serverData.static = data;
+				def.resolve(this.serverData.static);
+			},
+			(error: any): void => def.reject(error)
 		);
+		return def.promise;
 	}
-	private getPublicData(callback): void {
+	private getPublicData(): Promise<any> {
+		const def = new CustomDeferredService<any>();
 		this.publicDataService.getData().first().subscribe(
 			(data: any): void => {
 				this.nvd3.clearElement();
 				this.appUsageData = data;
+				def.resolve(this.appUsageData);
 			},
-			(error: any): void => this.errorMessage = error as any,
-			(): void => {
-				console.log('getPublicData done, data:', this.appUsageData);
-				callback(this.appUsageData);
-			}
+			(error: any): void => def.reject(error)
 		);
+		return def.promise;
 	}
 
 	public showModal: boolean = false;
@@ -122,7 +132,6 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
 	public ngOnInit(): void {
 		console.log('ngOnInit: AppSummaryComponent initialized');
 		this.emitter.emitSpinnerStartEvent();
-		this.emitter.emitEvent({appInfo: 'show'});
 
 		this.ws.onopen = (evt: any): void => {
 			console.log('websocket opened:', evt);
@@ -158,11 +167,15 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
 			}
 		});
 
-		this.getPublicData((/*publicData*/) => {
-			this.getServerStaticData((/*serverStaticData*/) => {
+		this.getPublicData()
+			.then(() => this.getServerStaticData())
+			.then(() => {
+				this.emitter.emitSpinnerStopEvent();
+			})
+			.catch((error: string) => {
+				this.errorMessage = error;
 				this.emitter.emitSpinnerStopEvent();
 			});
-		});
 
 	}
 	public ngOnDestroy(): void {
