@@ -6,21 +6,24 @@ import 'rxjs/add/operator/catch';
 
 @Injectable()
 export class UserService {
-	private model: any = {
-		email: null,
-		token: null
-	};
-	private modelKeys: any[];
 	constructor() {
-		this.model.email = null;
-		this.model.token = null;
-		this.modelKeys = Object.keys(this.model);
-		if (typeof localStorage.getItem('userService') === 'undefined' && localStorage.userService) {
-			localStorage.setItem('userService', JSON.stringify(this.model));
-		} else {
-			this.RestoreUser();
-		}
+		this.initializeModel();
+		this.RestoreUser();
 		console.log(' >> USER SERVICE CONSTRUCTOR, model', this.model);
+	}
+
+	private model: any;
+
+	private initializeModel(): void {
+		this.model = {
+			email: null,
+			token: null,
+			status: {
+				initialized: false,
+				encryption: false,
+				passwords: 0
+			}
+		};
 	}
 
 	public getUser(): any {
@@ -33,11 +36,14 @@ export class UserService {
 
 	public SaveUser(newValues): void {
 		console.log('SaveUser', newValues);
-		if (newValues.hasOwnProperty('email')) {
-			this.model.email = newValues.email;
-		}
-		if (newValues.hasOwnProperty('token')) {
-			this.model.token = newValues.token;
+		for (const [key, value] of Object.entries(this.model)) {
+			if (key !== 'status') {
+				this.model[key] = (newValues.hasOwnProperty(key)) ? newValues[key] : value;
+			} else {
+				for (const [statusKey, statusValue] of Object.entries(this.model.status)) {
+					this.model.status[statusKey] = (newValues.hasOwnProperty(statusKey)) ? newValues[statusKey] : statusValue;
+				}
+			}
 		}
 		localStorage.setItem('userService', JSON.stringify(this.model));
 	}
@@ -50,9 +56,7 @@ export class UserService {
 	}
 
 	public ResetUser(): void {
-		for (const key of this.modelKeys) {
-			this.model[key] = null;
-		}
+		this.initializeModel();
 		localStorage.setItem('userService', JSON.stringify(this.model));
 	}
 }
