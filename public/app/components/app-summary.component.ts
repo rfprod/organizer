@@ -6,6 +6,8 @@ import { ServerStaticDataService } from '../services/server-static-data.service'
 import { PublicDataService } from '../services/public-data.service';
 import { WebsocketService } from '../services/websocket.service';
 
+import { UserAPIService } from '../services/user-api.service';
+
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/takeUntil';
 import 'rxjs/add/operator/first';
@@ -26,7 +28,8 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
 		private emitter: EventEmitterService,
 		private websocket: WebsocketService,
 		private serverStaticDataService: ServerStaticDataService,
-		private publicDataService: PublicDataService
+		private publicDataService: PublicDataService,
+		private userAPIService: UserAPIService
 	) {
 		// console.log('this.el.nativeElement:', this.el.nativeElement);
 	}

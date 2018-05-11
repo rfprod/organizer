@@ -66,8 +66,8 @@ describe('AppLoginComponent', () => {
 			this.eventEmitterSrv = TestBed.get(EventEmitterService) as EventEmitterService;
 			spyOn(this.eventEmitterSrv, 'emitEvent').and.callThrough();
 			this.userService = TestBed.get(UserService) as UserService;
-			spyOn(this.userService, 'ResetUser').and.callThrough();
-			spyOn(this.userService, 'SaveUser').and.callThrough();
+			spyOn(this.userService, 'resetUser').and.callThrough();
+			spyOn(this.userService, 'saveUser').and.callThrough();
 			this.translateService = TestBed.get(TranslateService) as TranslateService;
 			this.userAPIService = TestBed.get(UserAPIService) as UserAPIService;
 			spyOn(this.userAPIService, 'login').and.callThrough();
@@ -96,7 +96,7 @@ describe('AppLoginComponent', () => {
 		this.component.resetForm();
 		expect(this.component.loginForm.controls.email.value).toBeNull();
 		expect(this.component.loginForm.controls.password.value).toBeNull();
-		expect(this.userService.ResetUser).toHaveBeenCalled();
+		expect(this.userService.resetUser).toHaveBeenCalled();
 	});
 
 	it('should submit a form on a respective method call if login form is valid', () => {

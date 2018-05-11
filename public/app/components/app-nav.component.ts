@@ -69,8 +69,7 @@ export class AppNavComponent implements OnInit, OnDestroy {
 	}
 
 	public logOut(): void {
-		const token = this.userService.getUser().token;
-		this.userService.SaveUser({ token: '' });
+		this.userService.resetUser();
 		this.router.navigate(['']);
 	}
 

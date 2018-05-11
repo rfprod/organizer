@@ -20,6 +20,7 @@ import 'rxjs/add/operator/first';
 	}
 })
 export class AppLoginComponent implements OnInit, OnDestroy {
+
 	constructor(
 		private el: ElementRef,
 		private emitter: EventEmitterService,
@@ -47,7 +48,7 @@ export class AppLoginComponent implements OnInit, OnDestroy {
 			email: null,
 			password: null
 		});
-		this.userService.ResetUser();
+		this.userService.resetUser();
 	}
 
 	public submitForm(): void {
@@ -58,7 +59,7 @@ export class AppLoginComponent implements OnInit, OnDestroy {
 			const formData = this.loginForm.value;
 			this.userAPIService.login(formData).first().subscribe(
 				(data: any) => {
-					this.userService.SaveUser({ email: this.loginForm.controls.email.value, token: data.token });
+					this.userService.saveUser({ email: this.loginForm.controls.email.value, token: data.token });
 					this.emitter.emitSpinnerStopEvent();
 					this.router.navigate(['summary']);
 				},

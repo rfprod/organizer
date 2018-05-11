@@ -6,9 +6,10 @@ import 'rxjs/add/operator/catch';
 
 @Injectable()
 export class UserService {
+
 	constructor() {
 		this.initializeModel();
-		this.RestoreUser();
+		this.restoreUser();
 		console.log(' >> USER SERVICE CONSTRUCTOR, model', this.model);
 	}
 
@@ -34,7 +35,7 @@ export class UserService {
 		return this.model.token;
 	}
 
-	public SaveUser(newValues): void {
+	public saveUser(newValues): void {
 		console.log('SaveUser', newValues);
 		for (const [key, value] of Object.entries(this.model)) {
 			if (key !== 'status') {
@@ -48,14 +49,14 @@ export class UserService {
 		localStorage.setItem('userService', JSON.stringify(this.model));
 	}
 
-	public RestoreUser(): void {
+	public restoreUser(): void {
 		console.log('Restore User, localStorage.userService:', localStorage.getItem('userService'));
 		if (typeof localStorage.getItem('userService') !== 'undefined' && localStorage.userService) {
 			this.model = JSON.parse(localStorage.getItem('userService'));
 		}
 	}
 
-	public ResetUser(): void {
+	public resetUser(): void {
 		this.initializeModel();
 		localStorage.setItem('userService', JSON.stringify(this.model));
 	}

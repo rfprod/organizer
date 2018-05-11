@@ -56,7 +56,7 @@ describe('AppNavComponent', () => {
 			this.eventEmitterSrv = TestBed.get(EventEmitterService) as EventEmitterService;
 			spyOn(this.eventEmitterSrv, 'emitEvent').and.callThrough();
 			this.userService = TestBed.get(UserService) as UserService;
-			spyOn(this.userService, 'ResetUser').and.callThrough();
+			spyOn(this.userService, 'resetUser').and.callThrough();
 			this.translateService = TestBed.get(TranslateService) as TranslateService;
 			done();
 		});

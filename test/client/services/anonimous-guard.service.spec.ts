@@ -34,10 +34,10 @@ describe('AnonimousGuard', () => {
 	});
 
 	it('canActivate should resolve to true if token does not exist in UserService', () => {
-		this.userService.SaveUser({token: 'a.a'});
+		this.userService.saveUser({token: 'a.a'});
 		expect(this.service.canActivate()).toBeFalsy();
 
-		this.userService.SaveUser({token: ''});
+		this.userService.saveUser({token: ''});
 		expect(this.service.canActivate()).toBeTruthy();
 	});
 
