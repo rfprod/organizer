@@ -9,7 +9,7 @@
  * @param {object} SrvInfo Server information
  * @param {object} appData User data
  */
-module.exports = function(app, cwd, fs, SrvInfo, appData) {
+module.exports = function(app, cwd, fs, SrvInfo, appData, cryptoUtils) {
 
 	/**
 	 * Serves Application root (index page).
@@ -140,11 +140,21 @@ module.exports = function(app, cwd, fs, SrvInfo, appData) {
 		});
 	});
 
+	const errorMessage = {
+		create: { error: 'Error creating user, check server logs for details'},
+		status: { error: 'Error getting user status, check server logs for details'},
+		login: { error: 'Error logging user in, check server logs for details'},
+		config: { error: 'Error updating user, check server logs for details'},
+		invalidEmailPass: { error: 'Invalid email and/or password' }
+	};
+
 	/**
 	 * User login endpoint.
 	 * @name User login
 	 * @path {POST} /api/user/login
 	 * @code {200}
+	 * @code {404} failed config
+	 * @code {401} invalid creadentials
 	 * @code {500} error logging user in
 	 * @response {object} {} object with session token
 	 */
@@ -152,13 +162,27 @@ module.exports = function(app, cwd, fs, SrvInfo, appData) {
 		const user = await appData.user();
 		if (Object.keys(user).length) {
 			if (user.email === req.body.email && user.password === req.body.password) {
-				const tk = 'tokenMock';
-				res.json({ token : tk });
+				const payload = {
+					email: user.email,
+					created: new Date().getTime()
+				};
+				let salt = user.salt;
+				if (salt.length < 48) { // TODO validate randomized value
+					salt = cryptoUtils.generateSalt();
+				}
+				const tokenObj = cryptoUtils.generateJWToken(payload, salt);
+				const formData = { salt: tokenObj.salt, token: tokenObj.token };
+				const updatedUser = await appData.config(formData);
+				if (Object.keys(updatedUser).length) {
+					res.json({ token : tokenObj.token });
+				} else {
+					res.status(404).json(errorMessage.config);
+				}
 			} else {
-				res.status(401).json({ error: 'Invalid username and/or password' });
+				res.status(401).json(errorMessage.invalidEmailPass);
 			}
 		} else {
-			res.status(500).json({ error: 'Error logging user in, check server logs for details'});
+			res.status(500).json(errorMessage.login);
 		}
 	});
 
@@ -175,7 +199,7 @@ module.exports = function(app, cwd, fs, SrvInfo, appData) {
 		if (Object.keys(user).length) {
 			res.json(user);
 		} else {
-			res.status(500).json({ error: 'Error creating user, check server logs for details'});
+			res.status(500).json(errorMessage.create);
 		}
 	});
 
@@ -197,7 +221,7 @@ module.exports = function(app, cwd, fs, SrvInfo, appData) {
 			};
 			res.json(status);
 		} else {
-			res.status(500).json({ error: 'Error getting user status, check server logs for details'});
+			res.status(500).json(errorMessage.status);
 		}
 	});
 
@@ -215,7 +239,7 @@ module.exports = function(app, cwd, fs, SrvInfo, appData) {
 		if (Object.keys(user).length) {
 			res.json(user);
 		} else {
-			res.status(404).json({ error: 'User not found, it should be created first'});
+			res.status(404).json(errorMessage.config);
 		}
 	});
 };

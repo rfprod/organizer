@@ -8,6 +8,8 @@ const session = require('express-session');
 const FileStore = require('session-file-store')(session);
 const app = express();
 const expressWs = require('express-ws')(app); // eslint-disable-line no-unused-vars
+const jwt = require('jwt-simple');
+const crypto = require('crypto');
 const cluster = require('cluster');
 const os = require('os');
 const fs = require('fs');
@@ -108,8 +110,9 @@ const appData = {
 	user: require('./app/models/users')(cwd).user,
 	config: require('./app/models/users')(cwd).config
 };
+const cryptoUtils = require('./app/utils/crypto-utils')(crypto, jwt);
 
-routes(app, cwd, fs, SrvInfo, appData);
+routes(app, cwd, fs, SrvInfo, appData, cryptoUtils);
 
 const port = process.env.PORT || 8079,
 	ip = process.env.IP;

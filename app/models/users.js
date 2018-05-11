@@ -14,6 +14,7 @@ module.exports = (cwd) => {
 		email: '',
 		password: '',
 		salt: '',
+		token: '',
 		passwords: []
 	};
 
