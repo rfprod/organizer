@@ -143,9 +143,32 @@ module.exports = function(app, cwd, fs, SrvInfo, appData) {
 	 * @name Application user
 	 * @path {GET} /api/user
 	 * @code {200}
-	 * @response {object} {} object
+	 * @code {500} error creating user
+	 * @response {object} {} Current user object
 	 */
-	app.get('/api/user', (req, res) => {
-		res.json(appData.user());
+	app.get('/api/user', async(req, res) => {
+		const user = await appData.user();
+		if (Object.keys(user).length) {
+			res.json(user);
+		} else {
+			res.status(500).json({ error: 'Error creating user, check server logs for details'});
+		}
+	});
+
+	/**
+	 * Application user config, sets user values.
+	 * @name Application user config
+	 * @path {POST} /api/user/config
+	 * @code {200}
+	 * @code {404} user does not exist
+	 * @response {object} {} Updated user object
+	 */
+	app.post('/api/user/config', async(req, res) => {
+		const user = await appData.config();
+		if (Object.keys(user).length) {
+			res.json(user);
+		} else {
+			res.status(404).json({ error: 'User not found, it should be created first'});
+		}
 	});
 };

@@ -1,15 +1,17 @@
 'use strict';
 
-const express = require('express'),
-	compression = require('compression'),
-	routes = require('./app/routes/index.js'),
-	session = require('express-session'),
-	FileStore = require('session-file-store')(session),
-	app = express(),
-	expressWs = require('express-ws')(app), // eslint-disable-line no-unused-vars
-	cluster = require('cluster'),
-	os = require('os'),
-	fs = require('fs');
+const express = require('express');
+const compression = require('compression');
+const bodyParser = require('body-parser');
+const routes = require('./app/routes/index.js');
+const session = require('express-session');
+const FileStore = require('session-file-store')(session);
+const app = express();
+const expressWs = require('express-ws')(app); // eslint-disable-line no-unused-vars
+const cluster = require('cluster');
+const os = require('os');
+const fs = require('fs');
+
 let clusterStop = false;
 
 require('dotenv').load();
@@ -35,6 +37,12 @@ app.use(compression({
 	threshold: 0,
 	level: -1
 }));
+
+/*
+* request parameters middleware
+*/
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 app.use('/public', express.static(cwd + '/public'));
 if (process.env.DEV_MODE) {
@@ -97,7 +105,8 @@ app.all('/*', function(req, res, next) {
 
 const SrvInfo = require('./app/utils/srv-info.js');
 const appData = {
-	user: require('./app/models/users')(cwd).user
+	user: require('./app/models/users')(cwd).user,
+	config: require('./app/models/users')(cwd).config
 };
 
 routes(app, cwd, fs, SrvInfo, appData);
