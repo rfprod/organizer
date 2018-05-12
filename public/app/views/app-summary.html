@@ -18,21 +18,28 @@
 	</span>
 </span>
 
-<span id="modal" *ngIf="showModal">
-	<button type="button" class="close" (click)="toggleModal()"><span>&times;</span></button>
-	<h4>{{ 'diag' | translate }}</h4>
-	<table>
-		<tbody>
-			<tr *ngFor="let unit of serverData.static">
-				<td>{{unit.name}}</td>
-				<td>{{unit.value}}</td>
-			</tr>
-		</tbody>
-		<tbody>
-			<tr *ngFor="let unit of serverData.dynamic">
-				<td>{{unit.name}}</td>
-				<td>{{unit.value}}</td>
-			</tr>
-		</tbody>
-	</table>
+<span id="modal" *ngIf="showModal" fxLayout="row wrap" fxLayoutAligh="start stretch">
+
+	<span fxFlex="100" fxLayout="row" fxLayoutAligh="start stretch">
+		<h4 fxFlex="1 1 auto">{{ 'diag' | translate }}</h4>
+		<span fxFlex="0 1 auto">
+			<button mat-icon-button (click)="toggleModal()">
+				<mat-icon class="material-icons">close</mat-icon>
+			</button>
+		</span>
+	</span>
+
+	<span fxFlex="100" fxLayout="row wrap" fxLayoutAligh="start stretch">
+		<span fxFlex="100" *ngFor="let unit of serverData.static" fxLayout="row wrap" fxLayoutAligh="center stretch">
+			<span fxFlex="50">{{unit.name}}</span>
+			<span fxFlex="50">{{unit.value}}</span>
+			<hr fxFlex>
+		</span>
+		<span fxFlex="100" *ngFor="let unit of serverData.dynamic" fxLayout="row wrap" fxLayoutAligh="start stretch">
+			<span fxFlex="50">{{unit.name}}</span>
+			<span fxFlex="50">{{unit.value}}</span>
+			<hr fxFlex>
+		</span>
+	</span>
+
 </span>

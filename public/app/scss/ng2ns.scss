@@ -254,50 +254,9 @@ body {
 			background-color: rgba(0,0,0, 0.9);
 			transition: 0.5s;
 
-			.close {
-				float: right;
-				font-size: 5vh;
-				font-weight: 700;
-				line-height: 1;
-				color: $lightgrey;
-				text-shadow: 0 1px 0 $white;
-				opacity: 0.2;
-				-webkit-appearance: none;
-				padding: 0;
-				cursor: pointer;
-				background: transparent;
-				border: 0;
-			}
-
-			table {
-				border-collapse: collapse;
-				background: transparent;
-				width: 100%;
-				line-height: 1.8em;
-				border-color: transparent;
-				thead {
-					display: table-row-group;
-					vertical-align: middle;
-				}
-				tbody {
-					display: table-row-group;
-					vertical-align: middle;
-					border-color: transparent;
-				}
-				tr {
-					display: table-row;
-					border: 1px solid;
-					border-left: 0;
-					border-right: 0;
-					border-top: 0;
-				}
-				td {
-					display: table-cell;
-					font-size: 1.1em;
-					padding: 0.5em;
-					&:hover {
-						cursor: default;
-					}
+			span {
+				&:hover {
+					cursor: default;
 				}
 			}
 		}
