@@ -32,8 +32,8 @@ export class AppLoginComponent implements OnInit, OnDestroy {
 		const restoredModel: any = this.userService.getUser();
 		// console.log('restoredModel use model', restoredModel);
 		this.loginForm = this.fb.group({
-			email: [restoredModel.email, Validators.compose([Validators.required, Validators.email, Validators.minLength(7)])],
-			password: ['', Validators.compose([Validators.required, Validators.minLength(1)])]
+			email: [restoredModel.email, Validators.compose([Validators.required, Validators.email])],
+			password: ['', Validators.compose([Validators.required, Validators.minLength(3)])]
 		});
 	}
 
