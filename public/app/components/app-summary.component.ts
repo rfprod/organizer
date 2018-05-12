@@ -6,6 +6,7 @@ import { ServerStaticDataService } from '../services/server-static-data.service'
 import { PublicDataService } from '../services/public-data.service';
 import { WebsocketService } from '../services/websocket.service';
 
+import { UserService } from '../services/user.service';
 import { UserAPIService } from '../services/user-api.service';
 
 import { Subject } from 'rxjs/Subject';
@@ -29,6 +30,7 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
 		private websocket: WebsocketService,
 		private serverStaticDataService: ServerStaticDataService,
 		private publicDataService: PublicDataService,
+		private userService: UserService,
 		private userAPIService: UserAPIService
 	) {
 		// console.log('this.el.nativeElement:', this.el.nativeElement);
@@ -36,7 +38,6 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
 
 	private ngUnsubscribe: Subject<void> = new Subject();
 
-	public title: string = 'Password Manager';
 	public description: string = 'Encrypted passwords storage';
 
 	public chartOptions: object = {
@@ -57,9 +58,9 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
 			legend: {
 				margin: {
 					top: 5,
-					right: 140,
+					right: 5,
 					bottom: 5,
-					left: 0,
+					left: 5,
 				},
 			},
 		},
@@ -122,6 +123,26 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
 		return def.promise;
 	}
 
+	public userStatus: any = {};
+
+	private getUserStatus(): Promise<any> {
+		const def = new CustomDeferredService<any>();
+		this.userAPIService.getUserStatus().first().subscribe(
+			(data: any) => {
+				this.userStatus = data;
+				const userModelUpdate: any = {
+					status: data
+				};
+				this.userService.saveUser(userModelUpdate);
+				def.resolve(data);
+			},
+			(error: string) => {
+				def.reject(error);
+			}
+		);
+		return def.promise;
+	}
+
 	public showModal: boolean = false;
 	public toggleModal(): void {
 		if (this.showModal) {
@@ -163,7 +184,7 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
 		};
 
 		this.emitter.getEmitter().takeUntil(this.ngUnsubscribe).subscribe((message: any) => {
-			console.log('/intro consuming event:', message);
+			console.log('AppSummaryComponent consuming event:', message);
 			if (message.websocket === 'close') {
 				console.log('closing webcosket');
 				this.ws.close();
@@ -172,6 +193,7 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
 
 		this.getPublicData()
 			.then(() => this.getServerStaticData())
+			.then(() => this.getUserStatus())
 			.then(() => {
 				this.emitter.emitSpinnerStopEvent();
 			})

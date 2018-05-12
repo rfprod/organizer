@@ -1,7 +1,22 @@
-<h3>{{title}} <a (click)="toggleModal()"><i class="fas fa-cogs"></i></a></h3>
-<p>{{ 'title' | translate }}: {{description}}</p>
+<p fxFlex="100">
+	{{ 'description' | translate }} <button mat-icon-button (click)="toggleModal()" matTooltip="{{ 'diag' | translate }}"><i class="fas fa-cogs"></i></button>
+</p>
 
-<nvd3 #chart [options]="chartOptions" [data]="appUsageData"></nvd3>
+<span fxFlex="100">
+	<nvd3 #chart [options]="chartOptions" [data]="appUsageData"></nvd3>
+</span>
+
+<span fxFlex="100" fxLayout="row wrap" fxLayoutAligh="start stretch">
+	<span fxFlex>
+		{{ 'initialized' | translate }}: {{userStatus.initialized}}
+	</span>
+	<span fxFlex>
+		{{ 'encryption' | translate }}: {{userStatus.encryption}}
+	</span>
+	<span fxFlex>
+		{{ 'passwords_count' | translate }}: {{userStatus.passwords}}
+	</span>
+</span>
 
 <span id="modal" *ngIf="showModal">
 	<button type="button" class="close" (click)="toggleModal()"><span>&times;</span></button>

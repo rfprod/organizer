@@ -108,9 +108,6 @@ body {
 	.selected {
 		background: $grey;
 	}
-	.inactive {
-		background: none;
-	}
 	.spacer {
 		flex: 1 1 auto;
 	}
@@ -226,11 +223,22 @@ body {
 		}
 	}
 
+	app-login, app-initialize {
+		flex: 1 1 auto;
+		align-self: stretch;
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+	}
+
 	app-summary {
 		flex: 1 1 auto;
 		align-self: stretch;
 		display: flex;
-		flex-direction: column;
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
 		padding-left: $boxPadding;
 		padding-right: $boxPadding;
 
@@ -294,16 +302,6 @@ body {
 			}
 		}
 	}
-
-	app-login, app-initialize {
-		flex: 1 1 auto;
-		align-self: stretch;
-		display: flex;
-		flex-direction: row;
-		flex-wrap: wrap;
-		align-items: center;
-		justify-content: center;
-	}	 
 
 	app-data {
 		flex: 1 1 auto;
