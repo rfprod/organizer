@@ -7,6 +7,8 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 
 import { MatIconRegistry, DateAdapter } from '@angular/material';
 
+import { ISupportedLanguage } from './interfaces';
+
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/takeUntil';
 
@@ -17,7 +19,6 @@ declare let $: JQueryStatic;
 	template: `
 		<app-nav></app-nav>
 		<router-outlet></router-outlet>
-		<app-info [hidden]="!showAppInfo"></app-info>
 		<span id="spinner" *ngIf="showSpinner">
 			<mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
 		</span>
@@ -43,7 +44,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
 	private ngUnsubscribe: Subject<void> = new Subject();
 
-	public showAppInfo: boolean = true;
 	public showSpinner: boolean = false;
 
 	// spinner controls
@@ -56,7 +56,7 @@ export class AppComponent implements OnInit, OnDestroy {
 		this.showSpinner = false;
 	}
 
-	private supportedLanguages: any[] = [
+	private supportedLanguages: ISupportedLanguage[] = [
 		{ key: 'en', name: 'English' },
 		{ key: 'ru', name: 'Russian' }
 	];
@@ -94,13 +94,6 @@ export class AppComponent implements OnInit, OnDestroy {
 		// listen event emitter control messages
 		this.emitter.getEmitter().takeUntil(this.ngUnsubscribe).subscribe((message: any) => {
 			console.log('app consuming event:', message);
-			if (message.appInfo) {
-				if (message.appInfo === 'hide') {
-					this.showAppInfo = false;
-				} else if (message.appInfo === 'show') {
-					this.showAppInfo = true;
-				}
-			}
 			if (message.spinner) {
 				if (message.spinner === 'start') { // spinner control message
 					console.log('starting spinner');

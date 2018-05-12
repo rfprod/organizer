@@ -119,7 +119,7 @@ export class AppDataComponent implements OnInit, OnDestroy {
 		console.log('ngOnInit: AppDataComponent initialized');
 		this.emitter.emitSpinnerStartEvent();
 		this.emitter.getEmitter().takeUntil(this.ngUnsubscribe).subscribe((event: any) => {
-			console.log('/data consuming event:', JSON.stringify(event));
+			console.log('AppSummaryComponent consuming event:', JSON.stringify(event));
 			// TODO
 		});
 

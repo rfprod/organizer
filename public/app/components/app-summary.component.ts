@@ -38,8 +38,6 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
 
 	private ngUnsubscribe: Subject<void> = new Subject();
 
-	public description: string = 'Encrypted passwords storage';
-
 	public chartOptions: object = {
 		chart: {
 			type: 'pieChart',

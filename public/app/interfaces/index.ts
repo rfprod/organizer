@@ -1,1 +1,1 @@
-export { IBadge } from './badge.interface';
+export { ISupportedLanguage } from './supported-language.interface';

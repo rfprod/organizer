@@ -131,35 +131,6 @@ body {
 		}
 	}
 
-	table {
-		border-collapse: collapse;
-		background: transparent;
-		width: 100%;
-		line-height: 1.8em;
-		border-color: transparent;
-		thead {
-			display: table-row-group;
-			vertical-align: middle;
-		}
-		tbody {
-			display: table-row-group;
-			vertical-align: middle;
-			border-color: transparent;
-		}
-		tr {
-			display: table-row;
-			border: 0;
-		}
-		td {
-			display: table-cell;
-			font-size: 1.1em;
-			padding: 0.5em;
-			&:hover {
-				cursor: default;
-			}
-		}
-	}
-
 /*
 *	layout
 */
@@ -194,33 +165,6 @@ body {
 		width: 100vw;
 		height: auto!important;
 		flex: 0 1 auto;
-	}
-
-	app-info {
-		flex: 0 1 auto;
-		min-height: 10vh;
-		width: 100%;
-		display: flex;
-		background: transparent;
-		justify-content: space-around;
-		align-items: center;
-
-		.flex-item {
-			flex: 1;
-			text-align: center;
-			text-decoration: none;
-			&:hover{
-				background: $lightgrey;
-			}
-
-			img {
-				min-height: 5vh;
-				height: 10vh;
-				max-height: 10vh;
-				width: auto !important;
-				max-width: 24vw;
-			}
-		}
 	}
 
 	app-login, app-initialize {

@@ -13,6 +13,8 @@ import { TranslateService, TranslatePipe, TRANSLATION_PROVIDERS } from '../../pu
 import { Observable } from 'rxjs/Rx';
 import { Subject } from 'rxjs/Subject';
 
+import { ISupportedLanguage } from '../../public/app/interfaces';
+
 import { FlexLayoutModule } from '@angular/flex-layout';
 import '../../node_modules/hammerjs/hammer.js';
 import { CustomMaterialModule } from '../../public/app/custom-material.module';
@@ -65,8 +67,6 @@ describe('AppComponent', () => {
 
 	it('should have variables and methods defined', () => {
 		expect(this.component.ngUnsubscribe).toEqual(jasmine.any(Subject));
-		expect(this.component.showAppInfo).toEqual(jasmine.any(Boolean));
-		expect(this.component.showAppInfo).toBeTruthy();
 		expect(this.component.showSpinner).toEqual(jasmine.any(Boolean));
 		expect(this.component.showSpinner).toBeFalsy();
 		expect(this.component.supportedLanguages).toEqual([
@@ -116,13 +116,6 @@ describe('AppComponent', () => {
 
 	it('should listen to event emitter and take action if message is correct', () => {
 		this.component.ngOnInit();
-		expect(this.component.showAppInfo).toBeTruthy();
-		this.emitterService.emitter.emit({ appInfo: 'hide' });
-		expect(this.component.showAppInfo).toBeFalsy();
-		this.emitterService.emitter.emit({ appInfo: 'show' });
-		expect(this.component.showAppInfo).toBeTruthy();
-		this.emitterService.emitter.emit({ appInfo: 'ziii' });
-		expect(this.component.showAppInfo).toBeTruthy(); // nothing happens
 
 		expect(this.component.showSpinner).toBeFalsy();
 		this.emitterService.emitter.emit({ spinner: 'start' });
@@ -141,7 +134,6 @@ describe('AppComponent', () => {
 		expect(this.component.isCurrentLanguage('en')).toBeTruthy(); // nothing happens
 
 		this.emitterService.emitter.emit({ unrecognized_key: 'value' }); //
-		expect(this.component.showAppInfo).toBeTruthy(); // nothing happens
 		expect(this.component.showSpinner).toBeFalsy(); // nothing happens
 		expect(this.component.isCurrentLanguage('en')).toBeTruthy(); // nothing happens
 	});

@@ -47,6 +47,7 @@ describe('AppSummaryComponent', () => {
 			providers: [
 				{ provide: 'Window', useValue: { location: { host: 'localhost', protocol: 'http' } } },
 				EventEmitterService,
+				UserService,
 				TRANSLATION_PROVIDERS,
 				TranslateService,
 				BaseRequestOptions,
@@ -102,10 +103,6 @@ describe('AppSummaryComponent', () => {
 
 	it('should have variables defined', () => {
 		expect(this.component.ngUnsubscribe).toEqual(jasmine.any(Subject));
-		expect(this.component.title).toBeDefined();
-		expect(this.component.title === 'Password Manager').toBeTruthy();
-		expect(this.component.description).toBeDefined();
-		expect(this.component.description === 'Encrypted passwords storage').toBeTruthy();
 		expect(this.component.chartOptions).toEqual(jasmine.any(Object));
 		expect(this.component.chartOptions.chart).toBeDefined();
 		expect(this.component.chartOptions.chart).toEqual({

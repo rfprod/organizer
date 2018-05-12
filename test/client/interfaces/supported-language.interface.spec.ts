@@ -5,9 +5,9 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { DummyComponent } from '../../../test/client/mocks/components/dummy.component.mock';
 
-import { IBadge } from '../../../public/app/interfaces/badge.interface';
+import { ISupportedLanguage } from '../../../public/app/interfaces/supported-language.interface';
 
-describe('IBadge', () => {
+describe('ISupportedLanguage', () => {
 
 	beforeEach((done) => {
 		TestBed.configureTestingModule({
@@ -18,17 +18,16 @@ describe('IBadge', () => {
 		}).compileComponents().then(() => {
 			this.fixture = TestBed.createComponent(DummyComponent);
 			this.component = this.fixture.componentInstance;
-			this.instanceOfIBadge = (obj: any): obj is IBadge => 'title' in obj && 'link' in obj && 'img' in obj;
+			this.instanceOfIBadge = (obj: any): obj is ISupportedLanguage => 'key' in obj && 'name' in obj;
 			expect(this.component).toBeDefined();
 			done();
 		});
 	});
 
 	it('should have specific properties', () => {
-		const a: IBadge = {
-			title: '',
-			link: '',
-			img: ''
+		const a: ISupportedLanguage = {
+			key: '',
+			name: ''
 		};
 		this.component.sample = a;
 		expect(this.instanceOfIBadge(this.component.sample)).toBeTruthy();
