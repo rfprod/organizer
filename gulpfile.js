@@ -24,27 +24,6 @@ let node,
 	tsc,
 	protractor;
 
-function killProcessByName(name) {
-	exec('pgrep ' + name, (error, stdout, stderr) => {
-		if (error) {
-			// throw error;
-			console.log('killProcessByName, error', error);
-		}
-		if (stderr) console.log('stderr:', stderr);
-		if (stdout) {
-			//console.log('killing running processes:', stdout);
-			const runningProcessesIDs = stdout.match(/\d+/);
-			runningProcessesIDs.forEach((id) => {
-				exec('kill -9 ' + id, (error, stdout, stderr) => {
-					if (error) throw error;
-					if (stderr) console.log('stdout:', stdout);
-					if (stdout) console.log('stderr:', stderr);
-				});
-			});
-		}
-	});
-}
-
 /*
 *	hashsum identifies build
 *
@@ -660,5 +639,4 @@ gulp.task('build-electron-deb', (done) => {
 
 process.on('exit', (code) => {
 	console.log(`PROCESS EXIT CODE ${code}`);
-	// killProcessByName('gulp');
 });
