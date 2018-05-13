@@ -35,8 +35,8 @@ export const LANG_EN_TRANSLATIONS = {
 	add_password: 'Add password',
 	name: 'Resource name',
 	timestamp: 'Timestamp',
-
 	required: 'This value is required',
-
-	delete: 'Delete'
+	delete: 'Delete',
+	encrypt_passwords: 'Encrypt passwords',
+	decrypt_passwords: 'Decrypt passwords'
 };

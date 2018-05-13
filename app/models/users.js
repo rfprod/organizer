@@ -15,7 +15,8 @@ module.exports = (cwd) => {
 		salt: '',
 		token: '',
 		keys: {},
-		passwords: []
+		passwords: [],
+		encrypted: false
 	};
 
 	const userConfigPath = `${cwd}/app/config/user.json`;

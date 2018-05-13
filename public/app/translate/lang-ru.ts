@@ -35,8 +35,8 @@ export const LANG_RU_TRANSLATIONS = {
 	add_password: 'Добавить пароль',
 	name: 'Название ресурса',
 	timestamp: 'Метка времени',
-
 	required: 'Это обязательное значение',
-
-	delete: 'Удалить'
+	delete: 'Удалить',
+	encrypt_passwords: 'Зашифровать пароли',
+	decrypt_passwords: 'Расшифровать пароли'
 };

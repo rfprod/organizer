@@ -146,7 +146,8 @@ module.exports = function(app, cwd, fs, SrvInfo, appData, cryptoUtils) {
 		login: { error: 'Error logging user in, check server logs for details'},
 		config: { error: 'Error updating user, check server logs for details'},
 		invalidEmailPass: { error: 'Invalid email and/or password' },
-		keysExist: { error: 'At least one user RSA key already exist' }
+		keysExist: { error: 'At least one user RSA key already exist' },
+		keysDoNotExist: { error: 'User RSA keys do not exist' }
 	};
 
 	/**
@@ -218,7 +219,8 @@ module.exports = function(app, cwd, fs, SrvInfo, appData, cryptoUtils) {
 			const status = {
 				initialized: user.email && user.password ? true : false,
 				encryption: user.keys.public && user.keys.private ? true : false,
-				passwords: user.passwords.length || 0
+				passwords: user.passwords.length || 0,
+				encrypted: user.encrypted ? true : false
 			};
 			res.json(status);
 		} else {
@@ -303,6 +305,68 @@ module.exports = function(app, cwd, fs, SrvInfo, appData, cryptoUtils) {
 				const user = await appData.config(userConfig);
 				if (Object.keys(saveKeys).length && Object.keys(user).length) {
 					res.json(user);
+				} else {
+					res.status(500).json(errorMessage.config);
+				}
+			});
+	});
+
+	/**
+	 * Encrypts user passwords with generated RSA keypair.
+	 * @name Encrypt user passwords
+	 * @path {GET} /api/user/rsa/encrypt
+	 * @code {200}
+	 * @code {500} error getting user status
+	 * @response {object} {} Updated user object
+	 */
+	app.get('/api/user/rsa/encrypt', async(req, res) => {
+		appData.keyExists.publicRSA()
+			.then(() => appData.keyExists.privateRSA())
+			.catch(() => {
+				console.log('keys do not exist');
+				res.status(412).json(errorMessage.keysDoNotExist);
+			})
+			.then(async() => {
+				console.log('user RSA keys exist, ok to go on');
+				const user = await appData.user();
+				if (Object.keys(user).length) {
+					user.passwords = user.passwords.map((item) => {
+						item.password = cryptoUtils.encryptString(item.password, user.keys.public);
+						return item;
+					});
+					const updatedUser = await appData.config({ passwords: user.passwords, encrypted: true });
+					res.json(updatedUser);
+				} else {
+					res.status(500).json(errorMessage.config);
+				}
+			});
+	});
+
+	/**
+	 * Decrypts user passwords with generated RSA keypair.
+	 * @name Decrypt user passwords
+	 * @path {GET} /api/user/rsa/decrypt
+	 * @code {200}
+	 * @code {500} error getting user status
+	 * @response {object} {} Updated user object
+	 */
+	app.get('/api/user/rsa/decrypt', async(req, res) => {
+		appData.keyExists.publicRSA()
+			.then(() => appData.keyExists.privateRSA())
+			.catch(() => {
+				console.log('keys do not exist');
+				res.status(412).json(errorMessage.keysDoNotExist);
+			})
+			.then(async() => {
+				console.log('user RSA keys exist, ok to go on');
+				const user = await appData.user();
+				if (Object.keys(user).length) {
+					user.passwords = user.passwords.map((item) => {
+						item.password = cryptoUtils.decryptString(item.password, user.keys.private);
+						return item;
+					});
+					const updatedUser = await appData.config({ passwords: user.passwords, encrypted: false });
+					res.json(updatedUser);
 				} else {
 					res.status(500).json(errorMessage.config);
 				}

@@ -119,6 +119,40 @@ export class AppDataComponent implements OnInit, OnDestroy {
 			}
 		);
 	}
+	/**
+	 * Encrypts user passwords with user public RSA key.
+	 */
+	public encryptPasswords(): void {
+		this.emitter.emitSpinnerStartEvent();
+		this.userAPIService.encryptPasswords().first().subscribe(
+			(data: any) => {
+				this.getUser().then(() => {
+					this.emitter.emitSpinnerStopEvent();
+				});
+			},
+			(error: string) => {
+				this.errorMessage = error;
+				this.emitter.emitSpinnerStopEvent();
+			}
+		);
+	}
+	/**
+	 * Decrypts user passwords with user private RSA key.
+	 */
+	public decryptPasswords(): void {
+		this.emitter.emitSpinnerStartEvent();
+		this.userAPIService.decryptPasswords().first().subscribe(
+			(data: any) => {
+				this.getUser().then(() => {
+					this.emitter.emitSpinnerStopEvent();
+				});
+			},
+			(error: string) => {
+				this.errorMessage = error;
+				this.emitter.emitSpinnerStopEvent();
+			}
+		);
+	}
 
 	/**
 	 * Filters search value.

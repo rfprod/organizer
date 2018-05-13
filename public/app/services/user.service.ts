@@ -28,7 +28,8 @@ export class UserService {
 			status: {
 				initialized: false,
 				encryption: false,
-				passwords: 0
+				passwords: 0,
+				encrypted: false
 			}
 		};
 	}

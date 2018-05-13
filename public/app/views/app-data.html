@@ -29,7 +29,15 @@
 	</span>
 </span>
 <span fxFlex="100" fxLayout="row wrap" fxLayoutAlign="start start">
-	<h3 fxFlex="100">{{ 'passwords' | translate }}</h3>
+	<h3 fxFlex="100">
+		{{ 'passwords' | translate }} 
+		<button mat-icon-button (click)="encryptPasswords()" *ngIf="!user.encrypted" color="primary" matTooltip="{{ 'encrypt_passwords' | translate }}" matTooltipPosition="after">
+			<mat-icon class="material-icons">lock</mat-icon>
+		</button>
+		<button mat-icon-button (click)="decryptPasswords()" *ngIf="user.encrypted" color="primary" matTooltip="{{ 'decrypt_passwords' | translate }}" matTooltipPosition="after">
+			<mat-icon class="material-icons">lock_open</mat-icon>
+		</button>
+	</h3>
 
 	<span fxFlex="100" fxLayout="row wrap">
 
