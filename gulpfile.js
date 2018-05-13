@@ -18,8 +18,7 @@ const gulp = require('gulp'),
 	hashsum = require('gulp-hashsum'),
 	crypto = require('crypto'),
 	fs = require('fs'),
-	spawn = require('child_process').spawn,
-	exec = require('child_process').exec;
+	spawn = require('child_process').spawn;
 let node,
 	tsc,
 	protractor;
