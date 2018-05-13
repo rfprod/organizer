@@ -15,6 +15,7 @@ describe('WebsocketService', () => {
 			schemas: []
 		}).compileComponents().then(() => {
 			this.service = TestBed.get(WebsocketService) as WebsocketService;
+			this.window = TestBed.get('Window') as Window;
 			done();
 		});
 	});
@@ -25,13 +26,18 @@ describe('WebsocketService', () => {
 
 	it('should have variables and methods defined', () => {
 		expect(this.service.host).toBeDefined();
-		expect(this.service.wsProtocol).toBeDefined();
-		expect(this.service.wsPort).toBeDefined();
+		expect(this.service.protocol).toBeDefined();
+		expect(this.service.endpoints).toEqual(jasmine.any(Object));
 		expect(this.service.generateUrl).toEqual(jasmine.any(Function));
 	});
 
 	it('generateUrl must return a valid websocket url according to provided parameters', () => {
-		expect(this.service.generateUrl('/test')).toMatch('ws://localhost:[0-9]{4}/test');
+		const host = this.window.location.host;
+		expect(this.service.generateUrl('dynamicServerData')).toMatch(`ws://${host}/api/app-diag/dynamic`);
+	});
+
+	it('generateUrl must return a valid websocket url according to provided parameters', () => {
+		expect(this.service.generateUrl('/test')).toMatch(`Endpoint /test does not exist`);
 	});
 
 });

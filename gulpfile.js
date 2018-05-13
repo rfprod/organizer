@@ -380,14 +380,7 @@ gulp.task('pack-vendor-css', () => {
 		*	add paths to required third party css files
 		*/
 		'./node_modules/nvd3/build/nv.d3.css',
-		'./node_modules/components-font-awesome/css/fontawesome-all.css',
-		/*
-		*	Angular material theme should be chosen and loaded here
-		*/
-		'./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css'
-		//'./node_modules/@angular/material/prebuilt-themes/indigo-pink.css'
-		//'./node_modules/@angular/material/prebuilt-themes/pink-bluegrey.css'
-		//'./node_modules/@angular/material/prebuilt-themes/purple-green.css'
+		'./node_modules/components-font-awesome/css/fontawesome-all.css'
 	])
 		.pipe(plumber())
 		.pipe(concat('vendor-bundle.css'))

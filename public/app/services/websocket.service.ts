@@ -7,13 +7,28 @@ export class WebsocketService {
 		@Inject('Window') public window: Window
 	) {}
 
+	/**
+	 * Host used for websocket url formation.
+	 */
 	private host: string = this.window.location.host;
 
-	private wsProtocol: string = (this.window.location.protocol === 'http:') ? 'ws://' : 'wss://';
+	/**
+	 * Protocol used for websocket url formation.
+	 */
+	private protocol: string = (this.window.location.protocol === 'http:') ? 'ws://' : 'wss://';
 
-	private wsPort: string = (this.window.location.protocol === 'http:') ? '8000' : '8443';
+	/**
+	 * Websocker endpoints.
+	 */
+	private endpoints: any = {
+		dynamicServerData: '/api/app-diag/dynamic'
+	};
 
+	/**
+	 * Generates websocket url.
+	 * @param endpoint endpoint key
+	 */
 	public generateUrl(endpoint: string): string {
-		return this.wsProtocol + this.host + endpoint;
+		return this.endpoints[endpoint] ? this.protocol + this.host + this.endpoints[endpoint] : `Endpoint ${endpoint} does not exist`;
 	}
 }

@@ -37,12 +37,23 @@ export class AppLoginComponent implements OnInit, OnDestroy {
 		});
 	}
 
+	/**
+	 * Unsubscribes from infinite subscriptions.
+	 */
 	private ngUnsubscribe: Subject<void> = new Subject();
 
+	/**
+	 * UI error message.
+	 */
 	public errorMessage: string;
 
+	/**
+	 * Login form.
+	 */
 	public loginForm: FormGroup;
-
+	/**
+	 * Resets login form.
+	 */
 	public resetForm(): void {
 		this.loginForm.reset({
 			email: null,
@@ -51,6 +62,9 @@ export class AppLoginComponent implements OnInit, OnDestroy {
 		this.userService.resetUser();
 	}
 
+	/**
+	 * Submits login form.
+	 */
 	public submitForm(): void {
 		console.log('SUBMIT', this.loginForm);
 		if (this.loginForm.valid) {
@@ -73,6 +87,9 @@ export class AppLoginComponent implements OnInit, OnDestroy {
 		}
 	}
 
+	/**
+	 * Check user status.
+	 */
 	private checkUserStatus(): Promise<any> {
 		const def = new CustomDeferredService<any>();
 		this.userAPIService.getUserStatus().first().subscribe(

@@ -5,6 +5,7 @@ export const LANG_EN_TRANSLATIONS = {
 	title: 'Password Manager',
 	description: 'Passwords storage with optional encryption',
 
+	toggle_servise_worker: 'Toggle Service Worker',
 	language: 'Language',
 
 	summary: 'Summary',

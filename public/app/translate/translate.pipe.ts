@@ -3,12 +3,13 @@ import { TranslateService } from './translate.service';
 
 @Pipe({
 	name: 'translate',
-	pure: false // this should be set to false fro values to be updated on language change
+	pure: false // this should be set to false for values to be updated on language change
 })
 export class TranslatePipe implements PipeTransform {
 
-	// inject translate service
-	constructor(private _translate: TranslateService) {}
+	constructor(
+		private _translate: TranslateService
+	) {}
 
 	public transform(value: string, args: any[]): any {
 		if (!value) { return; }

@@ -1,52 +1,71 @@
-<mat-toolbar>
-	<span><h1>{{ 'title' | translate}} <small><mat-slide-toggle [checked]="serviceWorkerRegistered" (click)="toggleServiceWorker()">service worker</mat-slide-toggle></small></h1></span>
-	<span class="spacer"></span>
-	<span class="mat-toolbar-tools">
-		<button [routerLink]="['login']" (click)="switchNavButtons($event, 'login')" mat-button [ngClass]="{selected: navButtonState.login, inactive: !navButtonState.login}" [fxHide.xs]="true" [fxHide.sm]="true" *ngIf="!userService.getUser().token">
-			<i class="fas fa-user"></i> {{ 'login' | translate }}
+<mat-toolbar color="primary" fxLayoutGap="10px">
+	<mat-icon class="material-icons" [fxHide.sm]="true" [fxHide.md]="true" [fxHide.lg]="true" matTooltip="{{ 'title' | translate }}" matTooltipPosition="after">lock</mat-icon>
+	<span fxFlex="0 1 auto" fxLayout="row" fxLayoutAligh="center center" fxLayoutGap="10px" [fxHide.xs]="true">
+		<h1 fxFlex>
+			{{ 'title' | translate}}
+		</h1>
+		<span fxFlex>
+			<mat-slide-toggle [checked]="serviceWorkerRegistered" (click)="toggleServiceWorker()" matTooltip="{{ 'toggle_servise_worker' | translate }}" matTooltipPosition="below" class="mat-caption">SW</mat-slide-toggle>
+		</span>
+	</span>
+	<span fxFlex="1 1 auto" fxLayout="row" fxLayoutAligh="start center">
+		<small fxFlex [fxHide.md]="true" [fxHide.lg]="true" class="center-text">
+			{{ currentViewTitle | translate }}
+		</small>
+	</span>
+	<span fxFlex="0 1 auto">
+		<button [routerLink]="['login']" (click)="switchNavButtons($event, 'login')" mat-button [color]="navButtonState.login ? 'accent' : null" [fxHide.xs]="true" [fxHide.sm]="true" *ngIf="!isLoggedIn()">
+			<mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-sign-in-alt"></mat-icon> {{ 'login' | translate }}
 		</button>
 
-		<button [routerLink]="['summary']" (click)="switchNavButtons($event, 'summary')" mat-button [ngClass]="{selected: navButtonState.summary, inactive: !navButtonState.summary}" [fxHide.xs]="true" [fxHide.sm]="true" *ngIf="userService.getUser().token">
-			<i class="fas fa-tachometer-alt"></i> {{ 'summary' | translate }}
+		<button [routerLink]="['summary']" (click)="switchNavButtons($event, 'summary')" mat-button [color]="navButtonState.summary ? 'accent' : null" [fxHide.xs]="true" [fxHide.sm]="true" *ngIf="isLoggedIn()">
+			<mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-columns"></mat-icon> {{ 'summary' | translate }}
 		</button>
-		<button [routerLink]="['data']" (click)="switchNavButtons($event, 'data')" mat-button [ngClass]="{selected: navButtonState.data, inactive: !navButtonState.data}" [fxHide.xs]="true" [fxHide.sm]="true" *ngIf="userService.getUser().token">
-			<i class="fas fa-database"></i> {{ 'data' | translate }}
+		<button [routerLink]="['data']" (click)="switchNavButtons($event, 'data')" mat-button [color]="navButtonState.data ? 'accent' : null" [fxHide.xs]="true" [fxHide.sm]="true" *ngIf="isLoggedIn()">
+			<mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-database"></mat-icon> {{ 'data' | translate }}
 		</button>
 
-		<button (click)="logOut()" mat-button [fxHide.xs]="true" [fxHide.sm]="true" *ngIf="userService.getUser().token">
-			<i class="fas fa-user"></i> {{ 'logout' | translate }}
+		<button (click)="logOut()" mat-button [fxHide.xs]="true" [fxHide.sm]="true" *ngIf="isLoggedIn()">
+			<mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-sign-out-alt"></mat-icon> {{ 'logout' | translate }}
 		</button>
 
 		<button mat-button [matMenuTriggerFor]="languageMenu" [fxHide.xs]="true" [fxHide.sm]="true">
-			<i class="fas fa-globe"></i> {{ 'language' | translate }}
+			<mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-globe"></mat-icon> {{ 'language' | translate }}
 		</button>
 		<mat-menu #languageMenu="matMenu" [fxHide.xs]="true" [fxHide.sm]="true">
-			<button mat-menu-item *ngFor="let lang of supportedLanguages" [ngClass]="{selected: isLanguageSelected(lang.key)}" (click)="selectLanguage(lang.key)">{{lang.name}}</button>
+			<ng-template matMenuContent>
+				<button mat-menu-item *ngFor="let lang of supportedLanguages" color="isLanguageSelected(lang.key) ? 'accent' : null" (click)="selectLanguage(lang.key)">{{lang.name}}</button>
+			</ng-template>
 		</mat-menu>
 
-		<button mat-button [matMenuTriggerFor]="mobileMenu" [fxHide.md]="true" [fxHide.lg]="true">
-			<i class="fas fa-ellipsis-v"></i>
+		<button mat-icon-button [matMenuTriggerFor]="mobileMenu" [fxHide.md]="true" [fxHide.lg]="true">
+			<mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-ellipsis-v"></mat-icon>
 		</button>
 		<mat-menu #mobileMenu="matMenu" [fxHide.md]="true" [fxHide.lg]="true">
-			<button [routerLink]="['login']" (click)="switchNavButtons($event, 'login')" mat-menu-item [ngClass]="{selected: navButtonState.login, inactive: !navButtonState.login}" *ngIf="!userService.getUser().token">
-				<i class="fas fa-user"></i> {{ 'login' | translate }}
-			</button>
+			<ng-template matMenuContent>
+				<button [routerLink]="['login']" (click)="switchNavButtons($event, 'login')" mat-menu-item *ngIf="!isLoggedIn()" [disabled]="navButtonState.login">
+					<mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-sign-in-alt"></mat-icon> {{ 'login' | translate }}
+				</button>
 
-			<button [routerLink]="['summary']" (click)="switchNavButtons($event, 'summary')" mat-menu-item [ngClass]="{selected: navButtonState.summary, inactive: !navButtonState.summary}" *ngIf="userService.getUser().token">
-				<i class="fas fa-tachometer"></i> {{ 'summary' | translate }}
-			</button>
-			<button [routerLink]="['data']" (click)="switchNavButtons($event, 'data')" mat-menu-item [ngClass]="{selected: navButtonState.data, inactive: !navButtonState.data}" *ngIf="userService.getUser().token">
-				<i class="fas fa-database"></i> {{ 'data' | translate }}
-			</button>
+				<button [routerLink]="['summary']" (click)="switchNavButtons($event, 'summary')" mat-menu-item *ngIf="isLoggedIn()" [disabled]="navButtonState.summary">
+					<mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-columns"></mat-icon> {{ 'summary' | translate }}
+				</button>
+				<button [routerLink]="['data']" (click)="switchNavButtons($event, 'data')" mat-menu-item *ngIf="isLoggedIn()" [disabled]="navButtonState.data">
+					<mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-database"></mat-icon> {{ 'data' | translate }}
+				</button>
 
-			<hr>
+				<hr>
 
-			<button (click)="logOut()" mat-menu-item *ngIf="userService.getUser().token">
-				<i class="fas fa-user"></i> {{ 'logout' | translate }}
-			</button>
-			<hr *ngIf="userService.getUser().token">
+				<button (click)="logOut()" mat-menu-item *ngIf="isLoggedIn()">
+					<mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-sign-out-alt"></mat-icon> {{ 'logout' | translate }}
+				</button>
+				<hr *ngIf="isLoggedIn()">
 
-			<button mat-button *ngFor="let lang of supportedLanguages" [ngClass]="{selected: isLanguageSelected(lang.key)}" (click)="selectLanguage(lang.key)">{{lang.name}}</button>
+				<span mat-menu-item disabled="true">
+					<mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-globe"></mat-icon> {{ 'language' | translate }}
+				</span>
+				<button mat-button *ngFor="let lang of supportedLanguages" [color]="isLanguageSelected(lang.key) ? 'accent' : null" (click)="selectLanguage(lang.key)">{{lang.name}}</button>
+			</ng-template>
 		</mat-menu>
 	</span>
 </mat-toolbar>

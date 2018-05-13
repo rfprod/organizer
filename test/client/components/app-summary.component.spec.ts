@@ -24,6 +24,8 @@ import { WebsocketService } from '../../../public/app/services/websocket.service
 import { Observable } from 'rxjs/Rx';
 import { Subject } from 'rxjs/Subject';
 
+import { ISupportedLanguage } from '../../../public/app/interfaces';
+
 import { FlexLayoutModule } from '@angular/flex-layout';
 import '../../../node_modules/hammerjs/hammer.js';
 import { CustomMaterialModule } from '../../../public/app/custom-material.module';
@@ -133,8 +135,6 @@ describe('AppSummaryComponent', () => {
 			static: jasmine.any(Array),
 			dynamic: jasmine.any(Array)
 		});
-		expect(this.component.wsEndpoint).toBeDefined();
-		expect(this.component.wsEndpoint).toEqual('/api/app-diag/dynamic');
 		expect(this.component.ws).toEqual(jasmine.any(WebSocket));
 		expect(this.component.getServerStaticData).toBeDefined();
 		expect(this.component.getPublicData).toBeDefined();

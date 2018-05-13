@@ -5,6 +5,7 @@ export const LANG_RU_TRANSLATIONS = {
 	title: 'Менеджер Паролей',
 	description: 'Хранилище паролей с возможным шифрованием',
 
+	toggle_servise_worker: 'Переключить Сервисного Рабочего',
 	language: 'Язык',
 
 	summary: 'Сводка',

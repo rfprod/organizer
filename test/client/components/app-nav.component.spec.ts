@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 import { APP_BASE_HREF } from '@angular/common';
 import { TestBed } from '@angular/core/testing';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
@@ -47,7 +47,7 @@ describe('AppNavComponent', () => {
 				TranslateService,
 				{provide: APP_BASE_HREF, useValue: '/'}
 			],
-			schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
+			schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ]
 		}).compileComponents().then(() => {
 			this.fixture = TestBed.createComponent(AppNavComponent);
 			this.component = this.fixture.componentInstance;

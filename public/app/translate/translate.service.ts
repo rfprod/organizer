@@ -3,29 +3,34 @@ import { TRANSLATIONS } from './translations'; // reference by opaque token
 
 @Injectable()
 export class TranslateService {
+
+	constructor(
+		@Inject(TRANSLATIONS) private _translations: any
+	) {}
+
+	/**
+	 * Current language.
+	 */
 	private _currentLanguage: string;
 
+	/**
+	 * Current language getter.
+	 */
 	public get currentLanguage() {
-		/*
-		*	public method for
-		*	current language retrieval
-		*/
 		return this._currentLanguage;
 	}
 
-	// translations injection
-	constructor(@Inject(TRANSLATIONS) private _translations: any) {}
-
+	/**
+	 * Current language setter.
+	 */
 	public use(key: string): void {
-		// set current language
 		this._currentLanguage = key;
 	}
 
+	/**
+	 * Private translation getter by key.
+	 */
 	private translate(key: string): string {
-		/*
-		*	private method for
-		*	instant translation resolution
-		*/
 		const translation = key;
 		if (this._translations[this.currentLanguage] && this._translations[this.currentLanguage][key]) {
 			return this._translations[this.currentLanguage][key];
@@ -33,11 +38,10 @@ export class TranslateService {
 		return translation;
 	}
 
-	public instant(key: string) {
-		/*
-		*	public method for
-		*	instant translation resolution
-		*/
+	/**
+	 * Public translation getter by key.
+	 */
+	public instant(key: string): string {
 		return this.translate(key);
 	}
 

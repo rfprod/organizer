@@ -7,6 +7,7 @@ import 'rxjs/add/operator/takeUntil';
 
 @Injectable()
 export class CustomServiceWorkerService {
+
 	constructor(
 		private emitter: EventEmitterService,
 		@Inject('Window') private window: Window
@@ -15,12 +16,24 @@ export class CustomServiceWorkerService {
 		this.initializeServiceWorker();
 	}
 
+	/**
+	 * Unsubscribes from infinite subscriptions.
+	 */
 	private ngUnsubscribe: Subject<void> = new Subject();
 
+	/**
+	 * Service worker instance.
+	 */
 	private serviceWorker: any = this.window.navigator.serviceWorker;
 
+	/**
+	 * Service worker registration.
+	 */
 	private serviceWorkerRegistration: any;
 
+	/**
+	 * Registers service worker.
+	 */
 	private registerServiceWorker(): Promise<boolean> {
 		const def = new CustomDeferredService<boolean>();
 		if (this.serviceWorker) {
@@ -39,6 +52,9 @@ export class CustomServiceWorkerService {
 		return def.promise;
 	}
 
+	/**
+	 * Unregisters service worker.
+	 */
 	private unregisterServiceWorker(): Promise<boolean> {
 		const def = new CustomDeferredService<boolean>();
 		if (this.serviceWorker) {
@@ -57,22 +73,31 @@ export class CustomServiceWorkerService {
 		return def.promise;
 	}
 
+	/**
+	 * Subscribes to EventEmitterService, listens to serviceWorker events.
+	 */
 	private emitterSubscribe(): void {
-		this.emitter.getEmitter().takeUntil(this.ngUnsubscribe).subscribe((message: any) => {
-			console.log('CustomServiceWorkerService consuming event:', JSON.stringify(message));
-			if (message.serviceWorker === 'initialize') {
+		this.emitter.getEmitter().takeUntil(this.ngUnsubscribe).subscribe((event: any) => {
+			console.log('CustomServiceWorkerService consuming event:', JSON.stringify(event));
+			if (event.serviceWorker === 'initialize') {
 				this.initializeServiceWorker();
-			} else if (message.serviceWorker === 'deinitialize') {
+			} else if (event.serviceWorker === 'deinitialize') {
 				this.deinitializeServiceWorker();
 			}
 		});
 	}
 
+	/**
+	 * Unsubscribes from EventEmitterService.
+	 */
 	private emitterUnsubscribe(): void {
 		this.ngUnsubscribe.next();
 		this.ngUnsubscribe.complete();
 	}
 
+	/**
+	 * Initializes service worker.
+	 */
 	public initializeServiceWorker(): void {
 		this.registerServiceWorker().then(() => {
 			this.emitterSubscribe();
@@ -82,12 +107,18 @@ export class CustomServiceWorkerService {
 		});
 	}
 
+	/**
+	 * Deinitializes service worker.
+	 */
 	private deinitializeServiceWorker(): void {
 		this.unregisterServiceWorker().then(() => {
 			this.emitter.emitEvent({serviceWorker: 'unregistered'});
 		});
 	}
 
+	/**
+	 * Disables service worker.
+	 */
 	public disableServiceWorker(): void {
 		this.unregisterServiceWorker().then(() => {
 			this.emitterUnsubscribe();
@@ -95,6 +126,9 @@ export class CustomServiceWorkerService {
 		});
 	}
 
+	/**
+	 * Resolves if service worker is registered or not.
+	 */
 	public isServiceWorkerRegistered(): boolean {
 		return this.serviceWorker && typeof this.serviceWorkerRegistration !== 'undefined';
 	}

@@ -39,45 +39,61 @@ export class AppComponent implements OnInit, OnDestroy {
 		private serviceWorker: CustomServiceWorkerService,
 		@Inject('Window') private window: Window
 	) {
-		console.log('this.el.nativeElement', this.el.nativeElement);
+		// console.log('this.el.nativeElement', this.el.nativeElement);
 	}
 
+	/**
+	 * Unsubscribes from infinite subscriptions.
+	 */
 	private ngUnsubscribe: Subject<void> = new Subject();
 
+	/**
+	 * Indicates spinner visibility.
+	 */
 	public showSpinner: boolean = false;
-
-	// spinner controls
+	/**
+	 * Sets spinner visible to true.
+	 */
 	private startSpinner(): void {
-		console.log('spinner start');
 		this.showSpinner = true;
 	}
+	/**
+	 * Sets spinner visible to false.
+	 */
 	private stopSpinner(): void {
-		console.log('spinner stop');
 		this.showSpinner = false;
 	}
 
+	/**
+	 * Supported languages.
+	 */
 	private supportedLanguages: ISupportedLanguage[] = [
 		{ key: 'en', name: 'English' },
 		{ key: 'ru', name: 'Russian' }
 	];
-
+	/**
+	 * Resolves if language is current.
+	 * @param key language key
+	 */
 	private isCurrentLanguage(key: string): boolean {
-		// check if selected one is a current language
 		return key === this.translate.currentLanguage;
 	}
+	/**
+	 * Selects language.
+	 * @param key language key
+	 */
 	private selectLanguage(key: string): void {
 		if (!this.isCurrentLanguage(key)) {
-			// set current language
 			this.translate.use(key);
-			// set datepickers locale
 			this.setDatepickersLocale(key);
 		}
 	}
+
+	/**
+	 * Sets datepicker locale depending on currently selected language.
+	 * @param key language key
+	 */
 	private setDatepickersLocale(key: string): void {
-		/*
-		*	set datepickers locale
-		*	supported languages: en, ru
-		*/
 		console.log('language change, key', key, 'this.dateAdapter', this.dateAdapter);
 		if (key === 'ru') {
 			this.dateAdapter.setLocale('ru');
@@ -89,34 +105,48 @@ export class AppComponent implements OnInit, OnDestroy {
 	public ngOnInit(): void {
 		console.log('ngOnInit: AppComponent initialized');
 
-		$('#init').remove(); // remove initialization text
+		/*
+		* Remove initialization text.
+		*/
+		$('#init').remove();
 
-		// listen event emitter control messages
-		this.emitter.getEmitter().takeUntil(this.ngUnsubscribe).subscribe((message: any) => {
-			console.log('app consuming event:', message);
-			if (message.spinner) {
-				if (message.spinner === 'start') { // spinner control message
+		/*
+		* Subscribe to event emitter service.
+		*/
+		this.emitter.getEmitter().takeUntil(this.ngUnsubscribe).subscribe((event: any) => {
+			console.log(' > AppComponent consuming event:', event);
+			if (event.spinner) {
+				if (event.spinner === 'start') { // spinner control message
 					console.log('starting spinner');
 					this.startSpinner();
-				} else if (message.spinner === 'stop') { // spinner control message
+				} else if (event.spinner === 'stop') { // spinner control message
 					console.log('stopping spinner');
 					this.stopSpinner();
 				}
 			}
-			if (message.lang) { // switch translation message
-				console.log('switch language', message.lang);
-				if (this.supportedLanguages.filter((item: any) => item.key === message.lang).length) {
+			if (event.lang) {
+				console.log('switch language', event.lang);
+				if (this.supportedLanguages.filter((item: any) => item.key === event.lang).length) {
 					// switch language only if it is present in supportedLanguages array
-					this.selectLanguage(message.lang);
+					this.selectLanguage(event.lang);
 				} else {
 					console.log('selected language is not supported');
 				}
 			}
 		});
 
-		// listen date adapter locale change
+		/*
+		* Subscribe to date adapter locale changes.
+		*/
 		this.dateAdapter.localeChanges.takeUntil(this.ngUnsubscribe).subscribe(() => {
-			console.log('dateAdapter.localeChanges, changed according to the language');
+			console.log('> AppComponent, dateAdapter.localeChanges, changed according to the language');
+		});
+
+		/*
+		* Subscribe to router events.
+		*/
+		this.router.events.takeUntil(this.ngUnsubscribe).subscribe((event: any) => {
+			console.log(' > AppComponent, ROUTER EVENT:', event);
 		});
 
 		/*
@@ -139,15 +169,6 @@ export class AppComponent implements OnInit, OnDestroy {
 		*	icons reference: https://fontawesome.com/icons/
 		*/
 		this.matIconRegistry.registerFontClassAlias('fontawesome-all');
-
-		/*
-		*	TODO:app.component router events
-		*
-		this.router.events.takeUntil(this.ngUnsubscribe).subscribe((event: any) => {
-			console.log(' > AppComponent listens ROUTER EVENT:', event);
-		});
-		*/
-
 	}
 
 	public ngOnDestroy(): void {

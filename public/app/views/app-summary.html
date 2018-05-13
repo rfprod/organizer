@@ -1,19 +1,22 @@
 <p fxFlex="100">
-	{{ 'description' | translate }} <button mat-icon-button (click)="toggleModal()" matTooltip="{{ 'diag' | translate }}"><i class="fas fa-cogs"></i></button>
+	{{ 'description' | translate }} 
+	<button mat-icon-button (click)="toggleModal()" matTooltip="{{ 'diag' | translate }}">
+		<mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-cogs"></mat-icon>
+	</button>
 </p>
 
 <span fxFlex="100">
 	<nvd3 #chart [options]="chartOptions" [data]="appUsageData"></nvd3>
 </span>
 
-<span fxFlex="100" fxLayout="row wrap" fxLayoutAligh="start stretch">
-	<span fxFlex>
+<span fxFlex="100" fxFlexAlign="stretch" fxLayout="row wrap" fxLayoutAligh="start stretch">
+	<span fxFlex class="center-text">
 		{{ 'initialized' | translate }}: {{userStatus.initialized}}
 	</span>
-	<span fxFlex>
+	<span fxFlex class="center-text">
 		{{ 'encryption' | translate }}: {{userStatus.encryption}}
 	</span>
-	<span fxFlex>
+	<span fxFlex class="center-text">
 		{{ 'passwords_count' | translate }}: {{userStatus.passwords}}
 	</span>
 </span>

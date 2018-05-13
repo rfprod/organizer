@@ -9,6 +9,7 @@ import 'rxjs/add/operator/catch';
 
 @Injectable()
 export class UserAPIService {
+
 	constructor(
 		private http: Http,
 		@Inject('Window') private window: Window,
@@ -17,6 +18,9 @@ export class UserAPIService {
 		console.log('UsersListService init');
 	}
 
+	/**
+	 * Service endpoints.
+	 */
 	private endpoints: any = {
 		user: this.window.location.origin + '/api/user' as string,
 		login: this.window.location.origin + '/api/user/login' as string,
@@ -24,27 +28,40 @@ export class UserAPIService {
 		status: this.window.location.origin + '/api/user/status' as string
 	};
 
+	/**
+	 * Gets user.
+	 */
 	public getUser(): Observable<any> {
 		return this.http.get(this.endpoints.user)
 			.map(this.httpHandlers.extractObject)
 			.catch(this.httpHandlers.handleError);
 	}
 
+	/**
+	 * Gets user status.
+	 */
+	public getUserStatus(): Observable<any> {
+		return this.http.get(this.endpoints.status)
+			.map(this.httpHandlers.extractObject)
+			.catch(this.httpHandlers.handleError);
+	}
+
+	/**
+	 * Loggs user in.
+	 */
 	public login(formData: object): Observable<any> {
 		return this.http.post(this.endpoints.login, formData)
 			.map(this.httpHandlers.extractObject)
 			.catch(this.httpHandlers.handleError);
 	}
 
+	/**
+	 * Configures user.
+	 */
 	public configUser(formData: object): Observable<any> {
 		return this.http.post(this.endpoints.config, formData)
 			.map(this.httpHandlers.extractObject)
 			.catch(this.httpHandlers.handleError);
 	}
 
-	public getUserStatus(): Observable<any> {
-		return this.http.get(this.endpoints.status)
-			.map(this.httpHandlers.extractObject)
-			.catch(this.httpHandlers.handleError);
-	}
 }

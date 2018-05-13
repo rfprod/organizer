@@ -6,6 +6,8 @@ import { CustomServiceWorkerService } from '../services/custom-service-worker.se
 import { TranslateService } from '../translate/index';
 import { UserService } from '../services/user.service';
 
+import { ISupportedLanguage } from '../interfaces';
+
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/takeUntil';
 
@@ -28,19 +30,44 @@ export class AppNavComponent implements OnInit, OnDestroy {
 		@Inject('Window') private window: Window
 	) {}
 
+	/**
+	 * Unsubscribes from infinite subscriptions.
+	 */
 	private ngUnsubscribe: Subject<void> = new Subject();
 
+	/**
+	 * Navigation buttons state.
+	 */
 	public navButtonState: any = {
 		summary: false,
 		login: false,
 		data: false
 	};
 
-	public supportedLanguages: any[] = [
+	/**
+	 * Title of views.
+	 */
+	public viewsTitles: any = {
+		summary: 'summary',
+		login: 'login',
+		data: 'data'
+	};
+
+	public currentViewTitle: string = '';
+
+	/**
+	 * Supported languages.
+	 */
+	public supportedLanguages: ISupportedLanguage[] = [
 		{ key: 'en', name: 'English' },
 		{ key: 'ru', name: 'Russian' }
 	];
 
+	/**
+	 * Switches navigation buttons.
+	 * @param event router event
+	 * @param [path] path that should be activated
+	 */
 	public switchNavButtons(event: any, path?: string): void {
 		/*
 		*	accepts router event, and optionally path which contains name of activated path
@@ -48,9 +75,10 @@ export class AppNavComponent implements OnInit, OnDestroy {
 		*/
 		console.log('switchNavButtons:', event);
 		const route: string = (event.route) ? event.route : (typeof event.urlAfterRedirects === 'string') ? event.urlAfterRedirects : event.url;
-		// remove args from route if present
+		// remove args from route if present, and remove leading /
 		path = (!path) ? route.replace(/\?.*$/, '').substring(route.lastIndexOf('/') + 1, route.length) : path;
 		console.log(' >> PATH', path);
+		this.currentViewTitle = path;
 		for (const b in this.navButtonState) {
 			if (typeof this.navButtonState[b] === 'boolean') {
 				this.navButtonState[b] = (b === path) ? true : false;
@@ -59,28 +87,54 @@ export class AppNavComponent implements OnInit, OnDestroy {
 		console.log('navButtonState:', this.navButtonState);
 	}
 
+	/**
+	 * Emits websocket stop event that should be caught by component which use websocket.
+	 *
+	 * Note: this function should be executed before user is sent to any external resource
+	 * on click on an anchor object if a resource is loaded in the same tab.
+	 */
 	public stopWS(): void {
-		/*
-		*	this function should be executed before user is sent to any external resource
-		*	on click on an anchor object if a resource is loaded in the same tab
-		*/
 		console.log('close websocket event emitted');
 		this.emitter.emitEvent({websocket: 'close'});
 	}
 
+	/**
+	 * Resolves if user is logged in.
+	 */
+	public isLoggedIn(): boolean {
+		return this.userService.getUser().token ? true : false;
+	}
+
+	/**
+	 * Loggs user out.
+	 */
 	public logOut(): void {
 		this.userService.resetUser();
 		this.router.navigate(['']);
 	}
 
+	/**
+	 * Selects language.
+	 * @param key language key
+	 */
 	public selectLanguage(key: string): void {
 		this.emitter.emitEvent({lang: key});
 	}
+	/**
+	 * Resolves if language is selected.
+	 * @param key language key
+	 */
 	public isLanguageSelected(key: string): boolean {
 		return key === this.translate.currentLanguage;
 	}
 
-	public serviceWorkerRegistered: boolean = true; // registered by default
+	/**
+	 * Service worker registration state.
+	 */
+	public serviceWorkerRegistered: boolean = true;
+	/**
+	 * Toggles service worker, turn off/on.
+	 */
 	public toggleServiceWorker(): void {
 		if (this.serviceWorkerRegistered) {
 			this.emitter.emitEvent({serviceWorker: 'deinitialize'});
@@ -89,17 +143,23 @@ export class AppNavComponent implements OnInit, OnDestroy {
 		}
 	}
 
+	/**
+	 * Subscribes to EventEmitterService, listens to serviceWorker events.
+	 */
 	private emitterSubscribe(): void {
-		this.emitter.getEmitter().takeUntil(this.ngUnsubscribe).subscribe((message: any) => {
-			console.log('AppNavComponent consuming event:', JSON.stringify(message));
-			if (message.serviceWorker === 'registered') {
+		this.emitter.getEmitter().takeUntil(this.ngUnsubscribe).subscribe((event: any) => {
+			console.log('AppNavComponent consuming event:', JSON.stringify(event));
+			if (event.serviceWorker === 'registered') {
 				this.serviceWorkerRegistered = true;
-			} else if (message.serviceWorker === 'unregistered') {
+			} else if (event.serviceWorker === 'unregistered') {
 				this.serviceWorkerRegistered = false;
 			}
 		});
 	}
 
+	/**
+	 * Subscribes to router events, switches nav buttons.
+	 */
 	private routerSubscribe(): void {
 		this.router.events.takeUntil(this.ngUnsubscribe).subscribe((event: any) => {
 			// console.log(' > ROUTER EVENT:', event);

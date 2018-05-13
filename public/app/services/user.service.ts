@@ -13,8 +13,14 @@ export class UserService {
 		console.log(' >> USER SERVICE CONSTRUCTOR, model', this.model);
 	}
 
+	/**
+	 * User model.
+	 */
 	private model: any;
 
+	/**
+	 * Initializes user model with default values.
+	 */
 	private initializeModel(): void {
 		this.model = {
 			email: null,
@@ -27,14 +33,24 @@ export class UserService {
 		};
 	}
 
+	/**
+	 * Gets user model.
+	 */
 	public getUser(): any {
 		return this.model;
 	}
 
+	/**
+	 * Gets user token.
+	 */
 	public isLoggedIn(): string {
 		return this.model.token;
 	}
 
+	/**
+	 * Updates user model.
+	 * @param newValues new model values object
+	 */
 	public saveUser(newValues): void {
 		console.log('SaveUser', newValues);
 		for (const [key, value] of Object.entries(this.model)) {
@@ -49,6 +65,9 @@ export class UserService {
 		localStorage.setItem('userService', JSON.stringify(this.model));
 	}
 
+	/**
+	 * Restores user model.
+	 */
 	public restoreUser(): void {
 		console.log('Restore User, localStorage.userService:', localStorage.getItem('userService'));
 		if (typeof localStorage.getItem('userService') !== 'undefined' && localStorage.userService) {
@@ -56,6 +75,9 @@ export class UserService {
 		}
 	}
 
+	/**
+	 * Resets user.
+	 */
 	public resetUser(): void {
 		this.initializeModel();
 		localStorage.setItem('userService', JSON.stringify(this.model));

@@ -36,8 +36,14 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
 		// console.log('this.el.nativeElement:', this.el.nativeElement);
 	}
 
+	/**
+	 * Unsubscribes from infinite subscriptions.
+	 */
 	private ngUnsubscribe: Subject<void> = new Subject();
 
+	/**
+	 * Chart options.
+	 */
 	public chartOptions: object = {
 		chart: {
 			type: 'pieChart',
@@ -63,40 +69,43 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
 			},
 		},
 	};
+	/**
+	 * Char view child reference.
+	 */
+	@ViewChild ('chart') private nvd3: any;
 
+	/**
+	 * Application usage data.
+	 */
 	public appUsageData: any[] = [
-		{
-			key: 'Default',
-			y: 1,
-		},
-		{
-			key: 'Default',
-			y: 1,
-		},
-		{
-			key: 'Default',
-			y: 1,
-		},
-		{
-			key: 'Default',
-			y: 1,
-		},
-		{
-			key: 'Default',
-			y: 1,
-		}
+		{ key: 'Default', y: 1 },
+		{ key: 'Default', y: 1 },
+		{ key: 'Default', y: 1 },
+		{ key: 'Default', y: 1 },
+		{ key: 'Default', y: 1 }
 	];
 
+	/**
+	 * Server diagnostic data.
+	 */
 	public serverData: any = {
 		static: [],
-		dynamic: [],
+		dynamic: []
 	};
 
-	private wsEndpoint: string = '/api/app-diag/dynamic';
-	private ws: WebSocket = new WebSocket(this.websocket.generateUrl(this.wsEndpoint));
+	/**
+	 * Websocket connection.
+	 */
+	private ws: WebSocket = new WebSocket(this.websocket.generateUrl('dynamicServerData'));
 
+	/**
+	 * UI error message.
+	 */
 	public errorMessage: string;
 
+	/**
+	 * Gets server static data.
+	 */
 	private getServerStaticData(): Promise<any> {
 		const def = new CustomDeferredService<any>();
 		this.serverStaticDataService.getData().first().subscribe(
@@ -108,6 +117,9 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
 		);
 		return def.promise;
 	}
+	/**
+	 * Gets public data.
+	 */
 	private getPublicData(): Promise<any> {
 		const def = new CustomDeferredService<any>();
 		this.publicDataService.getData().first().subscribe(
@@ -121,8 +133,14 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
 		return def.promise;
 	}
 
+	/**
+	 * User status.
+	 */
 	public userStatus: any = {};
 
+	/**
+	 * Gets user status.
+	 */
 	private getUserStatus(): Promise<any> {
 		const def = new CustomDeferredService<any>();
 		this.userAPIService.getUserStatus().first().subscribe(
@@ -141,15 +159,19 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
 		return def.promise;
 	}
 
+	/**
+	 * Indicates if modal should be displayed or not.
+	 */
 	public showModal: boolean = false;
+	/**
+	 * Toggles modal visibility.
+	 */
 	public toggleModal(): void {
 		if (this.showModal) {
 			this.ws.send(JSON.stringify({action: 'pause'}));
 		} else { this.ws.send(JSON.stringify({action: 'get'})); }
 		this.showModal = (!this.showModal) ? true : false;
 	}
-
-	@ViewChild ('chart') private nvd3: any;
 
 	public ngOnInit(): void {
 		console.log('ngOnInit: AppSummaryComponent initialized');
@@ -181,9 +203,9 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
 			console.log('websocket closed:', evt);
 		};
 
-		this.emitter.getEmitter().takeUntil(this.ngUnsubscribe).subscribe((message: any) => {
-			console.log('AppSummaryComponent consuming event:', message);
-			if (message.websocket === 'close') {
+		this.emitter.getEmitter().takeUntil(this.ngUnsubscribe).subscribe((event: any) => {
+			console.log('AppSummaryComponent consuming event:', event);
+			if (event.websocket === 'close') {
 				console.log('closing webcosket');
 				this.ws.close();
 			}

@@ -9,6 +9,7 @@ import 'rxjs/add/operator/catch';
 
 @Injectable()
 export class ServerStaticDataService {
+
 	constructor(
 		private http: Http,
 		@Inject('Window') private window: Window,
@@ -17,10 +18,18 @@ export class ServerStaticDataService {
 		console.log('ServerStaticDataService init');
 	}
 
-	private appDataUrl: string = this.window.location.origin + '/api/app-diag/static';
+	/**
+	 * Service endpoints.
+	 */
+	private endpoints: any = {
+		static: this.window.location.origin + '/api/app-diag/static'
+	};
 
-	public getData(): Observable<any[]> { // tslint:disable-line
-		return this.http.get(this.appDataUrl)
+	/**
+	 * Gets serverstatic diagnostic data.
+	 */
+	public getData(): Observable<any[]> {
+		return this.http.get(this.endpoints.static)
 			.map(this.httpHandlers.extractArray)
 			.catch(this.httpHandlers.handleError);
 	}

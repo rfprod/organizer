@@ -9,6 +9,7 @@ import 'rxjs/add/operator/catch';
 
 @Injectable()
 export class PublicDataService {
+
 	constructor(
 		private http: Http,
 		@Inject('Window') private window: Window,
@@ -17,10 +18,18 @@ export class PublicDataService {
 		console.log('PublicDataService init');
 	}
 
-	private appDataUrl: string = this.window.location.origin + '/api/app-diag/usage';
+	/**
+	 * Service endpoints.
+	 */
+	private endpoints: any = {
+		usage: this.window.location.origin + '/api/app-diag/usage'
+	};
 
-	public getData(): Observable<any[]> { // tslint:disable-line
-		return this.http.get(this.appDataUrl)
+	/**
+	 * Gets application usage data.
+	 */
+	public getData(): Observable<any[]> {
+		return this.http.get(this.endpoints.usage)
 			.map(this.httpHandlers.extractArray)
 			.catch(this.httpHandlers.handleError);
 	}
