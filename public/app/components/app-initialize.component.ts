@@ -38,7 +38,6 @@ export class AppInitializeComponent implements OnInit, OnDestroy {
 
 	public resetForm(): void {
 		this.initForm = this.fb.group({
-			name: ['', Validators.compose([Validators.required, Validators.pattern(/[a-zA-Z\w]{3,}/)])],
 			email: ['', Validators.compose([Validators.required, Validators.email])],
 			password: ['', Validators.compose([Validators.required, Validators.pattern(/[a-z]+/), Validators.pattern(/[A-Z]+/), Validators.pattern(/\d+/)])]
 		});
@@ -56,7 +55,6 @@ export class AppInitializeComponent implements OnInit, OnDestroy {
 					this.userService.saveUser({ email: this.initForm.controls.email.value });
 					// make subsequent login request for user after successful initialization request
 					const authFormData = this.initForm.value;
-					delete authFormData.name;
 					this.userAPIService.login(authFormData).first().subscribe(
 						(authData: any) => {
 							this.userService.saveUser({ email: this.initForm.controls.email.value, token: authData.token });

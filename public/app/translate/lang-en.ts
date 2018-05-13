@@ -8,6 +8,8 @@ export const LANG_EN_TRANSLATIONS = {
 	toggle_servise_worker: 'Toggle Service Worker',
 	language: 'Language',
 
+	initialization: 'User account initialization',
+
 	summary: 'Summary',
 	diag: 'Platform diagnostics',
 	initialized: 'User initialized',

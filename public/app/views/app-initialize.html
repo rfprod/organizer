@@ -9,14 +9,6 @@
 	</legend>
 
 	<mat-form-field fxFlex="100">
-		<input matInput type="text" name="name" [formControl]="initForm.controls.name" placeholder="{{ 'name' | translate }}" required />
-		<mat-icon matSuffix class="material-icons">email</mat-icon>
-		<mat-error *ngIf="initForm.controls.name.invalid">
-			invalid value, required: email, at least 3 characters long
-		</mat-error>
-	</mat-form-field>
-
-	<mat-form-field fxFlex="100">
 		<input matInput type="text" name="email" [formControl]="initForm.controls.email" placeholder="{{ 'email' | translate }}" required />
 		<mat-icon matSuffix class="material-icons">email</mat-icon>
 		<mat-error *ngIf="initForm.controls.email.invalid">

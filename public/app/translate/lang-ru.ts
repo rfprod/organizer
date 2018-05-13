@@ -8,6 +8,8 @@ export const LANG_RU_TRANSLATIONS = {
 	toggle_servise_worker: 'Переключить Сервисного Рабочего',
 	language: 'Язык',
 
+	initialization: 'Инициализация пользовательской учётной записи',
+
 	summary: 'Сводка',
 	diag: 'Диагностика платформы',
 	initialized: 'Пользователь инициализирован',
