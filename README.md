@@ -371,11 +371,9 @@ most command needed for manual interaction with the project were listed above, f
 * NPM scripts: [`package.json`](package.json) - `scripts` object
 * Gulp tasks: [`gulpfile.js`](gulpfile.js)
 
-### Docker documentation
+### Electron documentation
 
-* [`Docker documentation`](https://docs.docker.com)
-* [`Docker documentation: Engine command-line reference`](https://docs.docker.com/engine/reference/commandline/docker/)
-* [`Docker documentation: Configure and use Docker`](https://docs.docker.com/engine/reference/commandline/docker/)
+* [`Electron documentation`](https://electronjs.org/docs)
 
 ## Licenses
 
