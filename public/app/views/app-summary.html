@@ -14,14 +14,17 @@
 </span>
 
 <span fxFlex="100" fxFlexAlign="stretch" fxLayout="row wrap" fxLayoutAligh="start stretch">
-	<span fxFlex class="center-text">
-		{{ 'initialized' | translate }}: {{userStatus.initialized}}
+	<span fxFlex fxLayout="row" fxLayoutAlign="center center">
+		<span fxFlex="0 1 auto">{{ 'initialized' | translate }}: {{userStatus.initialized}}</span>
 	</span>
-	<span fxFlex class="center-text">
-		{{ 'encryption' | translate }}: {{userStatus.encryption}}
+	<span fxFlex fxLayout="row" fxLayoutAlign="center center">
+		<span fxFlex="0 1 auto">{{ 'encryption' | translate }}: {{userStatus.encryption}}</span>
+		<button mat-icon-button *ngIf="!userStatus.encryption" color="warn" (click)="generateKeypair()">
+			<mat-icon class="material-icons" matTooltip="{{ 'generate_keypair' | translate }}" matTooltipPosition="above">enhanced_encryption</mat-icon>
+		</button>
 	</span>
-	<span fxFlex class="center-text">
-		{{ 'passwords_count' | translate }}: {{userStatus.passwords}}
+	<span fxFlex fxLayout="row" fxLayoutAlign="center center">
+		<span fxFlex="0 1 auto">{{ 'passwords_count' | translate }}: {{userStatus.passwords}}</span>
 	</span>
 </span>
 

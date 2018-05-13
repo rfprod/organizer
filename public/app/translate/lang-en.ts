@@ -16,6 +16,8 @@ export const LANG_EN_TRANSLATIONS = {
 	encryption: 'Encryption available',
 	passwords_count: 'Passwords count',
 
+	generate_keypair: 'Generate RSA keypair',
+
 	login: 'Log in',
 	login_instructions: 'Provide an email and a password, please',
 	email: 'Email',

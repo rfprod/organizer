@@ -37,8 +37,7 @@ sessions/*.*
 # desktop builds
 desktop/
 
-# application data
-data/*.*
-!data/*.gitkeep
-data/**/*.*
-!data/**/*.gitkeep
+# user config except js files
+app/config/*.*
+!app/config/*.gitkeep
+!app/config/*.js

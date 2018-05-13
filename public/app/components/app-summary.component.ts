@@ -160,6 +160,24 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
 	}
 
 	/**
+	 * Generates private/public RSA keys for a user.
+	 */
+	public generateKeypair(): void {
+		this.emitter.emitSpinnerStartEvent();
+		this.userAPIService.generateKeypair().first().subscribe(
+			(data: any) => {
+				this.getUserStatus().then(() => {
+					this.emitter.emitSpinnerStopEvent();
+				});
+			},
+			(error: string) => {
+				this.errorMessage = error;
+				this.emitter.emitSpinnerStopEvent();
+			}
+		);
+	}
+
+	/**
 	 * Indicates if modal should be displayed or not.
 	 */
 	public showModal: boolean = false;

@@ -10,6 +10,7 @@ const app = express();
 const expressWs = require('express-ws')(app); // eslint-disable-line no-unused-vars
 const jwt = require('jwt-simple');
 const crypto = require('crypto');
+const keypair = require('keypair');
 const cluster = require('cluster');
 const os = require('os');
 const fs = require('fs');
@@ -108,12 +109,15 @@ app.all('/*', function(req, res, next) {
 const SrvInfo = require('./app/utils/srv-info.js');
 const Users = require('./app/models/users')(cwd);
 const appData = {
+	paths: Users.paths,
+	keyExists: Users.keyExists,
 	user: Users.user,
 	config: Users.config,
+	saveKeys: Users.saveKeys,
 	addPassword: Users.addPassword,
 	deletePassword: Users.deletePassword
 };
-const cryptoUtils = require('./app/utils/crypto-utils')(crypto, jwt);
+const cryptoUtils = require('./app/utils/crypto-utils')(crypto, jwt, keypair);
 
 routes(app, cwd, fs, SrvInfo, appData, cryptoUtils);
 

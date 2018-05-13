@@ -25,6 +25,7 @@ export class UserAPIService {
 		user: this.window.location.origin + '/api/user' as string,
 		login: this.window.location.origin + '/api/user/login' as string,
 		config: this.window.location.origin + '/api/user/config' as string,
+		generateKeypair: this.window.location.origin + '/api/user/rsa/generate' as string,
 		status: this.window.location.origin + '/api/user/status' as string,
 		addPassword: this.window.location.origin + '/api/user/password/add' as string,
 		deletePassword: this.window.location.origin + '/api/user/password/delete' as string
@@ -62,6 +63,15 @@ export class UserAPIService {
 	 */
 	public configUser(formData: object): Observable<any> {
 		return this.http.post(this.endpoints.config, formData)
+			.map(this.httpHandlers.extractObject)
+			.catch(this.httpHandlers.handleError);
+	}
+
+	/**
+	 * Generates RSA keypair for a user.
+	 */
+	public generateKeypair(): Observable<any> {
+		return this.http.get(this.endpoints.generateKeypair)
 			.map(this.httpHandlers.extractObject)
 			.catch(this.httpHandlers.handleError);
 	}

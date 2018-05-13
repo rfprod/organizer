@@ -16,6 +16,8 @@ export const LANG_RU_TRANSLATIONS = {
 	encryption: 'Шифрование доступно',
 	passwords_count: 'Количество паролей',
 
+	generate_keypair: 'Сгенерировать пару RSA-ключей',
+
 	login: 'Вход в систему',
 	login_instructions: 'Пожалуйста, введите адрес эл. почты и пароль',
 	email: 'Эл. почта',

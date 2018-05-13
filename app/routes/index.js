@@ -145,7 +145,8 @@ module.exports = function(app, cwd, fs, SrvInfo, appData, cryptoUtils) {
 		status: { error: 'Error getting user status, check server logs for details'},
 		login: { error: 'Error logging user in, check server logs for details'},
 		config: { error: 'Error updating user, check server logs for details'},
-		invalidEmailPass: { error: 'Invalid email and/or password' }
+		invalidEmailPass: { error: 'Invalid email and/or password' },
+		keysExist: { error: 'At least one user RSA key already exist' }
 	};
 
 	/**
@@ -216,7 +217,7 @@ module.exports = function(app, cwd, fs, SrvInfo, appData, cryptoUtils) {
 		if (Object.keys(user).length) {
 			const status = {
 				initialized: user.email && user.password ? true : false,
-				encryption: user.salt ? true : false,
+				encryption: user.keys.public && user.keys.private ? true : false,
 				passwords: user.passwords.length || 0
 			};
 			res.json(status);
@@ -277,5 +278,34 @@ module.exports = function(app, cwd, fs, SrvInfo, appData, cryptoUtils) {
 		} else {
 			res.status(404).json(errorMessage.config);
 		}
+	});
+
+	/**
+	 * Generates RSA key pair for application user.
+	 * @name Generate RSA key pair
+	 * @path {GET} /api/user/rsa/generate
+	 * @code {200}
+	 * @code {500} error getting user status
+	 * @response {object} {} Updated user object
+	 */
+	app.get('/api/user/rsa/generate', async(req, res) => {
+		appData.keyExists.publicRSA()
+			.then(() => appData.keyExists.privateRSA())
+			.then(() => {
+				console.log('user RSA keys exist');
+				res.status(412).json(errorMessage.keysExist);
+			})
+			.catch(async() => {
+				console.log('keys do not exist, ok to go on');
+				const keysObject = cryptoUtils.generateKeypair();
+				const saveKeys = await appData.saveKeys(keysObject);
+				const userConfig = { keys : keysObject };
+				const user = await appData.config(userConfig);
+				if (Object.keys(saveKeys).length && Object.keys(user).length) {
+					res.json(user);
+				} else {
+					res.status(500).json(errorMessage.config);
+				}
+			});
 	});
 };

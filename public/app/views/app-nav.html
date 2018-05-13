@@ -8,10 +8,12 @@
 			<mat-slide-toggle [checked]="serviceWorkerRegistered" (click)="toggleServiceWorker()" matTooltip="{{ 'toggle_servise_worker' | translate }}" matTooltipPosition="below" class="mat-caption">SW</mat-slide-toggle>
 		</span>
 	</span>
-	<span fxFlex="1 1 auto" fxLayout="row" fxLayoutAligh="start center">
-		<small fxFlex [fxHide.md]="true" [fxHide.lg]="true" class="center-text">
+	<span fxFlex="1 1 auto" fxLayout="row" fxLayoutAligh="center center">
+		<span fxFlex></span>
+		<small fxFlex="0 1 auto" [fxHide.md]="true" [fxHide.lg]="true">
 			{{ currentViewTitle | translate }}
 		</small>
+		<span fxFlex></span>
 	</span>
 	<span fxFlex="0 1 auto">
 		<button [routerLink]="['login']" (click)="switchNavButtons($event, 'login')" mat-button [color]="navButtonState.login ? 'accent' : null" [fxHide.xs]="true" [fxHide.sm]="true" *ngIf="!isLoggedIn()">

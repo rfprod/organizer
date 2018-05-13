@@ -72,6 +72,7 @@
 		"jwt-simple": "^0.5.1",
 		"karma": "^2.0.2",
 		"karma-redirect-preprocessor": "^0.1.1",
+		"keypair": "^1.0.1",
 		"material-design-icon-fonts": "^3.0.1",
 		"moment": "^2.22.1",
 		"ng2-nvd3": "^2.0.0",
