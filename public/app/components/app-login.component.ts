@@ -48,6 +48,13 @@ export class AppLoginComponent implements OnInit, OnDestroy {
 	public errorMessage: string;
 
 	/**
+	 * Resolves if user is logged in.
+	 */
+	public isLoggedIn(): boolean {
+		return this.userService.getUser().token ? true : false;
+	}
+
+	/**
 	 * Login form.
 	 */
 	public loginForm: FormGroup;

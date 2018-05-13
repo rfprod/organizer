@@ -25,7 +25,7 @@
 	</mat-form-field>
 
 	<span fxFlex="100">
-		<span *ngIf="userService.getUser().email"><a (click)="resetForm()">{{ 'forget_my_address' | translate }}</a></span>
+		<span *ngIf="isLoggedIn()"><a (click)="resetForm()">{{ 'forget_my_address' | translate }}</a></span>
 	</span>
 
 	<button fxFlex mat-button type="submit" [disabled]="loginForm.pristine || loginForm.invalid" [attr.aria-label]="submit">
