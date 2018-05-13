@@ -1,18 +1,18 @@
-<div id="filters">
-	<span class="flex-item">
+<span fxFlex="100" fxLayout="row wrap" fxLayoutAlign="start stretch">
+	<span fxFlex fxLayout="row" fxLayoutAlign="center center">
 		<mat-form-field>
 			<input matInput type="text" name="searchQuery" [(ngModel)]="searchQuery" placeholder="{{ 'name' | translate }}" />
 			<mat-icon matSuffix class="material-icons">search</mat-icon>
 		</mat-form-field>
 	</span>
-	<span class="flex-item">
-		<mat-form-field fxFlex>
+	<span fxFlex fxLayout="row" fxLayoutAlign="center center">
+		<mat-form-field>
 			<input matInput type="text" name="pickedDate" [matDatepicker]="datePicker" [(ngModel)]="pickedDate" placeholder="{{ 'pick_a_date' | translate }}" (click)="showDatePicker()" readonly="true"/>
 			<mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
 			<mat-datepicker #datePicker touchUi="true"></mat-datepicker>
 		</mat-form-field>
 	</span>
-	<span class="flex-item">
+	<span fxFlex fxLayout="row" fxLayoutAlign="center center">
 		<mat-form-field>
 			<mat-select type="select" name="sortByCriterion" [(ngModel)]="sortByCriterion" floatPlaceholder="auto">
 				<mat-option value="">None</mat-option>
@@ -24,24 +24,14 @@
 			</mat-placeholder>
 		</mat-form-field>
 	</span>
-</div>
-<div id="dashboard-data">
-	<h3>Users</h3>
-	<span fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="10px" class="flex-grid">
-		<span *ngFor="let user of usersList; let j = index" (mouseenter)="mouseEntered($event)" (mouseleave)="mouseLeft($event)" fxFlex fxFlex.xs="1" fxLayout="row" fxHide="{{hideElement(j)}}" class="flex-grid-item">
-			<span fxFlex="33" fxLayout="column" class="flex-list">
-				<div>id: {{user.id}}</div>
-				<div>{{user.firstName}}</div>
-				<div>{{user.lastName}}</div>
-				<div>role: {{user.role}}</div>
-			</span>
-			<span fxFlex fxLayout="column" class="flex-list">
-				<div>{{user.email}}</div>
-				<div>city: {{user.city}}</div>
-				<div>country: {{user.country}}</div>
-				<div>registered: {{user.registered | date}}</div>
-				<div>last login: {{user.lastLogin | date}}</div>
-			</span>
+</span>
+<span fxFlex="100" fxLayout="row wrap" fxLayoutAlign="start stretch">
+	<h3 fxFlex="100">{{ 'passwords' | translate }}</h3>
+	<span fxFlex="100" fxLayout="row wrap">
+		<span *ngFor="let passObj of user.passwords; let j = index" fxFlex fxLayout="row" fxLayoutAlign="start stretch" fxHide="{{hideElement(j)}}">
+			<span fxFlex>{{passObj.name}}</span>
+			<span fxFlex>{{passObj.password}}</span>
+			<span fxFlex>{{passObj.updated}}</span>
 		</span>
 	</span>
-</div>
+</span>

@@ -51,13 +51,6 @@ export class AppDataComponent implements OnInit, OnDestroy {
 		return def.promise;
 	}
 
-	public mouseEntered(event) {
-		console.log('mouse enter', event);
-	}
-	public mouseLeft(event) {
-		console.log('mouse leave', event);
-	}
-
 /*
 *	search
 */

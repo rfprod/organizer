@@ -24,7 +24,7 @@ export const LANG_RU_TRANSLATIONS = {
 	submit: 'Отправить',
 
 	data: 'Данные',
-	name: 'Имя',
+	passwords: 'Пароли',
 	sort_by: 'Сортировать по',
 	pick_a_date: 'Выберите дату'
 };
