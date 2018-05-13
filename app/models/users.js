@@ -18,6 +18,23 @@ module.exports = (cwd) => {
 		passwords: []
 	};
 
+	const userConfigPath = `${cwd}/data/user.json`;
+
+	const handlers = {
+		userDoesNotExist: (resolve) => {
+			console.log('# > user does not exist, should be initialized first');
+			resolve({});
+		},
+		errorUpdatingUser: (err, resolve, data) => {
+			console.log('# > error updating user', err);
+			resolve(JSON.parse(data.toString()));
+		},
+		userWasUpdated: (resolve, user) => {
+			console.log(`# > ${userConfigPath} was updated`);
+			resolve(user);
+		}
+	};
+
 	return {
 		/**
 		 * Returns user object
@@ -25,15 +42,15 @@ module.exports = (cwd) => {
 		 */
 		user: () => {
 			return new Promise((resolve) => {
-				fs.readFile(cwd + '/data/user.json', (err, data) => {
+				fs.readFile(userConfigPath, (err, data) => {
 					if (err) {
-						console.log('# > user does not exist, initialize');
-						fs.writeFile(cwd + '/data/user.json', JSON.stringify(defaultUserObject), (err) => {
+						console.log('# > user does not exist, initializing');
+						fs.writeFile(userConfigPath, JSON.stringify(defaultUserObject), (err) => {
 							if (err) {
 								console.log('# > error getting user', err);
 								resolve({});
 							}
-							console.log(`# > ${cwd}/data/user.json was created`);
+							console.log(`# > ${userConfigPath} was created`);
 							resolve(defaultUserObject);
 						});
 					} else {
@@ -49,10 +66,9 @@ module.exports = (cwd) => {
 		 */
 		config: (newValues) => {
 			return new Promise((resolve) => {
-				fs.readFile(cwd + '/data/user.json', (err, data) => {
+				fs.readFile(userConfigPath, (err, data) => {
 					if (err) {
-						console.log('# > user does not exist, should be initialized first');
-						resolve({});
+						handlers.userDoesNotExist();
 					} else {
 						const user = JSON.parse(data.toString());
 						if (newValues) {
@@ -64,13 +80,58 @@ module.exports = (cwd) => {
 							}
 						}
 						console.log('updated user', user);
-						fs.writeFile(cwd + '/data/user.json', JSON.stringify(user), (err) => {
+						fs.writeFile(userConfigPath, JSON.stringify(user), (err) => {
 							if (err) {
-								console.log('# > error updating user', err);
-								resolve(JSON.parse(data.toString()));
+								handlers.errorUpdatingUser(err, resolve, data);
 							}
-							console.log(`# > ${cwd}/data/user.json was updated`);
-							resolve(user);
+							handlers.userWasUpdated(resolve, user);
+						});
+					}
+				});
+			});
+		},
+
+		addPassword: (newPasswordObject) => {
+			return new Promise((resolve) => {
+				fs.readFile(userConfigPath, (err, data) => {
+					if (err) {
+						handlers.userDoesNotExist();
+					} else {
+						const user = JSON.parse(data.toString());
+						if (newPasswordObject) {
+							newPasswordObject.timestamp = new Date().getTime();
+							console.log('add password, newPasswordObject', newPasswordObject);
+							user.passwords.push(newPasswordObject);
+						}
+						console.log('updated user', user);
+						fs.writeFile(userConfigPath, JSON.stringify(user), (err) => {
+							if (err) {
+								handlers.errorUpdatingUser(err, resolve, data);
+							}
+							handlers.userWasUpdated(resolve, user);
+						});
+					}
+				});
+			});
+		},
+
+		deletePassword: (passwordObject) => {
+			return new Promise((resolve) => {
+				fs.readFile(userConfigPath, (err, data) => {
+					if (err) {
+						handlers.userDoesNotExist();
+					} else {
+						const user = JSON.parse(data.toString());
+						if (passwordObject) {
+							console.log('delete password, passwordObject', passwordObject);
+							user.passwords = user.passwords.filter((item) => item.name !== passwordObject.name && item.password !== passwordObject.password);
+						}
+						console.log('updated user', user);
+						fs.writeFile(userConfigPath, JSON.stringify(user), (err) => {
+							if (err) {
+								handlers.errorUpdatingUser(err, resolve, data);
+							}
+							handlers.userWasUpdated(resolve, user);
 						});
 					}
 				});

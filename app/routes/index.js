@@ -242,4 +242,40 @@ module.exports = function(app, cwd, fs, SrvInfo, appData, cryptoUtils) {
 			res.status(404).json(errorMessage.config);
 		}
 	});
+
+	/**
+	 * Add user password.
+	 * @name Add password
+	 * @path {POST} /api/user/password/add
+	 * @code {200}
+	 * @code {404} user does not exist
+	 * @response {object} {} Updated user object
+	 */
+	app.post('/api/user/password/add', async(req, res) => {
+		console.log('req.body', req.body);
+		const user = await appData.addPassword(req.body);
+		if (Object.keys(user).length) {
+			res.json(user);
+		} else {
+			res.status(404).json(errorMessage.config);
+		}
+	});
+
+	/**
+	 * Delete user password.
+	 * @name Delete password
+	 * @path {POST} /api/user/password/delete
+	 * @code {200}
+	 * @code {404} user does not exist
+	 * @response {object} {} Updated user object
+	 */
+	app.post('/api/user/password/delete', async(req, res) => {
+		console.log('req.body', req.body);
+		const user = await appData.deletePassword(req.body);
+		if (Object.keys(user).length) {
+			res.json(user);
+		} else {
+			res.status(404).json(errorMessage.config);
+		}
+	});
 };

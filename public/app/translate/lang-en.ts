@@ -27,5 +27,12 @@ export const LANG_EN_TRANSLATIONS = {
 	data: 'Data',
 	passwords: 'Passwords',
 	sort_by: 'Sort by',
-	pick_a_date: 'Pick a date'
+	pick_a_date: 'Pick a date',
+	add_password: 'Add password',
+	name: 'Resource name',
+	timestamp: 'Timestamp',
+
+	required: 'This value is required',
+
+	delete: 'Delete'
 };

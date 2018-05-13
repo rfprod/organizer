@@ -25,7 +25,9 @@ export class UserAPIService {
 		user: this.window.location.origin + '/api/user' as string,
 		login: this.window.location.origin + '/api/user/login' as string,
 		config: this.window.location.origin + '/api/user/config' as string,
-		status: this.window.location.origin + '/api/user/status' as string
+		status: this.window.location.origin + '/api/user/status' as string,
+		addPassword: this.window.location.origin + '/api/user/password/add' as string,
+		deletePassword: this.window.location.origin + '/api/user/password/delete' as string
 	};
 
 	/**
@@ -60,6 +62,24 @@ export class UserAPIService {
 	 */
 	public configUser(formData: object): Observable<any> {
 		return this.http.post(this.endpoints.config, formData)
+			.map(this.httpHandlers.extractObject)
+			.catch(this.httpHandlers.handleError);
+	}
+
+	/**
+	 * Adds user password.
+	 */
+	public addPassword(formData: object): Observable<any> {
+		return this.http.post(this.endpoints.addPassword, formData)
+			.map(this.httpHandlers.extractObject)
+			.catch(this.httpHandlers.handleError);
+	}
+
+	/**
+	 * Deletes user password.
+	 */
+	public deletePassword(formData: object): Observable<any> {
+		return this.http.post(this.endpoints.deletePassword, formData)
 			.map(this.httpHandlers.extractObject)
 			.catch(this.httpHandlers.handleError);
 	}

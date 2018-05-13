@@ -106,9 +106,12 @@ app.all('/*', function(req, res, next) {
 });
 
 const SrvInfo = require('./app/utils/srv-info.js');
+const Users = require('./app/models/users')(cwd);
 const appData = {
-	user: require('./app/models/users')(cwd).user,
-	config: require('./app/models/users')(cwd).config
+	user: Users.user,
+	config: Users.config,
+	addPassword: Users.addPassword,
+	deletePassword: Users.deletePassword
 };
 const cryptoUtils = require('./app/utils/crypto-utils')(crypto, jwt);
 

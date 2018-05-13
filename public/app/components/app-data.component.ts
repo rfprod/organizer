@@ -1,9 +1,10 @@
 import { Component, ElementRef, ViewChild, OnInit, OnDestroy } from '@angular/core';
-import { EventEmitterService } from '../services/event-emitter.service';
-import { CustomDeferredService } from '../services/custom-deferred.service';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { MatDatepicker } from '@angular/material';
 
-import { TranslateService } from '../translate/translate.service';
+import { EventEmitterService } from '../services/event-emitter.service';
+import { CustomDeferredService } from '../services/custom-deferred.service';
+import { UserService } from '../services/user.service';
 
 import { UserAPIService } from '../services/user-api.service';
 
@@ -22,11 +23,13 @@ export class AppDataComponent implements OnInit, OnDestroy {
 
 	constructor(
 		private el: ElementRef,
+		private fb: FormBuilder,
 		private emitter: EventEmitterService,
-		private userAPIService: UserAPIService,
-		private translateService: TranslateService
+		private userService: UserService,
+		private userAPIService: UserAPIService
 	) {
 		// console.log('this.el.nativeElement:', this.el.nativeElement);
+		this.resetPasswordForm();
 	}
 
 	/**
@@ -52,6 +55,7 @@ export class AppDataComponent implements OnInit, OnDestroy {
 		this.userAPIService.getUser().first().subscribe(
 			(data: any) => {
 				this.user = data;
+				this.userService.saveUser(this.user);
 				def.resolve(true);
 			},
 			(error: string) => {
@@ -61,6 +65,59 @@ export class AppDataComponent implements OnInit, OnDestroy {
 			() => console.log('getUser done')
 		);
 		return def.promise;
+	}
+
+	/**
+	 * New password form.
+	 */
+	public passwordForm: FormGroup;
+	/**
+	 * Resets new password form.
+	 */
+	private resetPasswordForm(): void {
+		this.passwordForm = this.fb.group({
+			name: ['', Validators.compose([Validators.required])],
+			password: ['', Validators.compose([Validators.required])]
+		});
+	}
+	/**
+	 * Adds user password.
+	 */
+	public addPassword(): void {
+		this.emitter.emitSpinnerStartEvent();
+		const formData: any = this.passwordForm.value;
+		this.userAPIService.addPassword(formData).first().subscribe(
+			(data: any) => {
+				this.getUser().then(() => {
+					this.resetPasswordForm();
+					this.emitter.emitSpinnerStopEvent();
+				});
+			},
+			(error: string) => {
+				this.errorMessage = error;
+				this.emitter.emitSpinnerStopEvent();
+			}
+		);
+	}
+	/**
+	 * Deletes user password.
+	 * @param id local model array index
+	 */
+	public deletePassword(id: number): void {
+		this.emitter.emitSpinnerStartEvent();
+		const formData: any = this.user.passwords[id];
+		this.userAPIService.deletePassword(formData).first().subscribe(
+			(data: any) => {
+				this.getUser().then(() => {
+					this.resetPasswordForm();
+					this.emitter.emitSpinnerStopEvent();
+				});
+			},
+			(error: string) => {
+				this.errorMessage = error;
+				this.emitter.emitSpinnerStopEvent();
+			}
+		);
 	}
 
 	/**
@@ -106,7 +163,7 @@ export class AppDataComponent implements OnInit, OnDestroy {
 	 * @param val sort value to be set
 	 */
 	public set sortByCriterion(val: string) {
-		if (this.sortValue !== val) { // sort if value changed
+		if (this.sortValue !== val) { // sort if value has changed
 			this.sortValue = val;
 			this.performSorting(val);
 		}

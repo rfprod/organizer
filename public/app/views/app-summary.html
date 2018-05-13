@@ -1,3 +1,7 @@
+<div fxFlex="100" *ngIf="errorMessage" class="error">
+	{{errorMessage}}
+</div>
+
 <p fxFlex="100">
 	{{ 'description' | translate }} 
 	<button mat-icon-button (click)="toggleModal()" matTooltip="{{ 'diag' | translate }}">

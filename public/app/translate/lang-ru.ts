@@ -27,5 +27,12 @@ export const LANG_RU_TRANSLATIONS = {
 	data: 'Данные',
 	passwords: 'Пароли',
 	sort_by: 'Сортировать по',
-	pick_a_date: 'Выберите дату'
+	pick_a_date: 'Выберите дату',
+	add_password: 'Добавить пароль',
+	name: 'Название ресурса',
+	timestamp: 'Метка времени',
+
+	required: 'Это обязательное значение',
+
+	delete: 'Удалить'
 };
