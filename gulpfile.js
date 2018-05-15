@@ -172,37 +172,37 @@ const logsIndexHTML = `
 			}
 		</style>
 	</head>
-	<body onload="fitIframeHeight()">
-		<h1 class="flex-100">PassMngr Reports and Documentation Index</h1>
+	<body onload='fitIframeHeight()'>
+		<h1 class='flex-100'>PassMngr Reports and Documentation Index</h1>
 
-		<h2 class="flex-100">Reports</h2>
+		<h2 class='flex-100'>Reports</h2>
 
-			<span class="flex-item">
-				<h3 class="flex-100">Server Unit</h3>
-				<a class="flex-item" href="unit/server/index.html" target=_blank>Spec</a>
+			<span class='flex-item'>
+				<h3 class='flex-100'>Server Unit</h3>
+				<a class='flex-item' href='unit/server/index.html' target=_blank>Spec</a>
 			</span>
 
-			<span class="flex-item">
-				<h3 class="flex-100">Client Unit</h3>
-				<a class="flex-item" href="unit/client/index.html" target=_blank>Spec</a>
-				<a class="flex-item" href="coverage/html-report/index.html" target=_blank>Coverage</a>
+			<span class='flex-item'>
+				<h3 class='flex-100'>Client Unit</h3>
+				<a class='flex-item' href='unit/client/index.html' target=_blank>Spec</a>
+				<a class='flex-item' href='coverage/html-report/index.html' target=_blank>Coverage</a>
 			</span>
 
-			<span class="flex-item">
-				<h3 class="flex-100">Client E2E</h3>
-				<a class="flex-item" href="e2e/report/index.html" target=_blank>Spec</a>
+			<span class='flex-item'>
+				<h3 class='flex-100'>Client E2E</h3>
+				<a class='flex-item' href='e2e/report/index.html' target=_blank>Spec</a>
 			</span>
 
-			<h2 class="flex-100">Documentation</h2>
+			<h2 class='flex-100'>Documentation</h2>
 
-			<span class="flex-item">
-				<h3 class="flex-100">Server</h3>
-				<a class="flex-item" href="jsdoc/index.html" target=_blank>JSDoc</a>
+			<span class='flex-item'>
+				<h3 class='flex-100'>Server</h3>
+				<a class='flex-item' href='jsdoc/index.html' target=_blank>JSDoc</a>
 			</span>
 
-			<span class="flex-item">
-				<h3 class="flex-100">Client</h3>
-				<a class="flex-item" href="typedoc/index.html" target=_blank>TypeDoc</a>
+			<span class='flex-item'>
+				<h3 class='flex-100'>Client</h3>
+				<a class='flex-item' href='typedoc/index.html' target=_blank>TypeDoc</a>
 			</span>
 	</body>
 </html>
@@ -227,15 +227,19 @@ gulp.task('typedoc-client', () => {
 	const typedoc = require('gulp-typedoc');
 	const config = {
 		// typescript options (see typescript docs)
-		module: 'commonjs',
-		target: 'es2015',
-		moduleResolution: 'node',
-		sourceMap: true,
+		allowSyntheticDefaultImports: true,
+		alwaysStrict: true,
+		importHelpers: true,
 		emitDecoratorMetadata: true,
+		esModuleInterop: true,
 		experimentalDecorators: true,
-		removeComments: false,
+		module: 'commonjs',
+		moduleResolution: 'node',
 		noImplicitAny: false,
+		removeComments: true,
+		sourceMap: true,
 		suppressImplicitAnyIndexErrors: true,
+		target: 'es2017',
 		// output options (see typedoc docs: http://typedoc.org/api/index.html)
 		readme: './README.md',
 		out: './logs/typedoc',
@@ -515,7 +519,7 @@ gulp.task('production-start', (done) => {
 *
 *	NOTE before packing/building: package.json must contain
 *	{...
-*		"main": "main.js",
+*		'main': 'main.js',
 *	...}
 *
 *	after installation execute: gulp electron-packager-win
