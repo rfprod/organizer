@@ -1,28 +1,134 @@
 'use strict';
 
+/**
+ * Server module
+ * @module server
+ */
+
+/**
+ * @name express
+ * @constant
+ * @summary Express server
+ * @description Express server
+ */
 const express = require('express');
+/**
+ * @name compression
+ * @constant
+ * @summary Compression for Express server
+ * @description Compression for Express server
+ */
 const compression = require('compression');
+/**
+ * @name bodyParser
+ * @constant
+ * @summary Body parser
+ * @description Body parser for Express server
+ */
 const bodyParser = require('body-parser');
+/**
+ * @name routes
+ * @constant
+ * @summary Express server Routes
+ * @description Express server Routes
+ * @see {@link module:app/routes/index}
+ */
 const routes = require('./app/routes/index.js');
+/**
+ * @name session
+ * @constant
+ * @summary Express server session
+ * @description Express server session
+ */
 const session = require('express-session');
+/**
+ * @name FileStore
+ * @constant
+ * @summary Express server session storage
+ * @description Express server session storage
+ */
 const FileStore = require('session-file-store')(session);
+/**
+ * @name app
+ * @constant
+ * @summary Express application
+ * @description Express application
+ */
 const app = express();
+/**
+ * @name expressWs
+ * @constant
+ * @summary Websocket for Express application
+ * @description Websocket for Express application
+ */
 const expressWs = require('express-ws')(app); // eslint-disable-line no-unused-vars
+/**
+ * @name jwt
+ * @constant
+ * @summary JWT simple module
+ * @description JWT utilities
+ */
 const jwt = require('jwt-simple');
+/**
+ * @name crypto
+ * @constant
+ * @summary NodeJS Crypto module
+ * @description Cryptographic utilities
+ */
 const crypto = require('crypto');
+/**
+ * @name keypair
+ * @constant
+ * @summary RSA keys module
+ * @description RSA keys utilities
+ */
 const keypair = require('keypair');
+/**
+ * @name cluster
+ * @constant
+ * @summary NodeJS cluster
+ * @description NodeJS cluster
+ */
 const cluster = require('cluster');
+/**
+ * @name os
+ * @constant
+ * @summary OS utility module
+ * @description OS utility module
+ */
 const os = require('os');
+/**
+ * @name path
+ * @constant
+ * @summary Directory paths utility module
+ * @description Directory paths utility module
+ */
 const fs = require('fs');
 
+/**
+ * @name clusterStop
+ * @type {boolean}
+ * @default {false}
+ * @summary Indicates if cluster is stopped
+ * @description Indicates if cluster is stopped, which prevents workers from spawning
+ */
 let clusterStop = false;
 
 require('dotenv').load();
 
 process.title = 'passmngr';
 
+/**
+ * @name cwd
+ * @constant
+ * @summary Current directory of the main Server script - server.js
+ * @description Correct root path for all setups, it should be used for all file references for the server and its modules like filePath: cwd + '/actual/file.extension'. Built Electron app contains actual app in resources/app(.asar) subdirectory, so it is essential to prefer __dirname usage over process.cwd() to get the value.
+ */
 const cwd = __dirname;
 
+/**
+ * Sessions management.
+ */
 app.use(session({
 	secret: 'secretPASSMNGR',
 	store: new FileStore,
@@ -33,17 +139,17 @@ app.use(session({
 	}
 }));
 
-/*
-*	use compression for all responses
-*/
+/**
+ * Use compression for all responses.
+ */
 app.use(compression({
 	threshold: 0,
 	level: -1
 }));
 
-/*
-* request parameters middleware
-*/
+/**
+ * Request parameters middleware
+ */
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
@@ -106,8 +212,29 @@ app.all('/*', function(req, res, next) {
 	else next();
 });
 
+/**
+ * @name SrvInfo
+ * @constant
+ * @summary Server information module
+ * @description Static, and dynamic server data
+ * @see {@link module:app/utils/srv-info}
+ */
 const SrvInfo = require('./app/utils/srv-info.js');
+/**
+ * @name Users
+ * @constant
+ * @summary Users module
+ * @description User model, and user utility methods
+ * @see {@link module:app/users}
+ */
 const Users = require('./app/models/users')(cwd);
+/**
+ * @name appData
+ * @constant
+ * @summary Application data
+ * @description Uses data from Users module
+ * @see {@link module:app/users}
+ */
 const appData = {
 	paths: Users.paths,
 	keyExists: Users.keyExists,
@@ -117,13 +244,35 @@ const appData = {
 	addPassword: Users.addPassword,
 	deletePassword: Users.deletePassword
 };
+/**
+ * @name cryptoUtils
+ * @constant
+ * @summary Server information module
+ * @description Static, and dynamic server data
+ * @see {@link module:app/utils/crypto-utils}
+ */
 const cryptoUtils = require('./app/utils/crypto-utils')(crypto, jwt, keypair);
 
 routes(app, cwd, fs, SrvInfo, appData, cryptoUtils);
 
-const port = process.env.PORT || 8079,
-	ip = process.env.IP;
+/**
+ * @name port
+ * @summary Application port
+ * @description Application port
+ */
+const port = process.env.PORT || 8079;
+/**
+ * @name ip
+ * @summary Application ip
+ * @description Application ip
+ */
+const ip = process.env.IP;
 
+/**
+ * @function terminator
+ * @summary Terminator function
+ * @description Terminates application
+ */
 function terminator (sig) {
 	if (typeof sig === 'string') {
 		console.log(`\n${Date(Date.now())}: Received signal ${sig} - terminating app...\n`);

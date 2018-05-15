@@ -8,6 +8,7 @@
  * @param {object} fs Filesystem access module
  * @param {object} SrvInfo Server information
  * @param {object} appData User data
+ * @param {object} cryptoUtils Cryptographic utility
  */
 module.exports = function(app, cwd, fs, SrvInfo, appData, cryptoUtils) {
 
@@ -43,7 +44,7 @@ module.exports = function(app, cwd, fs, SrvInfo, appData, cryptoUtils) {
 	 * @name App-diag build hashsum
 	 * @path {GET} /api/app-diag/hashsum
 	 * @code {200}
-	 * @response {object} {} Object with hashsum key
+	 * @response {object} - Object with hashsum key
 	 */
 	app.get('/api/app-diag/hashsum', (req, res) => {
 		console.log('process.env.BUILD_HASH', process.env.BUILD_HASH);
@@ -56,12 +57,9 @@ module.exports = function(app, cwd, fs, SrvInfo, appData, cryptoUtils) {
 	 * @name App-diag usage
 	 * @path {GET} /api/app-diag/usage
 	 * @code {200}
-	 * @response {array} [] Array of objects
+	 * @response {array} - Array of objects with user sessions data
 	 */
 	app.get('/api/app-diag/usage', (req, res) => {
-		/*
-		*	reports user sessions codes list with views count
-		*/
 		let filesList;
 		fs.readdir(cwd + '/sessions', (err, data) => {
 			if (err) throw err;
@@ -91,7 +89,7 @@ module.exports = function(app, cwd, fs, SrvInfo, appData, cryptoUtils) {
 	 * @name App-diag static
 	 * @path {GET} /api/app-diag/static
 	 * @code {200}
-	 * @response {object} {} Object with array of key/value pairs
+	 * @response {array} - Server static data
 	 */
 	app.get('/api/app-diag/static', (req, res) => {
 		res.format({
@@ -106,7 +104,7 @@ module.exports = function(app, cwd, fs, SrvInfo, appData, cryptoUtils) {
 	 * @name App-diag dynamic
 	 * @path {WS} /api/app-diag/dynamic
 	 * @code {200}
-	 * @response {object} {} Object with array of key/value pairs
+	 * @response {array} - Server dynamic data
 	 */
 	app.ws('/api/app-diag/dynamic', (ws) => {
 		console.log('websocket opened /app-diag/dynamic');
@@ -158,7 +156,7 @@ module.exports = function(app, cwd, fs, SrvInfo, appData, cryptoUtils) {
 	 * @code {404} failed config
 	 * @code {401} invalid creadentials
 	 * @code {500} error logging user in
-	 * @response {object} {} object with session token
+	 * @response {object} - Object with session token
 	 */
 	app.post('/api/user/login', async(req, res) => {
 		const user = await appData.user();
@@ -194,7 +192,7 @@ module.exports = function(app, cwd, fs, SrvInfo, appData, cryptoUtils) {
 	 * @path {GET} /api/user
 	 * @code {200}
 	 * @code {500} error creating user
-	 * @response {object} {} Current user object
+	 * @response {object} - Current user object
 	 */
 	app.get('/api/user', async(req, res) => {
 		const user = await appData.user();
@@ -211,7 +209,7 @@ module.exports = function(app, cwd, fs, SrvInfo, appData, cryptoUtils) {
 	 * @path {GET} /api/user/status
 	 * @code {200}
 	 * @code {500} error getting user status
-	 * @response {object} {} Current user status object
+	 * @response {object} - Current user status object
 	 */
 	app.get('/api/user/status', async(req, res) => {
 		const user = await appData.user();
@@ -234,7 +232,7 @@ module.exports = function(app, cwd, fs, SrvInfo, appData, cryptoUtils) {
 	 * @path {POST} /api/user/config
 	 * @code {200}
 	 * @code {404} user does not exist
-	 * @response {object} {} Updated user object
+	 * @response {object} - Updated user object
 	 */
 	app.post('/api/user/config', async(req, res) => {
 		console.log('req.body', req.body);
@@ -252,7 +250,7 @@ module.exports = function(app, cwd, fs, SrvInfo, appData, cryptoUtils) {
 	 * @path {POST} /api/user/password/add
 	 * @code {200}
 	 * @code {404} user does not exist
-	 * @response {object} {} Updated user object
+	 * @response {object} - Updated user object
 	 */
 	app.post('/api/user/password/add', async(req, res) => {
 		console.log('req.body', req.body);
@@ -270,7 +268,7 @@ module.exports = function(app, cwd, fs, SrvInfo, appData, cryptoUtils) {
 	 * @path {POST} /api/user/password/delete
 	 * @code {200}
 	 * @code {404} user does not exist
-	 * @response {object} {} Updated user object
+	 * @response {object} - Updated user object
 	 */
 	app.post('/api/user/password/delete', async(req, res) => {
 		console.log('req.body', req.body);
@@ -288,7 +286,7 @@ module.exports = function(app, cwd, fs, SrvInfo, appData, cryptoUtils) {
 	 * @path {GET} /api/user/rsa/generate
 	 * @code {200}
 	 * @code {500} error getting user status
-	 * @response {object} {} Updated user object
+	 * @response {object} - Updated user object
 	 */
 	app.get('/api/user/rsa/generate', async(req, res) => {
 		appData.keyExists.publicRSA()
@@ -317,7 +315,7 @@ module.exports = function(app, cwd, fs, SrvInfo, appData, cryptoUtils) {
 	 * @path {GET} /api/user/rsa/encrypt
 	 * @code {200}
 	 * @code {500} error getting user status
-	 * @response {object} {} Updated user object
+	 * @response {object} - Updated user object
 	 */
 	app.get('/api/user/rsa/encrypt', async(req, res) => {
 		appData.keyExists.publicRSA()
@@ -348,7 +346,7 @@ module.exports = function(app, cwd, fs, SrvInfo, appData, cryptoUtils) {
 	 * @path {GET} /api/user/rsa/decrypt
 	 * @code {200}
 	 * @code {500} error getting user status
-	 * @response {object} {} Updated user object
+	 * @response {object} - Updated user object
 	 */
 	app.get('/api/user/rsa/decrypt', async(req, res) => {
 		appData.keyExists.publicRSA()

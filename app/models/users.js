@@ -3,12 +3,15 @@
 const fs = require('fs');
 
 /**
- * User module
+ * User module.
  * @module app/users
  */
 
 module.exports = (cwd) => {
 
+	/**
+	 * Default user object which is used on user initialization.
+	 */
 	const defaultUserObject = {
 		email: '',
 		password: '',
@@ -19,34 +22,71 @@ module.exports = (cwd) => {
 		encrypted: false
 	};
 
+	/**
+	 * User configuration file path.
+	 */
 	const userConfigPath = `${cwd}/app/config/user.json`;
 
+	/**
+	 * User private RSA key file path.
+	 */
 	const userPrivateKeyPath = `${cwd}/app/config/rsa.private`;
+	/**
+	 * User public RSA key file path.
+	 */
 	const userPublicKeyPath = `${cwd}/app/config/rsa.public`;
 
+	/**
+	 * @name handlers
+	 * @constant
+	 * @summary Inner methods result handlers
+	 * @description Inner methods result handlers
+	 */
 	const handlers = {
+		/**
+		 * User does not exist handler
+		 */
 		userDoesNotExist: (resolve) => {
 			console.log('# > user does not exist, should be initialized first');
 			resolve({});
 		},
+		/**
+		 * Error updating user handler
+		 */
 		errorUpdatingUser: (err, resolve, data) => {
 			console.log('# > error updating user', err);
 			resolve(JSON.parse(data.toString()));
 		},
+		/**
+		 * User was updated handler
+		 */
 		userWasUpdated: (resolve, user) => {
 			console.log(`# > ${userConfigPath} was updated`);
 			resolve(user);
 		},
+		/**
+		 * Error saving user keys handler
+		 */
 		errorSavingKeys: (err, resolve, data) => {
 			console.log('# > error saving user RSA keys', err);
 			resolve(JSON.parse(data.toString()));
 		},
+		/**
+		 * Keys were saved handler
+		 */
 		keysWereSaved: (resolve, user) => {
 			console.log(`# > keys from ${userConfigPath} were saved: ${userPrivateKeyPath}, ${userPrivateKeyPath}`);
 			resolve(user);
 		}
 	};
 
+	/**
+	 * @function keyExists
+	 * @summary Checks if user keys exist
+	 * @description Checks if private or public key exists
+	 * @param privateKey indicates if private key should exist
+	 * @return {Promise} - key existence promise
+	 */
 	function keyExists(privateKey) {
 		return new Promise((resolve, reject) => {
 			const keyPath = (privateKey) ? userPrivateKeyPath : userPublicKeyPath;
@@ -80,8 +120,8 @@ module.exports = (cwd) => {
 			publicRSA: () => keyExists()
 		},
 		/**
-		 * Returns user object
-		 * @return {object} User object
+		 * Returns, and initializes if needed, user object.
+		 * @return {object} - User object
 		 */
 		user: () => {
 			return new Promise((resolve) => {
@@ -104,9 +144,9 @@ module.exports = (cwd) => {
 		},
 
 		/**
-		 * Configures user object
+		 * Configures user object.
 		 * @param newValues user object with new values that should be updated
-		 * @return {object} Updated user object
+		 * @return {object} - Updated user object
 		 */
 		config: (newValues) => {
 			return new Promise((resolve) => {
@@ -136,9 +176,9 @@ module.exports = (cwd) => {
 		},
 
 		/**
-		 * Saves user RSA keys to files
+		 * Saves user RSA keys to files.
 		 * @param keyPair key pair object
-		 * @return {object} Updated user object
+		 * @return {object} - Updated user object
 		 */
 		saveKeys: (keyPair) => {
 			return new Promise((resolve) => {
@@ -169,8 +209,8 @@ module.exports = (cwd) => {
 		},
 
 		/**
-		 * Adds new password
-		 * @return {object} Updated user object
+		 * Adds new password.
+		 * @return {object} - Updated user object
 		 */
 		addPassword: (newPasswordObject) => {
 			return new Promise((resolve) => {
@@ -197,8 +237,8 @@ module.exports = (cwd) => {
 		},
 
 		/**
-		 * Removes a password
-		 * @return {object} Updated user object
+		 * Removes a password.
+		 * @return {object} - Updated user object
 		 */
 		deletePassword: (passwordObject) => {
 			return new Promise((resolve) => {

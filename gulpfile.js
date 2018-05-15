@@ -1,27 +1,28 @@
 'use strict';
 
-const gulp = require('gulp'),
-	runSequence = require('run-sequence'),
-	util = require('gulp-util'),
-	concat = require('gulp-concat'),
-	rename = require('gulp-rename'),
-	eslint = require('gulp-eslint'),
-	tslint = require('gulp-tslint'),
-	plumber = require('gulp-plumber'),
-	mocha = require('gulp-mocha'),
-	karmaServer = require('karma').Server,
-	uglify = require('gulp-uglify'),
-	sass = require('gulp-sass'),
-	cssnano = require('gulp-cssnano'),
-	autoprefixer = require('gulp-autoprefixer'),
-	systemjsBuilder = require('gulp-systemjs-builder'),
-	hashsum = require('gulp-hashsum'),
-	crypto = require('crypto'),
-	fs = require('fs'),
-	spawn = require('child_process').spawn;
-let node,
-	tsc,
-	protractor;
+const gulp = require('gulp');
+const runSequence = require('run-sequence');
+const util = require('gulp-util');
+const concat = require('gulp-concat');
+const rename = require('gulp-rename');
+const eslint = require('gulp-eslint');
+const tslint = require('gulp-tslint');
+const plumber = require('gulp-plumber');
+const mocha = require('gulp-mocha');
+const karmaServer = require('karma').Server;
+const uglify = require('gulp-uglify');
+const sass = require('gulp-sass');
+const cssnano = require('gulp-cssnano');
+const autoprefixer = require('gulp-autoprefixer');
+const systemjsBuilder = require('gulp-systemjs-builder');
+const hashsum = require('gulp-hashsum');
+const crypto = require('crypto');
+const fs = require('fs');
+const spawn = require('child_process').spawn;
+
+let node;
+let tsc;
+let protractor;
 
 /*
 *	hashsum identifies build
@@ -70,7 +71,7 @@ gulp.task('create-env-development', (done) => {
 
 gulp.task('create-env-development-cluster', (done) => {
 	/*
-	*	create .env file for development
+	*	create .env file for development, use cluster
 	*/
 	const pkg = require('./package.json');
 	fs.readFile('./.env', (err, data) => {
@@ -479,10 +480,6 @@ gulp.task('compile-and-build', (done) => {
 	runSequence('tsc', 'build', 'create-env-development', done);
 });
 
-gulp.task('compile-and-build-production', (done) => {
-	runSequence('tsc', 'build', 'create-env-production', done);
-});
-
 gulp.task('compile-and-build-electron', (done) => {
 	runSequence('tsc', 'build', 'create-env-electron', done);
 });
@@ -506,10 +503,6 @@ gulp.task('spawn-rebuild-app', (done) => {
 */
 gulp.task('default', (done) => {
 	runSequence('lint', 'compile-and-build', 'server', 'watch', done);
-});
-
-gulp.task('production-start', (done) => {
-	runSequence('compile-and-build', 'server', done);
 });
 
 /*

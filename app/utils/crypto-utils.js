@@ -1,5 +1,10 @@
 'use strict';
 
+/**
+ * Cryptographic utilities module
+ * @module app/utils/crypto-utils
+ */
+
 module.exports = (crypto, jwt, keypair) => {
 
 	function generateSalt() {
