@@ -118,7 +118,6 @@
 	"scripts": {
 		"prestart": "npm install && npm run clear-ts-build",
 		"start": "gulp",
-		"production-start": "gulp production-start",
 		"pretest": "npm install",
 		"test": "gulp compile-and-test",
 		"client-test": "gulp watch-client-and-test",
