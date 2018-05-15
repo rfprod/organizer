@@ -65,13 +65,13 @@ This will install the PassMngr components into the `PassMngr` directory in your 
 Create a file named `.env` in the root directory manually or use a gulp task
 
 ```
-gulp create-env-development
+gulp create-env
 ```
 
 or
 
 ```
-gulp create-env-development-cluster
+gulp create-env-cluster
 ```
 
 or
@@ -80,19 +80,13 @@ or
 gulp create-env-electron
 ```
 
-or
-
-```
-gulp create-env-production
-```
-
 This `.env` file should contain
 
 for development environment without nodejs cluster
 
 ```
-PORT=8080
-APP_URL=http://localhost:8080/
+PORT=8079
+APP_URL=http://localhost:8079/
 APP_VERSION=1.0.0
 DEV_MODE=true
 BUILD_HASH=3ae81c3e8cac4bcdb303da08cfda57abbdaed
@@ -101,8 +95,8 @@ BUILD_HASH=3ae81c3e8cac4bcdb303da08cfda57abbdaed
 for development environment with nodejs cluster
 
 ```
-PORT=8080
-APP_URL=http://localhost:8080/
+PORT=8079
+APP_URL=http://localhost:8079/
 APP_VERSION=1.0.0
 DEV_MODE=false
 BUILD_HASH=3ae81c3e8cac4bcdb303da08cfda57abbdaed
@@ -111,20 +105,10 @@ BUILD_HASH=3ae81c3e8cac4bcdb303da08cfda57abbdaed
 for electron environment
 
 ```
-PORT=8080
-APP_URL=http://localhost:8080/
+PORT=8079
+APP_URL=http://localhost:8079/
 APP_VERSION=1.0.0
 ELECTRON=true
-NODE_ENV=production
-BUILD_HASH=3ae81c3e8cac4bcdb303da08cfda57abbdaed
-```
-
-for production environment
-
-```
-PORT=8080
-APP_URL=http://app-url
-APP_VERSION=1.0.0
 NODE_ENV=production
 BUILD_HASH=3ae81c3e8cac4bcdb303da08cfda57abbdaed
 ```
@@ -133,7 +117,7 @@ BUILD_HASH=3ae81c3e8cac4bcdb303da08cfda57abbdaed
 
 `APP_URL` may be used by the server if it should form urls to client app and return it to user.
 
-`DEV_MODE` is a variable which defines if coverage report should be served to user upon requesting path `host/logs/coverage/html-report/index.html`, for local environment the url path is it is `http://localhost:8080/logs/coverage/html-report/index.html`. If coverage report should `NOT` be served, don't set this variable at all or remove part `=true`, server does not check its value, only presence.
+`DEV_MODE` is a variable which defines if coverage report should be served to user upon requesting path `host/logs/coverage/html-report/index.html`, for local environment the url path is it is `http://localhost:8079/logs/coverage/html-report/index.html`. If coverage report should `NOT` be served, don't set this variable at all or remove part `=true`, server does not check its value, only presence.
 
 `ELECTRON` tells server to use control flow specific for electron where applicable.
 
@@ -255,7 +239,6 @@ then execute from the project folder
 ```
 nsp check
 ```
-
 
 ### Starting the App
 
