@@ -31,7 +31,7 @@ before_script:
 script:
   - gulp lint
   - gulp compile-and-build
-  - gulp create-env-development
+  - gulp create-env
   - gulp server & # ampersand is required to run server in background
   - gulp server-test
   - gulp client-unit-test-single-run
