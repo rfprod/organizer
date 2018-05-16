@@ -49,7 +49,7 @@ function createEnvFile(env, done) {
 	});
 }
 
-gulp.task('create-env-development', (done) => {
+gulp.task('create-env', (done) => {
 	/*
 	*	create .env file for development
 	*/
@@ -69,7 +69,7 @@ gulp.task('create-env-development', (done) => {
 	});
 });
 
-gulp.task('create-env-development-cluster', (done) => {
+gulp.task('create-env-cluster', (done) => {
 	/*
 	*	create .env file for development, use cluster
 	*/
@@ -477,7 +477,7 @@ gulp.task('build', (done) => {
 });
 
 gulp.task('compile-and-build', (done) => {
-	runSequence('tsc', 'build', 'create-env-development', done);
+	runSequence('tsc', 'build', 'create-env', done);
 });
 
 gulp.task('compile-and-build-electron', (done) => {
