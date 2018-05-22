@@ -1,17 +1,16 @@
 import { Injectable, Inject } from '@angular/core';
-import { Http, Response } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 
 import { CustomHttpHandlersService } from './custom-http-handlers.service';
 
-import { Observable } from 'rxjs/Rx';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
+import { Observable } from 'rxjs';
+import { timeout, take, map, catchError } from 'rxjs/operators';
 
 @Injectable()
 export class ServerStaticDataService {
 
 	constructor(
-		private http: Http,
+		private http: HttpClient,
 		@Inject('Window') private window: Window,
 		private httpHandlers: CustomHttpHandlersService
 	) {
@@ -29,8 +28,11 @@ export class ServerStaticDataService {
 	 * Gets serverstatic diagnostic data.
 	 */
 	public getData(): Observable<any[]> {
-		return this.http.get(this.endpoints.static)
-			.map(this.httpHandlers.extractArray)
-			.catch(this.httpHandlers.handleError);
+		return this.http.get(this.endpoints.static).pipe(
+			timeout(10000),
+			take(1),
+			map(this.httpHandlers.extractArray),
+			catchError(this.httpHandlers.handleError)
+		);
 	}
 }

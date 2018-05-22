@@ -8,10 +8,6 @@ import { UserService } from '../services/user.service';
 
 import { UserAPIService } from '../services/user-api.service';
 
-import { Subject } from 'rxjs/Subject';
-import 'rxjs/add/operator/takeUntil';
-import 'rxjs/add/operator/first';
-
 @Component({
 	selector: 'app-initialize',
 	templateUrl: '/public/app/views/app-initialize.html',
@@ -30,7 +26,7 @@ export class AppInitializeComponent implements OnInit, OnDestroy {
 		private userAPIService: UserAPIService
 	) {}
 
-	private ngUnsubscribe: Subject<void> = new Subject();
+	private subscriptions: any[] = [];
 
 	public errorMessage: string;
 
@@ -50,12 +46,12 @@ export class AppInitializeComponent implements OnInit, OnDestroy {
 			this.emitter.emitSpinnerStartEvent();
 			this.errorMessage = null;
 			const formData = this.initForm.value;
-			this.userAPIService.configUser(formData).first().subscribe(
+			this.userAPIService.configUser(formData).subscribe(
 				(data: any) => {
 					this.userService.saveUser({ email: this.initForm.controls.email.value });
 					// make subsequent login request for user after successful initialization request
 					const authFormData = this.initForm.value;
-					this.userAPIService.login(authFormData).first().subscribe(
+					this.userAPIService.login(authFormData).subscribe(
 						(authData: any) => {
 							this.userService.saveUser({ email: this.initForm.controls.email.value, token: authData.token });
 							this.emitter.emitSpinnerStopEvent();
@@ -82,7 +78,7 @@ export class AppInitializeComponent implements OnInit, OnDestroy {
 
 	private checkUserStatus(): Promise<any> {
 		const def = new CustomDeferredService<any>();
-		this.userAPIService.getUserStatus().first().subscribe(
+		this.userAPIService.getUserStatus().subscribe(
 			(data: any) => {
 				this.userStatus = data;
 				def.resolve(data);
@@ -112,7 +108,10 @@ export class AppInitializeComponent implements OnInit, OnDestroy {
 	}
 	public ngOnDestroy(): void {
 		console.log('ngOnDestroy: AppInitializeComponent destroyed');
-		this.ngUnsubscribe.next();
-		this.ngUnsubscribe.complete();
+		if (this.subscriptions.length) {
+			for (const sub of this.subscriptions) {
+				sub.unsubscribe();
+			}
+		}
 	}
 }

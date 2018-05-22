@@ -9,9 +9,6 @@ import { MatIconRegistry, DateAdapter } from '@angular/material';
 
 import { ISupportedLanguage } from './interfaces';
 
-import { Subject } from 'rxjs/Subject';
-import 'rxjs/add/operator/takeUntil';
-
 declare let $: JQueryStatic;
 
 @Component({
@@ -43,9 +40,9 @@ export class AppComponent implements OnInit, OnDestroy {
 	}
 
 	/**
-	 * Unsubscribes from infinite subscriptions.
+	 * Component subscriptions.
 	 */
-	private ngUnsubscribe: Subject<void> = new Subject();
+	private subscriptions: any[] = [];
 
 	/**
 	 * Indicates spinner visibility.
@@ -113,7 +110,7 @@ export class AppComponent implements OnInit, OnDestroy {
 		/*
 		* Subscribe to event emitter service.
 		*/
-		this.emitter.getEmitter().takeUntil(this.ngUnsubscribe).subscribe((event: any) => {
+		let sub = this.emitter.getEmitter().subscribe((event: any) => {
 			console.log(' > AppComponent consuming event:', event);
 			if (event.spinner) {
 				if (event.spinner === 'start') { // spinner control message
@@ -134,20 +131,23 @@ export class AppComponent implements OnInit, OnDestroy {
 				}
 			}
 		});
+		this.subscriptions.push(sub);
 
 		/*
 		* Subscribe to date adapter locale changes.
 		*/
-		this.dateAdapter.localeChanges.takeUntil(this.ngUnsubscribe).subscribe(() => {
+		sub = this.dateAdapter.localeChanges.subscribe(() => {
 			console.log('> AppComponent, dateAdapter.localeChanges, changed according to the language');
 		});
+		this.subscriptions.push(sub);
 
 		/*
 		* Subscribe to router events.
 		*/
-		this.router.events.takeUntil(this.ngUnsubscribe).subscribe((event: any) => {
+		sub = this.router.events.subscribe((event: any) => {
 			console.log(' > AppComponent, ROUTER EVENT:', event);
 		});
+		this.subscriptions.push(sub);
 
 		/*
 		* check preferred language, respect preference if dictionary exists
@@ -174,8 +174,11 @@ export class AppComponent implements OnInit, OnDestroy {
 	public ngOnDestroy(): void {
 		console.log('ngOnDestroy: AppComponent destroyed');
 		this.serviceWorker.disableServiceWorker();
-		this.ngUnsubscribe.next();
-		this.ngUnsubscribe.complete();
+		if (this.subscriptions.length) {
+			for (const sub of this.subscriptions) {
+				sub.unsubscribe();
+			}
+		}
 	}
 
 }

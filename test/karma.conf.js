@@ -31,11 +31,11 @@ module.exports = function(config){
 			{ pattern: 'systemjs.config.js', included: false, watched: false },
 			{ pattern: 'systemjs.karma.config.js', included: false, watched: false },
 			{ pattern: 'systemjs.config.extras.js', included: false, watched: false },
-			{ pattern: 'node_modules/traceur/bin/traceur.js', included: false, watched: false },
 			
 			'node_modules/hammerjs/hammer.js',
 			{ pattern: 'node_modules/@angular/**', included: false, watched: false },
 			{ pattern: 'node_modules/rxjs/**', included: false, watched: false },
+
 			{ pattern: 'node_modules/tslib/**', included: false, watched: false },
 			{ pattern: 'node_modules/traceur/**', included: false, watched: false },
 

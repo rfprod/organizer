@@ -9,10 +9,6 @@ import { WebsocketService } from '../services/websocket.service';
 import { UserService } from '../services/user.service';
 import { UserAPIService } from '../services/user-api.service';
 
-import { Subject } from 'rxjs/Subject';
-import 'rxjs/add/operator/takeUntil';
-import 'rxjs/add/operator/first';
-
 declare let d3: any;
 
 @Component({
@@ -37,9 +33,9 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
 	}
 
 	/**
-	 * Unsubscribes from infinite subscriptions.
+	 * Component subscriptions.
 	 */
-	private ngUnsubscribe: Subject<void> = new Subject();
+	private subscriptions: any[] = [];
 
 	/**
 	 * Chart options.
@@ -108,7 +104,7 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
 	 */
 	private getServerStaticData(): Promise<any> {
 		const def = new CustomDeferredService<any>();
-		this.serverStaticDataService.getData().first().subscribe(
+		this.serverStaticDataService.getData().subscribe(
 			(data: any): void => {
 				this.serverData.static = data;
 				def.resolve(this.serverData.static);
@@ -122,7 +118,7 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
 	 */
 	private getPublicData(): Promise<any> {
 		const def = new CustomDeferredService<any>();
-		this.publicDataService.getData().first().subscribe(
+		this.publicDataService.getData().subscribe(
 			(data: any): void => {
 				this.nvd3.clearElement();
 				this.appUsageData = data;
@@ -143,7 +139,7 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
 	 */
 	private getUserStatus(): Promise<any> {
 		const def = new CustomDeferredService<any>();
-		this.userAPIService.getUserStatus().first().subscribe(
+		this.userAPIService.getUserStatus().subscribe(
 			(data: any) => {
 				this.userStatus = data;
 				const userModelUpdate: any = {
@@ -164,7 +160,7 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
 	 */
 	public generateKeypair(): void {
 		this.emitter.emitSpinnerStartEvent();
-		this.userAPIService.generateKeypair().first().subscribe(
+		this.userAPIService.generateKeypair().subscribe(
 			(data: any) => {
 				this.getUserStatus().then(() => {
 					this.emitter.emitSpinnerStopEvent();
@@ -221,13 +217,14 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
 			console.log('websocket closed:', evt);
 		};
 
-		this.emitter.getEmitter().takeUntil(this.ngUnsubscribe).subscribe((event: any) => {
+		const sub = this.emitter.getEmitter().subscribe((event: any) => {
 			console.log('AppSummaryComponent consuming event:', event);
 			if (event.websocket === 'close') {
 				console.log('closing webcosket');
 				this.ws.close();
 			}
 		});
+		this.subscriptions.push(sub);
 
 		this.getPublicData()
 			.then(() => this.getServerStaticData())
@@ -243,8 +240,11 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
 	}
 	public ngOnDestroy(): void {
 		console.log('ngOnDestroy: AppSummaryComponent destroyed');
-		this.ngUnsubscribe.next();
-		this.ngUnsubscribe.complete();
 		this.ws.close();
+		if (this.subscriptions.length) {
+			for (const sub of this.subscriptions) {
+				sub.unsubscribe();
+			}
+		}
 	}
 }

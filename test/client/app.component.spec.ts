@@ -10,9 +10,6 @@ import { CustomServiceWorkerService } from '../../public/app/services/custom-ser
 
 import { TranslateService, TranslatePipe, TRANSLATION_PROVIDERS } from '../../public/app/translate/index';
 
-import { Observable } from 'rxjs/Rx';
-import { Subject } from 'rxjs/Subject';
-
 import { ISupportedLanguage } from '../../public/app/interfaces';
 
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -66,7 +63,7 @@ describe('AppComponent', () => {
 	});
 
 	it('should have variables and methods defined', () => {
-		expect(this.component.ngUnsubscribe).toEqual(jasmine.any(Subject));
+		expect(this.component.subscriptions).toEqual(jasmine.any(Array));
 		expect(this.component.showSpinner).toEqual(jasmine.any(Boolean));
 		expect(this.component.showSpinner).toBeFalsy();
 		expect(this.component.supportedLanguages).toEqual([
@@ -151,10 +148,12 @@ describe('AppComponent', () => {
 
 	it('should be properly destroyed', () => {
 		this.component.ngOnInit();
-		spyOn(this.component.ngUnsubscribe, 'next').and.callThrough();
-		spyOn(this.component.ngUnsubscribe, 'complete').and.callThrough();
+		for (const sub of this.component.subscriptions) {
+			spyOn(sub, 'unsubscribe').and.callThrough();
+		}
 		this.component.ngOnDestroy();
-		expect(this.component.ngUnsubscribe.next).toHaveBeenCalled();
-		expect(this.component.ngUnsubscribe.complete).toHaveBeenCalled();
+		for (const sub of this.component.subscriptions) {
+			expect(sub.unsubscribe).toHaveBeenCalled();
+		}
 	});
 });

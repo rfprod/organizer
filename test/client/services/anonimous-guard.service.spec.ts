@@ -1,9 +1,9 @@
+import { TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+
 import { AnonimousGuard } from '../../../public/app/services/anonimous-guard.service';
 
 import { UserService } from '../../../public/app/services/user.service';
-
-import { TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
 
 import { DummyComponent } from '../mocks/index';
 

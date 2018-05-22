@@ -8,10 +8,6 @@ import { UserService } from '../services/user.service';
 
 import { UserAPIService } from '../services/user-api.service';
 
-import { Subject } from 'rxjs/Subject';
-import 'rxjs/add/operator/takeUntil';
-import 'rxjs/add/operator/first';
-
 @Component({
 	selector: 'app-login',
 	templateUrl: '/public/app/views/app-login.html',
@@ -38,9 +34,9 @@ export class AppLoginComponent implements OnInit, OnDestroy {
 	}
 
 	/**
-	 * Unsubscribes from infinite subscriptions.
+	 * Component subscriptions.
 	 */
-	private ngUnsubscribe: Subject<void> = new Subject();
+	private subscriptions: any[] = [];
 
 	/**
 	 * UI error message.
@@ -78,7 +74,7 @@ export class AppLoginComponent implements OnInit, OnDestroy {
 			this.emitter.emitSpinnerStartEvent();
 			this.errorMessage = null;
 			const formData = this.loginForm.value;
-			this.userAPIService.login(formData).first().subscribe(
+			this.userAPIService.login(formData).subscribe(
 				(data: any) => {
 					this.userService.saveUser({ email: this.loginForm.controls.email.value, token: data.token });
 					this.emitter.emitSpinnerStopEvent();
@@ -99,7 +95,7 @@ export class AppLoginComponent implements OnInit, OnDestroy {
 	 */
 	private checkUserStatus(): Promise<any> {
 		const def = new CustomDeferredService<any>();
-		this.userAPIService.getUserStatus().first().subscribe(
+		this.userAPIService.getUserStatus().subscribe(
 			(data: any) => {
 				if (!data.initialized) {
 					this.router.navigate(['initialize']);
@@ -127,7 +123,10 @@ export class AppLoginComponent implements OnInit, OnDestroy {
 	}
 	public ngOnDestroy(): void {
 		console.log('ngOnDestroy: AppLoginComponent destroyed');
-		this.ngUnsubscribe.next();
-		this.ngUnsubscribe.complete();
+		if (this.subscriptions.length) {
+			for (const sub of this.subscriptions) {
+				sub.unsubscribe();
+			}
+		}
 	}
 }

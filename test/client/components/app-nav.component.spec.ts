@@ -13,8 +13,6 @@ import { UserService } from '../../../public/app/services/user.service';
 
 import { TranslateService, TranslatePipe, TRANSLATION_PROVIDERS } from '../../../public/app/translate/index';
 
-import { Subject } from 'rxjs/Subject';
-
 import { FlexLayoutModule } from '@angular/flex-layout';
 import '../../../node_modules/hammerjs/hammer.js';
 import { CustomMaterialModule } from '../../../public/app/custom-material.module';
@@ -67,7 +65,7 @@ describe('AppNavComponent', () => {
 	});
 
 	it('should have variables and methods defined', () => {
-		expect(this.component.ngUnsubscribe).toEqual(jasmine.any(Subject));
+		expect(this.component.subscriptions).toEqual(jasmine.any(Array));
 		expect(this.component.navButtonState).toEqual(jasmine.objectContaining({
 			summary: false,
 			login: false,
@@ -125,11 +123,13 @@ describe('AppNavComponent', () => {
 
 	it('should be properly destroyed', () => {
 		this.component.ngOnInit();
-		spyOn(this.component.ngUnsubscribe, 'next').and.callThrough();
-		spyOn(this.component.ngUnsubscribe, 'complete').and.callThrough();
+		for (const sub of this.component.subscriptions) {
+			spyOn(sub, 'unsubscribe').and.callThrough();
+		}
 		this.component.ngOnDestroy();
-		expect(this.component.ngUnsubscribe.next).toHaveBeenCalled();
-		expect(this.component.ngUnsubscribe.complete).toHaveBeenCalled();
+		for (const sub of this.component.subscriptions) {
+			expect(sub.unsubscribe).toHaveBeenCalled();
+		}
 	});
 
 });

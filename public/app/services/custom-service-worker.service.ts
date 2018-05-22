@@ -2,9 +2,6 @@ import { Injectable, Inject } from '@angular/core';
 import { EventEmitterService } from '../services/event-emitter.service';
 import { CustomDeferredService } from '../services/custom-deferred.service';
 
-import { Subject } from 'rxjs/Subject';
-import 'rxjs/add/operator/takeUntil';
-
 @Injectable()
 export class CustomServiceWorkerService {
 
@@ -17,9 +14,9 @@ export class CustomServiceWorkerService {
 	}
 
 	/**
-	 * Unsubscribes from infinite subscriptions.
+	 * Service subscriptions.
 	 */
-	private ngUnsubscribe: Subject<void> = new Subject();
+	private subscriptions: any[] = [];
 
 	/**
 	 * Service worker instance.
@@ -77,7 +74,7 @@ export class CustomServiceWorkerService {
 	 * Subscribes to EventEmitterService, listens to serviceWorker events.
 	 */
 	private emitterSubscribe(): void {
-		this.emitter.getEmitter().takeUntil(this.ngUnsubscribe).subscribe((event: any) => {
+		const sub = this.emitter.getEmitter().subscribe((event: any) => {
 			console.log('CustomServiceWorkerService consuming event:', JSON.stringify(event));
 			if (event.serviceWorker === 'initialize') {
 				this.initializeServiceWorker();
@@ -85,14 +82,18 @@ export class CustomServiceWorkerService {
 				this.deinitializeServiceWorker();
 			}
 		});
+		this.subscriptions.push(sub);
 	}
 
 	/**
 	 * Unsubscribes from EventEmitterService.
 	 */
 	private emitterUnsubscribe(): void {
-		this.ngUnsubscribe.next();
-		this.ngUnsubscribe.complete();
+		if (this.subscriptions.length) {
+			for (const sub of this.subscriptions) {
+				sub.unsubscribe();
+			}
+		}
 	}
 
 	/**

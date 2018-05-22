@@ -1,17 +1,16 @@
 import { Injectable, Inject } from '@angular/core';
-import { Http, Response } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 
 import { CustomHttpHandlersService } from './custom-http-handlers.service';
 
-import { Observable } from 'rxjs/Rx';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
+import { Observable } from 'rxjs';
+import { timeout, take, map, catchError } from 'rxjs/operators';
 
 @Injectable()
 export class UserAPIService {
 
 	constructor(
-		private http: Http,
+		private http: HttpClient,
 		@Inject('Window') private window: Window,
 		private httpHandlers: CustomHttpHandlersService
 	) {
@@ -37,81 +36,108 @@ export class UserAPIService {
 	 * Gets user.
 	 */
 	public getUser(): Observable<any> {
-		return this.http.get(this.endpoints.user)
-			.map(this.httpHandlers.extractObject)
-			.catch(this.httpHandlers.handleError);
+		return this.http.get(this.endpoints.user).pipe(
+			timeout(10000),
+			take(1),
+			map(this.httpHandlers.extractObject),
+			catchError(this.httpHandlers.handleError)
+		);
 	}
 
 	/**
 	 * Gets user status.
 	 */
 	public getUserStatus(): Observable<any> {
-		return this.http.get(this.endpoints.status)
-			.map(this.httpHandlers.extractObject)
-			.catch(this.httpHandlers.handleError);
+		return this.http.get(this.endpoints.status).pipe(
+			timeout(10000),
+			take(1),
+			map(this.httpHandlers.extractObject),
+			catchError(this.httpHandlers.handleError)
+		);
 	}
 
 	/**
 	 * Loggs user in.
 	 */
 	public login(formData: object): Observable<any> {
-		return this.http.post(this.endpoints.login, formData)
-			.map(this.httpHandlers.extractObject)
-			.catch(this.httpHandlers.handleError);
+		return this.http.post(this.endpoints.login, formData).pipe(
+			timeout(10000),
+			take(1),
+			map(this.httpHandlers.extractObject),
+			catchError(this.httpHandlers.handleError)
+		);
 	}
 
 	/**
 	 * Configures user.
 	 */
 	public configUser(formData: object): Observable<any> {
-		return this.http.post(this.endpoints.config, formData)
-			.map(this.httpHandlers.extractObject)
-			.catch(this.httpHandlers.handleError);
+		return this.http.post(this.endpoints.config, formData).pipe(
+			timeout(10000),
+			take(1),
+			map(this.httpHandlers.extractObject),
+			catchError(this.httpHandlers.handleError)
+		);
 	}
 
 	/**
 	 * Adds user password.
 	 */
 	public addPassword(formData: object): Observable<any> {
-		return this.http.post(this.endpoints.addPassword, formData)
-			.map(this.httpHandlers.extractObject)
-			.catch(this.httpHandlers.handleError);
+		return this.http.post(this.endpoints.addPassword, formData).pipe(
+			timeout(10000),
+			take(1),
+			map(this.httpHandlers.extractObject),
+			catchError(this.httpHandlers.handleError)
+		);
 	}
 
 	/**
 	 * Deletes user password.
 	 */
 	public deletePassword(formData: object): Observable<any> {
-		return this.http.post(this.endpoints.deletePassword, formData)
-			.map(this.httpHandlers.extractObject)
-			.catch(this.httpHandlers.handleError);
+		return this.http.post(this.endpoints.deletePassword, formData).pipe(
+			timeout(10000),
+			take(1),
+			map(this.httpHandlers.extractObject),
+			catchError(this.httpHandlers.handleError)
+		);
 	}
 
 	/**
 	 * Generates RSA keypair for a user.
 	 */
 	public generateKeypair(): Observable<any> {
-		return this.http.get(this.endpoints.generateKeypair)
-			.map(this.httpHandlers.extractObject)
-			.catch(this.httpHandlers.handleError);
+		return this.http.get(this.endpoints.generateKeypair).pipe(
+			timeout(10000),
+			take(1),
+			map(this.httpHandlers.extractObject),
+			catchError(this.httpHandlers.handleError)
+		);
 	}
 
 	/**
 	 * Encrypts user passwords with user public RSA key.
 	 */
 	public encryptPasswords(): Observable<any> {
-		return this.http.get(this.endpoints.encryptPasswords)
-			.map(this.httpHandlers.extractObject)
-			.catch(this.httpHandlers.handleError);
+		return this.http.get(this.endpoints.encryptPasswords).pipe(
+			timeout(10000),
+			take(1),
+			map(this.httpHandlers.extractObject),
+			catchError(this.httpHandlers.handleError)
+		);
 	}
 
 	/**
 	 * Decrypts user passwords with user private RSA key.
 	 */
 	public decryptPasswords(): Observable<any> {
-		return this.http.get(this.endpoints.decryptPasswords)
-			.map(this.httpHandlers.extractObject)
-			.catch(this.httpHandlers.handleError);
+		return this.http.get(this.endpoints.decryptPasswords).pipe(
+			timeout(10000),
+			take(1),
+			map(this.httpHandlers.extractObject),
+			catchError(this.httpHandlers.handleError)
+		);
 	}
 
 }

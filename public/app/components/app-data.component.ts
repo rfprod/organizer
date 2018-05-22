@@ -8,10 +8,6 @@ import { UserService } from '../services/user.service';
 
 import { UserAPIService } from '../services/user-api.service';
 
-import { Subject } from 'rxjs/Subject';
-import 'rxjs/add/operator/takeUntil';
-import 'rxjs/add/operator/first';
-
 @Component({
 	selector: 'app-data',
 	templateUrl: '/public/app/views/app-data.html',
@@ -33,9 +29,9 @@ export class AppDataComponent implements OnInit, OnDestroy {
 	}
 
 	/**
-	 * Unsubscribes from infinite subscriptions.
+	 * Component subscriptions.
 	 */
-	private ngUnsubscribe: Subject<void> = new Subject();
+	private subscriptions: any[] = [];
 
 	/**
 	 * Currently logged in user object.
@@ -52,7 +48,7 @@ export class AppDataComponent implements OnInit, OnDestroy {
 	 */
 	private getUser(): Promise<boolean> {
 		const def = new CustomDeferredService<boolean>();
-		this.userAPIService.getUser().first().subscribe(
+		this.userAPIService.getUser().subscribe(
 			(data: any) => {
 				this.user = data;
 				this.userService.saveUser(this.user);
@@ -86,7 +82,7 @@ export class AppDataComponent implements OnInit, OnDestroy {
 	public addPassword(): void {
 		this.emitter.emitSpinnerStartEvent();
 		const formData: any = this.passwordForm.value;
-		this.userAPIService.addPassword(formData).first().subscribe(
+		this.userAPIService.addPassword(formData).subscribe(
 			(data: any) => {
 				this.getUser().then(() => {
 					this.resetPasswordForm();
@@ -106,7 +102,7 @@ export class AppDataComponent implements OnInit, OnDestroy {
 	public deletePassword(id: number): void {
 		this.emitter.emitSpinnerStartEvent();
 		const formData: any = this.user.passwords[id];
-		this.userAPIService.deletePassword(formData).first().subscribe(
+		this.userAPIService.deletePassword(formData).subscribe(
 			(data: any) => {
 				this.getUser().then(() => {
 					this.resetPasswordForm();
@@ -124,7 +120,7 @@ export class AppDataComponent implements OnInit, OnDestroy {
 	 */
 	public encryptPasswords(): void {
 		this.emitter.emitSpinnerStartEvent();
-		this.userAPIService.encryptPasswords().first().subscribe(
+		this.userAPIService.encryptPasswords().subscribe(
 			(data: any) => {
 				this.getUser().then(() => {
 					this.emitter.emitSpinnerStopEvent();
@@ -141,7 +137,7 @@ export class AppDataComponent implements OnInit, OnDestroy {
 	 */
 	public decryptPasswords(): void {
 		this.emitter.emitSpinnerStartEvent();
-		this.userAPIService.decryptPasswords().first().subscribe(
+		this.userAPIService.decryptPasswords().subscribe(
 			(data: any) => {
 				this.getUser().then(() => {
 					this.emitter.emitSpinnerStopEvent();
@@ -242,9 +238,11 @@ export class AppDataComponent implements OnInit, OnDestroy {
 	public ngOnInit() {
 		console.log('ngOnInit: AppDataComponent initialized');
 		this.emitter.emitSpinnerStartEvent();
-		this.emitter.getEmitter().takeUntil(this.ngUnsubscribe).subscribe((event: any) => {
+
+		const sub = this.emitter.getEmitter().subscribe((event: any) => {
 			console.log('AppSummaryComponent consuming event:', JSON.stringify(event));
 		});
+		this.subscriptions.push(sub);
 
 		this.getUser().then(() => {
 			console.log('all models updated');
@@ -253,7 +251,10 @@ export class AppDataComponent implements OnInit, OnDestroy {
 	}
 	public ngOnDestroy() {
 		console.log('ngOnDestroy: AppDataComponent destroyed');
-		this.ngUnsubscribe.next();
-		this.ngUnsubscribe.complete();
+		if (this.subscriptions.length) {
+			for (const sub of this.subscriptions) {
+				sub.unsubscribe();
+			}
+		}
 	}
 }

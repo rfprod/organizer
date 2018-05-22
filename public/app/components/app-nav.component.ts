@@ -8,9 +8,6 @@ import { UserService } from '../services/user.service';
 
 import { ISupportedLanguage } from '../interfaces';
 
-import { Subject } from 'rxjs/Subject';
-import 'rxjs/add/operator/takeUntil';
-
 @Component({
 	selector: 'app-nav',
 	templateUrl: '/public/app/views/app-nav.html',
@@ -31,9 +28,9 @@ export class AppNavComponent implements OnInit, OnDestroy {
 	) {}
 
 	/**
-	 * Unsubscribes from infinite subscriptions.
+	 * Component subscriptions.
 	 */
-	private ngUnsubscribe: Subject<void> = new Subject();
+	private subscriptions: any[] = [];
 
 	/**
 	 * Navigation buttons state.
@@ -147,7 +144,7 @@ export class AppNavComponent implements OnInit, OnDestroy {
 	 * Subscribes to EventEmitterService, listens to serviceWorker events.
 	 */
 	private emitterSubscribe(): void {
-		this.emitter.getEmitter().takeUntil(this.ngUnsubscribe).subscribe((event: any) => {
+		const sub = this.emitter.getEmitter().subscribe((event: any) => {
 			console.log('AppNavComponent consuming event:', JSON.stringify(event));
 			if (event.serviceWorker === 'registered') {
 				this.serviceWorkerRegistered = true;
@@ -155,19 +152,21 @@ export class AppNavComponent implements OnInit, OnDestroy {
 				this.serviceWorkerRegistered = false;
 			}
 		});
+		this.subscriptions.push(sub);
 	}
 
 	/**
 	 * Subscribes to router events, switches nav buttons.
 	 */
 	private routerSubscribe(): void {
-		this.router.events.takeUntil(this.ngUnsubscribe).subscribe((event: any) => {
+		const sub = this.router.events.subscribe((event: any) => {
 			// console.log(' > ROUTER EVENT:', event);
 			if (event instanceof NavigationEnd) {
 				console.log(' > ROUTER > NAVIGATION END, event', event);
 				this.switchNavButtons(event);
 			}
 		});
+		this.subscriptions.push(sub);
 	}
 
 	public ngOnInit(): void {
@@ -178,7 +177,10 @@ export class AppNavComponent implements OnInit, OnDestroy {
 
 	public ngOnDestroy(): void {
 		console.log('ngOnDestroy: AppNavComponent destroyed');
-		this.ngUnsubscribe.next();
-		this.ngUnsubscribe.complete();
+		if (this.subscriptions.length) {
+			for (const sub of this.subscriptions) {
+				sub.unsubscribe();
+			}
+		}
 	}
 }
