@@ -25,7 +25,7 @@ import { ISupportedLanguage } from '../../../public/app/interfaces';
 
 import { FlexLayoutModule } from '@angular/flex-layout';
 import '../../../node_modules/hammerjs/hammer.js';
-import { CustomMaterialModule } from '../../../public/app/custom-material.module';
+import { CustomMaterialModule } from '../../../public/app/modules/custom-material.module';
 
 import { DummyComponent } from '../mocks/index';
 

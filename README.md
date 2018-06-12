@@ -9,16 +9,17 @@ Password Manager - Electron application core based on NodeJS and Angular.
 ### Project structure
 
 * `./app` - server
-  * `./app/config` - configurations
+  * `./app/config` - configurations (user config, user keys)
   * `./app/models` - data models
   * `./app/routes` - routes
   * `./app/utils` - utilities
 * `./public` - client
   * `./public/app` - main module and routes
-    * `./public/app/components` - components' scripts (development)
-    * `./public/app/interfaces` - interfaces' scripts (development)
+    * `./public/app/components` - components (development)
+    * `./public/app/interfaces` - interfaces (development)
+    * `./public/app/modules` - modules (development)
     * `./public/app/scss` - stylesheets (development)
-    * `./public/app/services` - services' scripts (development)
+    * `./public/app/services` - services (development)
     * `./public/app/views` - components' templates
   * `./public/css/` - bundled styles (production)
   * `./public/img/` - images
@@ -40,7 +41,6 @@ Password Manager - Electron application core based on NodeJS and Angular.
   * `./desktop/osx`
     * `./desktop/osx/build` - osx build
     * `./desktop/osx/dist` - osx installer
-* `.topoData` - topological data for maps in `json` format
 
 ### Requirements
 

@@ -19,7 +19,7 @@ import { AnonimousGuard } from './services/anonimous-guard.service';
 *	CustomMaterialModule loads exact material modules
 */
 import '../../node_modules/hammerjs/hammer.js';
-import { CustomMaterialModule } from './custom-material.module';
+import { CustomMaterialModule } from './modules/custom-material.module';
 
 import { AppComponent } from './app.component';
 import { AppNavComponent } from './components/app-nav.component';

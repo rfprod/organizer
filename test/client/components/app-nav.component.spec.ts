@@ -15,7 +15,7 @@ import { TranslateService, TranslatePipe, TRANSLATION_PROVIDERS } from '../../..
 
 import { FlexLayoutModule } from '@angular/flex-layout';
 import '../../../node_modules/hammerjs/hammer.js';
-import { CustomMaterialModule } from '../../../public/app/custom-material.module';
+import { CustomMaterialModule } from '../../../public/app/modules/custom-material.module';
 
 import { AuthGuardGeneral } from '../../../public/app/services/auth-guard-general.service';
 import { AnonimousGuard } from '../../../public/app/services/anonimous-guard.service';
