@@ -4,11 +4,10 @@
 		"dictionaries": [ "jsdoc", "closure" ]
 	},
 	"opts": {
-		"destination": "./logs/jsdoc"
+		"destination": "./logs/jsdoc/build"
 	},
 	"plugins": [
-		"plugins/markdown",
-		"jsdoc-http-plugin"
+		"plugins/markdown"
 	],
 	"templates": {
 		"cleverLinks": false,
@@ -22,7 +21,7 @@
 		"linenums": true,
 		"dateFormat": "MMMM DD YYYY, h:mm:ss a",
 
-		"systemName"				: "Ng2NS Server",
+		"systemName"				: "Password Manager Build",
 		"footer"						: "",
 		"copyright"					: "",
 		"includeDate"				: true,

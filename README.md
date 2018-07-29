@@ -13,6 +13,9 @@ Password Manager - Electron application core based on NodeJS and Angular.
   * `./app/models` - data models
   * `./app/routes` - routes
   * `./app/utils` - utilities
+* `./build-system` - tasks and modules used in `./gulpfile.js`
+  * `./modules` - modules used in tasks
+  * `./tasks` - task modules used in `./gulpfile.js`
 * `./public` - client
   * `./public/app` - main module and routes
     * `./public/app/components` - components (development)

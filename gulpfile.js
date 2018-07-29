@@ -1,114 +1,248 @@
 'use strict';
 
-const gulp = require('gulp');
-const runSequence = require('run-sequence');
-const util = require('gulp-util');
-const concat = require('gulp-concat');
-const rename = require('gulp-rename');
-const eslint = require('gulp-eslint');
-const tslint = require('gulp-tslint');
-const plumber = require('gulp-plumber');
-const mocha = require('gulp-mocha');
-const karmaServer = require('karma').Server;
-const uglify = require('gulp-uglify');
-const sass = require('gulp-sass');
-const cssnano = require('gulp-cssnano');
-const autoprefixer = require('gulp-autoprefixer');
-const systemjsBuilder = require('gulp-systemjs-builder');
-const hashsum = require('gulp-hashsum');
-const crypto = require('crypto');
-const fs = require('fs');
-const spawn = require('child_process').spawn;
-
-let node;
-let tsc;
-let protractor;
+/**
+ * Gulpfile module
+ * @module gulpfile
+ * @description Main gulp file
+ */
 
 /*
-*	hashsum identifies build
-*
-*	after build SHA1SUMS.json is generated with sha1 sums for different files
-*	then sha256 is calculated using stringified file contents
+* TODO separate into modules
 */
+
+/**
+ * @name config
+ * @constant
+ * @summary Gulp tasks configuration
+ * @description Configuration object for Gulp tasks
+ */
+const config = require('./build-system/config');
+
+/**
+ * @name gulp
+ * @constant
+ * @summary Gulp
+ * @description Gulp
+ */
+const gulp = require('gulp');
+
+/**
+ * @name runSequence
+ * @constant
+ * @summary Sequential runner for gulp
+ * @description Sequential runner for gulp
+ */
+const runSequence = require('run-sequence');
+
+/**
+ * @name concat
+ * @constant
+ * @summary Gulp concat
+ * @description Gulp concat
+ */
+const concat = require('gulp-concat');
+
+/**
+ * @name rename
+ * @constant
+ * @summary Gulp rename
+ * @description Gulp rename
+ */
+const rename = require('gulp-rename');
+
+/**
+ * @name eslint
+ * @constant
+ * @summary Gulp eslint
+ * @description Gulp eslint
+ */
+const eslint = require('gulp-eslint');
+
+/**
+ * @name tslint
+ * @constant
+ * @summary Gulp tslint
+ * @description Gulp tslint
+ */
+const tslint = require('gulp-tslint');
+
+/**
+ * @name plumber
+ * @constant
+ * @summary Gulp plumber
+ * @description Gulp plumber
+ */
+const plumber = require('gulp-plumber');
+
+/**
+ * @name mocha
+ * @constant
+ * @summary Gulp mocha
+ * @description Gulp mocha
+ */
+const mocha = require('gulp-mocha');
+
+/**
+ * @name karmaServer
+ * @constant
+ * @summary Karma server
+ * @description Karma server
+ */
+const karmaServer = require('karma').Server;
+
+/**
+ * @name uglify
+ * @constant
+ * @summary Gulp uglify
+ * @description Gulp uglify
+ */
+const uglify = require('gulp-uglify');
+
+/**
+ * @name sass
+ * @constant
+ * @summary Gulp sass
+ * @description Gulp sass
+ */
+const sass = require('gulp-sass');
+
+/**
+ * @name cssnano
+ * @constant
+ * @summary Gulp cssnano
+ * @description Gulp cssnano
+ */
+const cssnano = require('gulp-cssnano');
+
+/**
+ * @name autoprefixer
+ * @constant
+ * @summary Gulp autoprefixer
+ * @description Gulp autoprefixer
+ */
+const autoprefixer = require('gulp-autoprefixer');
+
+/**
+ * @name systemjsBuilder
+ * @constant
+ * @summary Gulp systemjs builder
+ * @description Gulp systemjs builder
+ */
+const systemjsBuilder = require('gulp-systemjs-builder');
+
+/**
+ * @name hashsum
+ * @constant
+ * @summary Gulp hashsum
+ * @description Gulp hashsum
+ */
+const hashsum = require('gulp-hashsum');
+
+/**
+ * @name crypto
+ * @constant
+ * @summary Node crypto
+ * @description Node crypto
+ */
+const crypto = require('crypto');
+
+/**
+ * @name fs
+ * @constant
+ * @summary Node fs
+ * @description Node fs
+ */
+const fs = require('fs');
+
+/**
+ * @name spawn
+ * @constant
+ * @summary Node child process spawner
+ * @description Node child process spawner
+ */
+const spawn = require('child_process').spawn;
+
+/**
+ * @name node
+ * @summary NodeJS client application server instance.
+ */
+let node;
+
+/**
+ * @name tsc
+ * @summary Typescript Compiler instance.
+ */
+let tsc;
+
+/**
+ * @name protractor
+ * @summary Protractor instance.
+ */
+let protractor;
+
+/**
+ * @name hashsum
+ * @member {Function}
+ * @summary Hashsum identifies build.
+ * @description After build SHA1SUMS.json is generated with sha1 sums for different files, then sha256 is calculated using stringified file contents.
+ * @see {@link module:build-system/tasks/hashsum}
+ */
 gulp.task('hashsum', () => {
-	return gulp.src(['./public/*', '!./public/SHA1SUMS.json', './public/app/views/**', './public/css/**', './public/webfonts/**', './public/img/**', './public/js/**'])
-		.pipe(hashsum({ filename: 'public/SHA1SUMS.json', hash: 'sha1', json: true }));
+	return require('./build-system/tasks/hashsum')(gulp, hashsum, config.hashsum);
 });
 
-function createEnvFile(env, done) {
-	fs.readFile('./public/SHA1SUMS.json', (err, data) => {
-		if (err) throw err;
-		const hash = crypto.createHmac('sha256', data.toString()).digest('hex');
-		console.log('BUILD_HASH', hash);
-		env += 'BUILD_HASH=' + hash + '\n';
-		fs.writeFile('./.env', env, (err) => {
-			if (err) throw err;
-			console.log('# > ENV > .env file was created');
-			done();
-		});
-	});
-}
-
+/**
+ * @name create-env
+ * @member {Function}
+ * @summary Create electron environment file.
+ * @description Creates .env file containing environment variables for single core setup.
+ * @see {@link module:build-system/tasks/create-env-file}
+ */
 gulp.task('create-env', (done) => {
-	/*
-	*	create .env file for development
-	*/
-	const pkg = require('./package.json');
-	fs.readFile('./.env', (err, data) => {
-		const env = 'PORT=8079\nAPP_URL=http://localhost:8079/\nAPP_VERSION=' + pkg.version + '\nDEV_MODE=false\n';
-		if (err) {
-			createEnvFile(env, done);
-		} else {
-			if (data.toString() === env) {
-				console.log('# > ENV > .env file is correct');
-				done();
-			} else {
-				createEnvFile(env, done);
-			}
-		}
-	});
+	const nodeEnv = null;
+	const devMode = false;
+	const electron = null;
+	const electronSec = null;
+	return require('./build-system/tasks/create-env-file')(fs, crypto, config.env, nodeEnv, devMode, electron, electronSec, done);
 });
 
+/**
+ * @name create-env-cluster
+ * @member {Function}
+ * @summary Create electron environment file.
+ * @description Creates .env file containing environment variables for nodejs cluster setup.
+ * @see {@link module:build-system/tasks/create-env-file}
+ */
 gulp.task('create-env-cluster', (done) => {
-	/*
-	*	create .env file for development, use cluster
-	*/
-	const pkg = require('./package.json');
-	fs.readFile('./.env', (err, data) => {
-		const env = 'PORT=8079\nAPP_URL=http://localhost:8079/\nAPP_VERSION=' + pkg.version + '\nDEV_MODE=true\n';
-		if (err) {
-			createEnvFile(env, done);
-		} else {
-			if (data.toString() === env) {
-				console.log('# > ENV > .env file is correct');
-				done();
-			} else {
-				createEnvFile(env, done);
-			}
-		}
-	});
+	const nodeEnv = null;
+	const devMode = true;
+	const electron = null;
+	const electronSec = null;
+	return require('./build-system/tasks/create-env-file')(fs, crypto, config.env, nodeEnv, devMode, electron, electronSec, done);
 });
 
+/**
+ * @name create-env-electron
+ * @member {Function}
+ * @summary Create electron environment file.
+ * @description Creates .env file containing electron environment variables.
+ * @see {@link module:build-system/tasks/create-env-file}
+ */
 gulp.task('create-env-electron', (done) => {
-	/*
-	*	create .env file for electron
-	*/
-	const pkg = require('./package.json');
-	fs.readFile('./.env', (err, data) => {
-		const env = 'PORT=8079\nAPP_URL=http://localhost:8079/\nAPP_VERSION=' + pkg.version + '\nELECTRON=true\nELECTRON_ENABLE_SECURITY_WARNINGS=true\nNODE_ENV=production';
-		if (err) {
-			createEnvFile(env, done);
-		} else {
-			if (data.toString() === env) {
-				console.log('# > ENV > .env file is correct');
-				done();
-			} else {
-				createEnvFile(env, done);
-			}
-		}
-	});
+	const nodeEnv = 'production';
+	const devMode = null;
+	const electron = true;
+	const electronSec = true;
+	return require('./build-system/tasks/create-env-file')(fs, crypto, config.env, nodeEnv, devMode, electron, electronSec, done);
 });
 
+
+/**
+ * @name server
+ * @member {Function}
+ * @summary Starts application server.
+ * @description Starts client application server.
+ */
 gulp.task('server', (done) => {
 	if (node) node.kill();
 	node = spawn('node', ['server.js'], {stdio: 'inherit'});
@@ -120,11 +254,23 @@ gulp.task('server', (done) => {
 	done();
 });
 
+/**
+ * @name server-kill
+ * @member {Function}
+ * @summary Kills application server.
+ * @description Kills client application server.
+ */
 gulp.task('server-kill', (done) => {
 	if (node) node.kill();
 	done();
 });
 
+/**
+ * @name tsc
+ * @member {Function}
+ * @summary Compiles client.
+ * @description Compiles client typescript files.
+ */
 gulp.task('tsc', (done) => {
 	if (tsc) tsc.kill();
 	tsc = spawn('tsc', [], {stdio: 'inherit'});
@@ -137,93 +283,54 @@ gulp.task('tsc', (done) => {
 	});
 });
 
-const logsIndexHTML = `
-<!DOCTYPE html>
-<html>
-	<head>
-		<style>
-			body {
-				height: 100%;
-				margin: 0;
-				padding: 0 1em;
-				display: flex;
-				flex-direction: row;
-				flex-wrap: wrap;
-				align-items: flex-start;
-				align-content: flex-start;
-				justify-content: stretch;
-			}
-			.flex-100 {
-				flex: 100%;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-			}
-			.flex-item {
-				flex: 1 1 auto;
-				display: flex;
-				flex-direction: row;
-				flex-wrap: wrap;
-				align-items: center;
-				justify-content: center;
-				border: 1px rgba(0, 0, 0, 0.3) dotted;
-			}
-			a {
-				text-transform: uppercase;
-			}
-		</style>
-	</head>
-	<body onload='fitIframeHeight()'>
-		<h1 class='flex-100'>PassMngr Reports and Documentation Index</h1>
-
-		<h2 class='flex-100'>Reports</h2>
-
-			<span class='flex-item'>
-				<h3 class='flex-100'>Server Unit</h3>
-				<a class='flex-item' href='unit/server/index.html' target=_blank>Spec</a>
-			</span>
-
-			<span class='flex-item'>
-				<h3 class='flex-100'>Client Unit</h3>
-				<a class='flex-item' href='unit/client/index.html' target=_blank>Spec</a>
-				<a class='flex-item' href='coverage/html-report/index.html' target=_blank>Coverage</a>
-			</span>
-
-			<span class='flex-item'>
-				<h3 class='flex-100'>Client E2E</h3>
-				<a class='flex-item' href='e2e/report/index.html' target=_blank>Spec</a>
-			</span>
-
-			<h2 class='flex-100'>Documentation</h2>
-
-			<span class='flex-item'>
-				<h3 class='flex-100'>Server</h3>
-				<a class='flex-item' href='jsdoc/index.html' target=_blank>JSDoc</a>
-			</span>
-
-			<span class='flex-item'>
-				<h3 class='flex-100'>Client</h3>
-				<a class='flex-item' href='typedoc/index.html' target=_blank>TypeDoc</a>
-			</span>
-	</body>
-</html>
-`;
+/**
+ * @name generate-logs-index
+ * @member {Function}
+ * @summary Generates logs index file.
+ * @description Generates an html-file which serves as a logs index.
+ * @see {@link module:build-system/tasks/generate-logs-index}
+ */
 gulp.task('generate-logs-index', (done) => {
-	fs.writeFile('./logs/index.html', logsIndexHTML, (err) => {
-		if (err) throw err;
-		console.log('# > LOGS index.html > was created');
-		done();
-	});
+	return require('./build-system/tasks/generate-logs-index')(fs, done);
 });
 
+/**
+ * @name jsdoc-server
+ * @member {Function}
+ * @summary Generates server jsdoc.
+ * @description Generates jsdoc for client application server.
+ * @see {@link module:build-system/tasks/jsdoc}
+ */
 gulp.task('jsdoc-server', () => {
 	const jsdoc = require('gulp-jsdoc3');
-	const config = require('./jsdoc.json');
+	const config = require('./jsdoc-server.json');
 	const source = ['./server.js', './app/**/*.js'];
 	return gulp.src(['README.md'].concat(source), {read: false})
 		.pipe(jsdoc(config));
 });
 
+/**
+ * @name jsdoc-build-system
+ * @member {Function}
+ * @summary Generates build-system jsdoc.
+ * @description Generates jsdoc for client application build system.
+ * @see {@link module:build-system/tasks/jsdoc}
+ */
+gulp.task('jsdoc-build-system', () => {
+	const jsdoc = require('gulp-jsdoc3');
+	const config = require('./jsdoc-build.json');
+	const source = ['./gulpfile.js', './build-system/**/*.js'];
+	return gulp.src(['README.md'].concat(source), {read: false})
+		.pipe(jsdoc(config));
+});
+
+/**
+ * @name typedoc-client
+ * @member {Function}
+ * @summary Generates client typedoc.
+ * @description Generates typedoc for client application.
+ * @see {@link module:build-system/tasks/typedoc}
+ */
 gulp.task('typedoc-client', () => {
 	const typedoc = require('gulp-typedoc');
 	const config = {
@@ -246,7 +353,7 @@ gulp.task('typedoc-client', () => {
 		out: './logs/typedoc',
 		json: './logs/typedoc/typedoc-output.json',
 		// typedoc options (see typedoc docs: http://typedoc.org/api/index.html)
-		name: 'PassMngr Client',
+		name: 'Password Manager Client',
 		theme: 'default',
 		//plugins: [], // set to none to use no plugins, omit to use all
 		includeDeclarations: false,
@@ -257,10 +364,19 @@ gulp.task('typedoc-client', () => {
 		.pipe(typedoc(config));
 });
 
+/**
+ * @name server-test
+ * @member {Function}
+ * @summary Executes server unit tests.
+ * @description Executes server unit tests, generates test report.
+ * @see {@link module:build-system/tasks/server-test}
+ */
 gulp.task('server-test', () => {
 	return gulp.src(['./test/server/*.js'], { read: false })
 		.pipe(mocha({ reporter: 'good-mocha-html-reporter' }))
-		.on('error', util.log)
+		.on('error', (error) => {
+			console.log('server-test, error', error);
+		})
 		.once('end', () => {
 			if (fs.existsSync('./report.html')) {
 				if (!fs.existsSync('./logs/unit/server')) {
@@ -275,7 +391,17 @@ gulp.task('server-test', () => {
 		});
 });
 
+/**
+ * @name karmaSRV
+ * @summary Karma server instance.
+ */
 let karmaSRV;
+/**
+ * @name client-unit-test
+ * @member {Function}
+ * @summary Executes client unit tests in watch mode.
+ * @description Executes client unit tests in watch mode, generates test report.
+ */
 gulp.task('client-unit-test', (done) => {
 	if (!karmaSRV) {
 		karmaSRV = new karmaServer({
@@ -305,6 +431,12 @@ gulp.task('client-unit-test', (done) => {
 	}
 });
 
+/**
+ * @name client-unit-test-single-run
+ * @member {Function}
+ * @summary Executes client unit tests in single run mode.
+ * @description Executes client unit tests in single run mode, generates test report.
+ */
 gulp.task('client-unit-test-single-run', (done) => {
 	if (!karmaSRV) {
 		karmaSRV = new karmaServer({
@@ -332,163 +464,200 @@ gulp.task('client-unit-test-single-run', (done) => {
 	}
 });
 
+/**
+ * @name client-e2e-test
+ * @member {Function}
+ * @summary Executes client e2e tests.
+ * @description Executes client e2e tests, generates test report.
+ */
 gulp.task('client-e2e-test', () => {
 	if (protractor) protractor.kill();
 	protractor = spawn('npm', ['run', 'protractor'], {stdio: 'inherit'});
 });
 
+/**
+ * @name build-system-js
+ * @member {Function}
+ * @summary Builds application for all roles.
+ * @description Bundles scripts for application built for all roles.
+ * @see {@link module:build-system/tasks/build-system-js}
+ */
 gulp.task('build-system-js', () => {
-	/*
-	*	this task builds angular application
-	*	components, angular modules, and some dependencies
-	*
-	*	nonangular components related to design, styling, data visualization etc.
-	*	are built by another task
-	*/
-	return systemjsBuilder('/','./systemjs.config.js')
-		.buildStatic('app', 'bundle.min.js', {
-			minify: true,
-			mangle: true
-		})
-		.pipe(gulp.dest('./public/js'));
+	return require('./build-system/tasks/build-system-js')(gulp, systemjsBuilder, config.systemjs);
 });
 
+/**
+ * @name pack-vendor-js
+ * @member {Function}
+ * @summary Packs vendor js bundle.
+ * @description Concatenates, and minifies vendor js files (nonangular js bundle, components related to design, styling, data visualization etc.).
+ * @see {@link module:build-system/tasks/pack-vendor-js}
+ */
 gulp.task('pack-vendor-js', () => {
-	return gulp.src([
-		/*
-		*	add paths to required third party js libraries here
-		*/
-		// angular requirements
-		'./node_modules/core-js/client/shim.js',
-		'./node_modules/zone.js/dist/zone.min.js',
-		'./node_modules/reflect-metadata/Reflect.js',
-		'./node_modules/web-animations-js/web-animations.min.js',
-
-		'./node_modules/jquery/dist/jquery.js',
-
-		// ng2nvd3 dependency
-		'./node_modules/d3/d3.js',
-		'./node_modules/nvd3/build/nv.d3.js'
-	])
-		.pipe(plumber())
-		.pipe(concat('vendor-bundle.js'))
-		.pipe(uglify())
-		.pipe(plumber.stop())
-		.pipe(rename('vendor-bundle.min.js'))
-		.pipe(gulp.dest('./public/js'));
+	return require('./build-system/tasks/pack-vendor-js')(gulp, plumber, uglify, concat, rename, config.vendor.js);
 });
 
+/**
+ * @name pack-vendor-css
+ * @member {Function}
+ * @summary Packs vendor css bundle.
+ * @description Concatenates, and minifies vendor css files.
+ * @see {@link module:build-system/tasks/pack-vendor-css}
+ */
 gulp.task('pack-vendor-css', () => {
-	return gulp.src([
-		/*
-		*	add paths to required third party css files
-		*/
-		'./node_modules/nvd3/build/nv.d3.css',
-		'./node_modules/components-font-awesome/css/fontawesome-all.css'
-	])
-		.pipe(plumber())
-		.pipe(concat('vendor-bundle.css'))
-		.pipe(cssnano())
-		.pipe(plumber.stop())
-		.pipe(rename('vendor-bundle.min.css'))
-		.pipe(gulp.dest('./public/css'));
+	return require('./build-system/tasks/pack-vendor-css')(gulp, plumber, cssnano, concat, rename, config.vendor.css);
 });
 
+/**
+ * @name move-vendor-fonts
+ * @member {Function}
+ * @summary Moves vendor fonts.
+ * @description Moves vendor fonts to specified location for usage in the application.
+ * @see {@link module:build-system/tasks/move-vendor-fonts}
+ */
 gulp.task('move-vendor-fonts', () => {
-	return gulp.src([
-		'./node_modules/components-font-awesome/webfonts/*.*',
-		// material design icons
-		'./node_modules/material-design-icon-fonts/iconfont/*.eot',
-		'./node_modules/material-design-icon-fonts/iconfont/*.woff2',
-		'./node_modules/material-design-icon-fonts/iconfont/*.woff',
-		'./node_modules/material-design-icon-fonts/iconfont/*.ttf'
-	])
-		.pipe(gulp.dest('./public/webfonts'));
+	return require('./build-system/tasks/move-vendor-fonts')(gulp, config.vendor.fonts);
 });
 
+/**
+ * @name sass-autoprefix-minify-css
+ * @member {Function}
+ * @summary Compiles SASS to CSS.
+ * @description Compiles SASS to CSS, autoprefixes, and minifies bundle.
+ * @see {@link module:build-system/tasks/sass-autoprefix-minify-css}
+ */
 gulp.task('sass-autoprefix-minify-css', () => {
-	return gulp.src('./public/app/scss/*.scss')
-		.pipe(plumber())
-		.pipe(concat('packed-app.css'))
-		.pipe(sass().on('error', sass.logError))
-		.pipe(autoprefixer({
-			browsers: ['last 2 versions']
-		}))
-		.pipe(cssnano())
-		.pipe(plumber.stop())
-		.pipe(rename('bundle.min.css'))
-		.pipe(gulp.dest('./public/css'));
+	return require('./build-system/tasks/sass-autoprefix-minify-css')(gulp, plumber, concat, rename, cssnano, autoprefixer, sass, config.sass);
 });
 
+/**
+ * @name eslint
+ * @member {Function}
+ * @summary Lints JavaScript codebase.
+ * @description Calls gulp-eslint with specified config.
+ * @see {@link module:build-system/tasks/eslint}
+ */
 gulp.task('eslint', () => {
-	return gulp.src(['./*.js', './app/**/*.js', './public/{electron.preload,service-worker}.js', './test/*.js', './test/e2e/scenarios.js', './test/server/test.js']) // uses ignore list from .eslintignore
-		.pipe(eslint('./.eslintrc.json'))
-		.pipe(eslint.format());
+	return require('./build-system/tasks/eslint')(gulp, eslint, config.eslint);
 });
 
+/**
+ * @name tslint
+ * @member {Function}
+ * @summary Lints Typescript codebase.
+ * @description Calls gulp-tslint with specified config.
+ * @see {@link module:build-system/tasks/tslint}
+ */
 gulp.task('tslint', () => {
-	return gulp.src(['./public/app/*.ts', './public/app/**/*.ts', '!./public/app/{scss,views}/', './test/client/**/*.ts'])
-		.pipe(tslint({
-			formatter: 'verbose' // 'verbose' - extended info | 'prose' - brief info
-		}))
-		.pipe(tslint.report({
-			emitError: false
-		}));
+	return require('./build-system/tasks/tslint')(gulp, tslint, config.tslint);
 });
 
+/**
+ * @name lint
+ * @member {Function}
+ * @summary Lints Typescript, and JavsScript codebase.
+ * @description Calls gulp tasks: tslint, eslint.
+ * @see {@link module:build-system/tasks/tslint}
+ * @see {@link module:build-system/tasks/eslint}
+ */
 gulp.task('lint', (done) => {
 	runSequence('eslint', 'tslint', done);
 });
 
-/*
-*	watchers
-*/
+/**
+ * @name watch
+ * @member {Function}
+ * @summary Default development mode watchers.
+ * @description Watches all files, triggers all tasks - default development mode.
+ * @see {@link module:build-system/tasks/watch}
+ */
 gulp.task('watch', () => {
-	gulp.watch(['./server.js', './app/**/*.js'], ['server']); // watch server and database changes, and restart server
-	gulp.watch(['./test/server/*.js'], ['server-test']); // watch server tests changes, and run tests
-	gulp.watch(['./gulpfile.js'], ['pack-vendor-js', 'pack-vendor-css', 'move-vendor-fonts']); // watch gulpfile changes, and repack vendor assets
-	gulp.watch('./public/app/scss/*.scss', ['sass-autoprefix-minify-css']); // watch app scss-source changes, and pack application css bundle
-	gulp.watch(['./public/app/*.ts', './public/app/**/*.ts', './test/client/**/*.ts', './tslint.json'], ['spawn-rebuild-app']); // watch app ts-source chages, and rebuild app js bundle
-	gulp.watch(['./*.js', './app/**/*.js', './public/{electron.preload,service-worker}.js', './test/*.js', './test/e2e/scenarios.js', './test/server/test.js', './.eslintignore', './.eslintrc.json'], ['eslint']); // watch js file changes, and lint
+	return require('./build-system/tasks/watch').all(gulp);
 });
 
+/**
+ * @name watch-and-lint
+ * @member {Function}
+ * @summary Linting watchers.
+ * @description Watches all js/ts files, triggers respective linting tasks.
+ * @see {@link module:build-system/tasks/watch}
+ */
 gulp.task('watch-and-lint', () => {
-	gulp.watch(['./*.js', './app/**/*.js', './public/{electron.preload,service-worker}.js', './test/*.js', './test/e2e/scenarios.js', './test/server/test.js', './.eslintignore', './.eslintrc.json'], ['eslint']); // watch js file changes, and lint
-	gulp.watch(['./public/app/*.ts', './public/app/**/*.ts', './test/client/**/*.ts', './tslint.json'], ['tslint']); // watch ts files and lint on change
+	return require('./build-system/tasks/watch').lint(gulp);
 });
 
+/**
+ * @name watch-client-and-test
+ * @member {Function}
+ * @summary Client testing watchers.
+ * @description Watches client files, triggers respective testing tasks.
+ * @see {@link module:build-system/tasks/watch}
+ */
 gulp.task('watch-client-and-test', () => {
-	gulp.watch(['./public/app/*.ts', './public/app/**/*.ts', './test/client/**/*.ts'], ['compile-and-test']); // watch app source changes, and compile and test
-	gulp.watch(['./test/karma.conf.js','./test/karma.test-shim.js'], ['client-unit-test']); // watch karma configs changes, and test
+	return require('./build-system/tasks/watch').test(gulp);
 });
 
-/*
-*	test sequences
-*/
+/**
+ * @name compile-and-test
+ * @member {Function}
+ * @summary Compiles and tests client in signe run mode.
+ * @description Compiles and tests client in signe run mode.
+ */
 gulp.task('compile-and-test', (done) => {
 	runSequence('tsc', 'client-unit-test-single-run', done);
 });
 
-/*
-*	build sequences
-*/
+/**
+ * @name build
+ * @member {Function}
+ * @summary Builds client application from existing compiles ts-code.
+ * @description Builds client application from existing compiles ts-code.
+ */
 gulp.task('build', (done) => {
 	runSequence('build-system-js', 'pack-vendor-js', 'pack-vendor-css', 'move-vendor-fonts', 'sass-autoprefix-minify-css', 'hashsum', done);
 });
 
+/**
+ * @name compile-and-build
+ * @member {Function}
+ * @summary Compiles and builds client application.
+ * @description Compiles and builds client application.
+ */
 gulp.task('compile-and-build', (done) => {
 	runSequence('tsc', 'build', 'create-env', done);
 });
 
+/**
+ * @name compile-and-build-electron
+ * @member {Function}
+ * @summary Compiles and builds client application for electron environment.
+ * @description Compiles and builds client application for electron environment.
+ */
 gulp.task('compile-and-build-electron', (done) => {
 	runSequence('tsc', 'build', 'create-env-electron', done);
 });
 
+/**
+ * @name rebuild-app
+ * @member {Function}
+ * @summary Rebuilds (compiles and builds) client application.
+ * @description Rebuilds (compiles and builds) client application.
+ */
 gulp.task('rebuild-app', (done) => { // should be used in watcher to rebuild the app on *.ts file changes
 	runSequence('tslint', 'tsc', 'build-system-js', 'hashsum', done);
 });
 
+/**
+ * @name rebuildApp
+ * @summary Revuild app spawned process instance.
+ */
 let rebuildApp;
+/**
+ * @name spawn-rebuild-app
+ * @member {Function}
+ * @summary Spawns rebuild app task.
+ * @description Spawns rebuild app task (is used in development watchers).
+ */
 gulp.task('spawn-rebuild-app', (done) => {
 	if (rebuildApp) rebuildApp.kill();
 	rebuildApp = spawn('gulp', ['rebuild-app'], {stdio: 'inherit'});
@@ -498,9 +667,14 @@ gulp.task('spawn-rebuild-app', (done) => {
 	done();
 });
 
-/*
-*	start sequences
-*/
+/**
+ * @name default
+ * @member {Function}
+ * @summary Default development start sequence.
+ * @description Default development start sequence: lint, compile-and-build, server, watch.
+ * @see {@link module:gulpfile}
+ * @see {@link module:build-system/tasks/watch}
+ */
 gulp.task('default', (done) => {
 	runSequence('lint', 'compile-and-build', 'server', 'watch', done);
 });
@@ -528,6 +702,7 @@ gulp.task('default', (done) => {
 */
 const electronPackagerIgnore = [ // exclude
 	/\/desktop/, // builds and dists
+	/\/build-system/, // build system tasks
 	/\/public\/app\/(components|directives|scss|services|translate|.*\.ts|.*\.js)/, // client app source code
 	/\/logs/, // logs
 	/\/node_modules\/(@angular|gulp.*|karma.*|jasmine.*|mocha.*|@types|(remap-)?istanbul)/, // not needed node_modules
