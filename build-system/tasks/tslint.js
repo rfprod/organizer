@@ -10,7 +10,7 @@
  * Lints Typescript codebase.
  * @param {Object} gulp Gulp
  * @param {Function} tslint Gulp tslint
- * @param {Object} task configuration, exported from require('./build-system/config').tslint
+ * @param {Object} config task configuration, exported from require('./build-system/config').tslint
  */
 module.exports = (gulp, tslint, config) => {
 	return gulp.src(config.gulp.src)

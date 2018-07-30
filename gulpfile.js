@@ -192,78 +192,16 @@ gulp.task('hashsum', () => {
 });
 
 /**
- * @name create-env
- * @member {Function}
- * @summary Create electron environment file.
- * @description Creates .env file containing environment variables for single core setup.
- * @see {@link module:build-system/tasks/create-env-file}
+ * @name Create environment import
+ * @see {@link module:build-system/modules/create-environment}
  */
-gulp.task('create-env', (done) => {
-	const nodeEnv = null;
-	const devMode = false;
-	const electron = null;
-	const electronSec = null;
-	return require('./build-system/tasks/create-env-file')(fs, crypto, config.env, nodeEnv, devMode, electron, electronSec, done);
-});
+require('./build-system/modules/create-environment')(gulp, fs, crypto, config.env);
 
 /**
- * @name create-env-cluster
- * @member {Function}
- * @summary Create electron environment file.
- * @description Creates .env file containing environment variables for nodejs cluster setup.
- * @see {@link module:build-system/tasks/create-env-file}
+ * @name Server handling tasks import
+ * @see {@link module:build-system/modules/server}
  */
-gulp.task('create-env-cluster', (done) => {
-	const nodeEnv = null;
-	const devMode = true;
-	const electron = null;
-	const electronSec = null;
-	return require('./build-system/tasks/create-env-file')(fs, crypto, config.env, nodeEnv, devMode, electron, electronSec, done);
-});
-
-/**
- * @name create-env-electron
- * @member {Function}
- * @summary Create electron environment file.
- * @description Creates .env file containing electron environment variables.
- * @see {@link module:build-system/tasks/create-env-file}
- */
-gulp.task('create-env-electron', (done) => {
-	const nodeEnv = 'production';
-	const devMode = null;
-	const electron = true;
-	const electronSec = true;
-	return require('./build-system/tasks/create-env-file')(fs, crypto, config.env, nodeEnv, devMode, electron, electronSec, done);
-});
-
-
-/**
- * @name server
- * @member {Function}
- * @summary Starts application server.
- * @description Starts client application server.
- */
-gulp.task('server', (done) => {
-	if (node) node.kill();
-	node = spawn('node', ['server.js'], {stdio: 'inherit'});
-	node.on('close', (code) => {
-		if (code === 8) {
-			console.log('Error detected, waiting for changes...');
-		}
-	});
-	done();
-});
-
-/**
- * @name server-kill
- * @member {Function}
- * @summary Kills application server.
- * @description Kills client application server.
- */
-gulp.task('server-kill', (done) => {
-	if (node) node.kill();
-	done();
-});
+require('./build-system/modules/server')(gulp, node, spawn);
 
 /**
  * @name tsc
@@ -299,29 +237,23 @@ gulp.task('generate-logs-index', (done) => {
  * @member {Function}
  * @summary Generates server jsdoc.
  * @description Generates jsdoc for client application server.
- * @see {@link module:build-system/tasks/jsdoc}
+ * @see {@link module:build-system/tasks/jsdoc-server}
  */
 gulp.task('jsdoc-server', () => {
 	const jsdoc = require('gulp-jsdoc3');
-	const config = require('./jsdoc-server.json');
-	const source = ['./server.js', './app/**/*.js'];
-	return gulp.src(['README.md'].concat(source), {read: false})
-		.pipe(jsdoc(config));
+	return require('./build-system/tasks/jsdoc-server')(gulp, jsdoc, config.server.jsdoc);
 });
 
 /**
- * @name jsdoc-build-system
+ * @name jsdoc-build
  * @member {Function}
- * @summary Generates build-system jsdoc.
+ * @summary Generates build system jsdoc.
  * @description Generates jsdoc for client application build system.
- * @see {@link module:build-system/tasks/jsdoc}
+ * @see {@link module:build-system/tasks/jsdoc-build}
  */
 gulp.task('jsdoc-build-system', () => {
 	const jsdoc = require('gulp-jsdoc3');
-	const config = require('./jsdoc-build.json');
-	const source = ['./gulpfile.js', './build-system/**/*.js'];
-	return gulp.src(['README.md'].concat(source), {read: false})
-		.pipe(jsdoc(config));
+	return require('./build-system/tasks/jsdoc-build-system')(gulp, jsdoc, config.build.jsdoc);
 });
 
 /**
@@ -333,35 +265,7 @@ gulp.task('jsdoc-build-system', () => {
  */
 gulp.task('typedoc-client', () => {
 	const typedoc = require('gulp-typedoc');
-	const config = {
-		// typescript options (see typescript docs)
-		allowSyntheticDefaultImports: true,
-		alwaysStrict: true,
-		importHelpers: true,
-		emitDecoratorMetadata: true,
-		esModuleInterop: true,
-		experimentalDecorators: true,
-		module: 'commonjs',
-		moduleResolution: 'node',
-		noImplicitAny: false,
-		removeComments: true,
-		sourceMap: true,
-		suppressImplicitAnyIndexErrors: true,
-		target: 'es2017',
-		// output options (see typedoc docs: http://typedoc.org/api/index.html)
-		readme: './README.md',
-		out: './logs/typedoc',
-		json: './logs/typedoc/typedoc-output.json',
-		// typedoc options (see typedoc docs: http://typedoc.org/api/index.html)
-		name: 'Password Manager Client',
-		theme: 'default',
-		//plugins: [], // set to none to use no plugins, omit to use all
-		includeDeclarations: false,
-		ignoreCompilerErrors: true,
-		version: true
-	};
-	return gulp.src(['public/app/**/*.ts'], {read: false})
-		.pipe(typedoc(config));
+	return require('./build-system/tasks/typedoc')(gulp, typedoc, config.client.typedoc);
 });
 
 /**
@@ -372,23 +276,7 @@ gulp.task('typedoc-client', () => {
  * @see {@link module:build-system/tasks/server-test}
  */
 gulp.task('server-test', () => {
-	return gulp.src(['./test/server/*.js'], { read: false })
-		.pipe(mocha({ reporter: 'good-mocha-html-reporter' }))
-		.on('error', (error) => {
-			console.log('server-test, error', error);
-		})
-		.once('end', () => {
-			if (fs.existsSync('./report.html')) {
-				if (!fs.existsSync('./logs/unit/server')) {
-					if (!fs.existsSync('./logs/unit')) {
-						fs.mkdirSync('./logs/unit');
-					}
-					fs.mkdirSync('./logs/unit/server');
-				}
-				fs.copyFileSync('./report.html', './logs/unit/server/index.html');
-				fs.unlinkSync('./report.html');
-			}
-		});
+	return require('./build-system/tasks/server-test')(gulp, mocha, fs, config.server.unit);
 });
 
 /**

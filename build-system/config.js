@@ -1,6 +1,90 @@
 const pkg = require('../package.json');
 
+const conf = {
+	jsdocServer: require('../jsdoc-server.json'),
+	jsdocBuild: require('../jsdoc-build.json')
+};
+
 module.exports = {
+	/*
+	* Server documentation
+	*/
+	server: {
+		jsdoc: {
+			gulp: {
+				src: ['./server.js', './app/**/*.js'],
+				options: { read: false }
+			},
+			config: conf.jsdocServer
+		},
+		unit: {
+			gulp: {
+				src: ['./test/server/*.js'],
+				options: { read: false }
+			},
+			mocha: {
+				options: { reporter: 'good-mocha-html-reporter' }
+			},
+			report: {
+				src: './report.html',
+				dest: './logs/unit/server/index.html',
+				dir: {
+					server: './logs/unit/server',
+					unit: './logs/unit'
+				}
+			}
+		}
+	},
+	/*
+	* Build system documentation
+	*/
+	build: {
+		jsdoc: {
+			gulp: {
+				src: ['./gulpfile.js', './build-system/**/*.js'],
+				options: { read: false }
+			},
+			config: conf.jsdocBuild
+		}
+	},
+	/*
+	* Client documentation
+	*/
+	client: {
+		typedoc: {
+			gulp: {
+				src: ['public/app/**/*.ts'],
+				options: { read: false }
+			},
+			config: {
+				// typescript options (see typescript docs)
+				allowSyntheticDefaultImports: true,
+				alwaysStrict: true,
+				importHelpers: true,
+				emitDecoratorMetadata: true,
+				esModuleInterop: true,
+				experimentalDecorators: true,
+				module: 'commonjs',
+				moduleResolution: 'node',
+				noImplicitAny: false,
+				removeComments: true,
+				sourceMap: true,
+				suppressImplicitAnyIndexErrors: true,
+				target: 'es2017',
+				// output options (see typedoc docs: http://typedoc.org/api/index.html)
+				readme: './README.md',
+				out: './logs/typedoc',
+				json: './logs/typedoc/typedoc-output.json',
+				// typedoc options (see typedoc docs: http://typedoc.org/api/index.html)
+				name: 'Password Manager Client',
+				theme: 'default',
+				//plugins: [], // set to none to use no plugins, omit to use all
+				includeDeclarations: false,
+				ignoreCompilerErrors: true,
+				version: true
+			}
+		}
+	},
 	/*
 	* Hashsum
 	*/
