@@ -1,4 +1,4 @@
-import { APP_ROUTES } from '../../public/app/app.routes';
+import { APP_ROUTES } from '../../public/app/app.routing.module';
 
 import { AuthGuardGeneral } from '../../public/app/services/auth-guard-general.service';
 import { AnonimousGuard } from '../../public/app/services/anonimous-guard.service';

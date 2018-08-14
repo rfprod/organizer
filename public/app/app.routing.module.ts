@@ -1,4 +1,5 @@
-import { Routes } from '@angular/router';
+import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
 import { AuthGuardGeneral } from './services/auth-guard-general.service';
 import { AnonimousGuard } from './services/anonimous-guard.service';
 import { AppSummaryComponent } from './components/app-summary.component';
@@ -14,3 +15,12 @@ export const APP_ROUTES: Routes = [
 	{path: '', redirectTo: 'login', pathMatch: 'full'},
 	{path: '**', redirectTo: 'login'}
 ];
+
+/**
+ * Application routing module.
+ */
+@NgModule({
+	imports: [ RouterModule.forRoot(APP_ROUTES) ],
+	exports: [ RouterModule ]
+})
+export class AppRoutingModule {}

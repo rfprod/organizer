@@ -67,7 +67,7 @@ export class UserService {
 	 */
 	public restoreUser(): void {
 		console.log('Restore User, localStorage.userService:', localStorage.getItem('userService'));
-		if (typeof localStorage.getItem('userService') !== 'undefined' && localStorage.userService) {
+		if (localStorage.getItem('userService')) {
 			this.model = JSON.parse(localStorage.getItem('userService'));
 		}
 	}

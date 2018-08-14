@@ -11,6 +11,9 @@ import { ISupportedLanguage } from './interfaces';
 
 declare let $: JQueryStatic;
 
+/**
+ * Main application component.
+ */
 @Component({
 	selector: 'root',
 	template: `

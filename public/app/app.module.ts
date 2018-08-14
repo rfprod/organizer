@@ -9,10 +9,6 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { RouterModule } from '@angular/router';
-import { APP_ROUTES } from './app.routes';
-import { AuthGuardGeneral } from './services/auth-guard-general.service';
-import { AnonimousGuard } from './services/anonimous-guard.service';
 
 /*
 *	Some material components rely on hammerjs
@@ -21,32 +17,43 @@ import { AnonimousGuard } from './services/anonimous-guard.service';
 import '../../node_modules/hammerjs/hammer.js';
 import { CustomMaterialModule } from './modules/custom-material.module';
 
-import { AppComponent } from './app.component';
-import { AppNavComponent } from './components/app-nav.component';
-import { AppSummaryComponent } from './components/app-summary.component';
-import { AppLoginComponent } from './components/app-login.component';
-import { AppInitializeComponent } from './components/app-initialize.component';
-import { AppDataComponent } from './components/app-data.component';
-
-import { TRANSLATION_PROVIDERS, TranslatePipe, TranslateService } from './translate/index';
-
-import { CustomServiceWorkerService } from './services/custom-service-worker.service';
-import { CustomDeferredService } from './services/custom-deferred.service';
-import { CustomHttpHandlersService } from './services/custom-http-handlers.service';
-import { EventEmitterService } from './services/event-emitter.service';
-import { WebsocketService } from './services/websocket.service';
-
-import { UserAPIService } from './services/user-api.service';
-import { UserService } from './services/user.service';
-import { ServerStaticDataService } from './services/server-static-data.service';
-import { PublicDataService } from './services/public-data.service';
-
 import { NvD3Component } from 'ng2-nvd3';
 
+import { AppRoutingModule } from './app.barrel';
+
+import { AuthGuardGeneral } from './app.barrel';
+import { AnonimousGuard } from './app.barrel';
+
+import { AppComponent } from './app.barrel';
+import { AppNavComponent } from './app.barrel';
+import { AppSummaryComponent } from './app.barrel';
+import { AppLoginComponent } from './app.barrel';
+import { AppInitializeComponent } from './app.barrel';
+import { AppDataComponent } from './app.barrel';
+
+import { TranslateModule } from './app.barrel';
+
+import { CustomServiceWorkerService } from './app.barrel';
+import { CustomDeferredService } from './app.barrel';
+import { CustomHttpHandlersService } from './app.barrel';
+import { EventEmitterService } from './app.barrel';
+import { WebsocketService } from './app.barrel';
+
+import { UserAPIService } from './app.barrel';
+import { UserService } from './app.barrel';
+import { ServerStaticDataService } from './app.barrel';
+import { PublicDataService } from './app.barrel';
+
+/**
+ * Main application module.
+ */
 @NgModule({
-	declarations: [ AppComponent, TranslatePipe, AppNavComponent, AppSummaryComponent, AppLoginComponent, AppInitializeComponent, AppDataComponent, NvD3Component ],
-	imports 		: [ BrowserModule, BrowserAnimationsModule, FlexLayoutModule, CustomMaterialModule, FormsModule, ReactiveFormsModule, HttpClientModule, RouterModule.forRoot(APP_ROUTES) ],
-	providers 	: [ {provide: APP_BASE_HREF, useValue: '/'}, {provide: LocationStrategy, useClass: PathLocationStrategy}, { provide: 'Window', useValue: window }, TRANSLATION_PROVIDERS, TranslateService, CustomServiceWorkerService, CustomDeferredService, CustomHttpHandlersService, EventEmitterService, WebsocketService, UserService, AuthGuardGeneral, AnonimousGuard, UserAPIService, ServerStaticDataService, PublicDataService ],
+	declarations: [ AppComponent, AppNavComponent, AppSummaryComponent, AppLoginComponent, AppInitializeComponent, AppDataComponent, NvD3Component ],
+	imports 		: [ BrowserModule, BrowserAnimationsModule, FlexLayoutModule, CustomMaterialModule, FormsModule, ReactiveFormsModule, HttpClientModule,
+									TranslateModule.forRoot(), AppRoutingModule ],
+	providers 	: [ {provide: APP_BASE_HREF, useValue: '/'}, {provide: LocationStrategy, useClass: PathLocationStrategy}, { provide: 'Window', useValue: window },
+									CustomServiceWorkerService, CustomDeferredService, CustomHttpHandlersService, EventEmitterService, WebsocketService, UserService, AuthGuardGeneral,
+									AnonimousGuard, UserAPIService, ServerStaticDataService, PublicDataService ],
 	schemas 		: [ CUSTOM_ELEMENTS_SCHEMA ],
 	bootstrap 	: [ AppComponent ],
 })
