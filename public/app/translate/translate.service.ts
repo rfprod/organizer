@@ -1,30 +1,31 @@
 import { Injectable, Inject } from '@angular/core';
+
 import { TRANSLATIONS } from './translations'; // reference by opaque token
 
 @Injectable()
 export class TranslateService {
 
 	constructor(
-		@Inject(TRANSLATIONS) private _translations: any
+		@Inject(TRANSLATIONS) private translations: any
 	) {}
 
 	/**
 	 * Current language.
 	 */
-	private _currentLanguage: string;
+	private currentLang: string;
 
 	/**
 	 * Current language getter.
 	 */
 	public get currentLanguage() {
-		return this._currentLanguage;
+		return this.currentLang;
 	}
 
 	/**
 	 * Current language setter.
 	 */
 	public use(key: string): void {
-		this._currentLanguage = key;
+		this.currentLang = key;
 	}
 
 	/**
@@ -32,8 +33,8 @@ export class TranslateService {
 	 */
 	private translate(key: string): string {
 		const translation = key;
-		if (this._translations[this.currentLanguage] && this._translations[this.currentLanguage][key]) {
-			return this._translations[this.currentLanguage][key];
+		if (this.translations[this.currentLanguage] && this.translations[this.currentLanguage][key]) {
+			return this.translations[this.currentLanguage][key];
 		}
 		return translation;
 	}

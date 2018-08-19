@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="en" class="mat-typography">
 	<head>
-		<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' https://* data: blob:; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; frame-src 'self'; object-src 'self' blob:; connect-src 'self' ws: wss: http://localhost:*; worker-src 'self'">
+		<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' https://* data: blob:; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; frame-src 'self'; object-src 'self' blob:; connect-src 'self' ws: wss: http://localhost:*; worker-src 'self'">
 		<meta charset="utf-8">
 		<title>PasswordManager (PassMngr)</title>
 
 		<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
-		
-		<script src="/public/js/vendor-bundle.min.js"></script>
-		<link href="/public/css/vendor-bundle.min.css" rel="stylesheet">
 
+		<link href="/public/css/vendor-bundle.min.css" rel="stylesheet">
 		<link href="/public/css/bundle.min.css" rel="stylesheet">
 
 		<base href="/">
@@ -17,6 +15,8 @@
 	<body class="mat-body-1">
 		<span id="init">Loading Angular...</span>
 		<root></root>
+
+		<script src="/public/js/vendor-bundle.min.js"></script>
 
 		<!-- load app in dev mode -->
 		<!--

@@ -1,6 +1,8 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 
-import { TRANSLATION_PROVIDERS, TranslatePipe, TranslateService } from './index';
+import { TranslateService } from './translate.service';
+import { TranslatePipe } from './translate.pipe';
+import { TRANSLATION_PROVIDERS } from './translations';
 
 /**
  * Translate module.
