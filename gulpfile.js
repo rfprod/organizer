@@ -537,7 +537,7 @@ gulp.task('rebuild-app', (done) => { // should be used in watcher to rebuild the
 
 /**
  * @name rebuildApp
- * @summary Revuild app spawned process instance.
+ * @summary Rebuild app spawned process instance.
  */
 let rebuildApp;
 /**
