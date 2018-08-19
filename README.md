@@ -4,7 +4,11 @@
 
 ## Overview
 
-Password Manager - Electron application core based on NodeJS and Angular.
+Password Manager - Electron application based on NodeJS and Angular.
+
+### How does it work
+
+TODO
 
 ### Project structure
 

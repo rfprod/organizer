@@ -76,8 +76,13 @@
 		<span fxFlex="100" fxLayout="row wrap" fxLayoutAlign="start stretch">
 			<span *ngFor="let passObj of user.passwords; let j = index" fxFlex="100" fxLayout="row" fxLayoutAlign="start stretch" fxFlayoutGap="5px" fxHide="{{hideElement(j)}}">
 				<span fxFlex="1 1 auto" fxLayout="row" fxLayoutAlign="start center">{{j}}</span>
-				<span fxFlex="3 1 auto" fxLayout="row" fxLayoutAlign="start center" matTooltip="{{ 'name' | translate }}" matTooltipPosition="above">{{passObj.name}}</span>
-				<span fxFlex="4 1 auto" fxLayout="row" fxLayoutAlign="start center" matTooltip="{{ 'password' | translate }}" matTooltipPosition="above">{{passObj.password}}</span>
+				<span fxFlex="2 1 auto" fxLayout="row" fxLayoutAlign="start center" matTooltip="{{ 'name' | translate }}" matTooltipPosition="above">{{passObj.name}}</span>
+				<span fxFlex="4 1 auto" fxLayout="row" fxLayoutAlign="start center" matTooltip="{{ 'password' | translate }}" matTooltipPosition="above">
+					<span *ngIf="!user.encrypted">{{passObj.password}}</span>
+					<span *ngIf="user.encrypted" matTooltip="{{passObj.password}}">
+						<mat-icon class="material-icons">lock</mat-icon>
+					</span>
+				</span>
 				<span fxFlex="0 1 auto" fxLayout="row" fxLayoutAlign="start center" matTooltip="{{ 'timestamp' | translate }}: {{passObj.timestamp | date: 'yyyy.MM.dd HH:mm Z'}}" matTooltipPosition="above">
 					<mat-icon class="material-icons" fxShow="true" [fxHide.gt-sm]="true">access_time</mat-icon> <span fxHide="true" [fxShow.gt-sm]="true">{{passObj.timestamp | date: 'yyyy.MM.dd HH:mm Z'}}</span>
 				</span>
