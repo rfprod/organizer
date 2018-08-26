@@ -595,8 +595,9 @@ const electronPackagerIgnore = [ // exclude
 	/\/logs/, // logs
 	/\/node_modules\/(@angular|gulp.*|karma.*|jasmine.*|mocha.*|@types|(remap-)?istanbul)/, // not needed node_modules
 	/\/test\/(client|e2e|server\/.*\.js|.*\.js)/, // tests source code
+	/\/build-system/, // gulp-based build system
 	/\/\.(editorconfig|eslintignore|eslintrc\.json|gitattributes|gitignore)/, // configuration files matching pattern: .config_filename
-	/\/(tsconfig|tslint|jsdoc)\.json/, // json configuration
+	/\/(tsconfig|tslint|jsdoc*)\.json/, // json configuration
 	/\/README\.md/, // readme
 	/\/.*\.sh/, // bash scripts
 	/\/systemjs\..*/ // systemjs configs
@@ -683,10 +684,10 @@ gulp.task('electron-debinstaller', (done) => {
 	});
 });
 gulp.task('build-electron-win', (done) => {
-	runSequence('compile-and-build', 'create-env-electron', 'electron-packager-win', 'electron-winstaller', done);
+	runSequence('compile-and-build-electron', 'electron-packager-win', 'electron-winstaller', done);
 });
 gulp.task('build-electron-deb', (done) => {
-	runSequence('compile-and-build', 'create-env-electron', 'electron-packager-nix', 'electron-debinstaller', done);
+	runSequence('compile-and-build-electron', 'electron-packager-nix', 'electron-debinstaller', done);
 });
 
 process.on('exit', (code) => {
