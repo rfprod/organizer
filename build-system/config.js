@@ -1,5 +1,25 @@
+/**
+ * Create environment module
+ * @module build-system/config
+ * @see {@link module:gulpfile}
+ * @summary Gulp configuration module.
+ * @description Exports config for different gulp tasks.
+ */
+
+ /**
+ * @name pkg
+ * @constant
+ * @summary Package.json.
+ * @description Package.json.
+ */
 const pkg = require('../package.json');
 
+/**
+ * @name conf
+ * @constant
+ * @summary Jsdoc server, and build system configs.
+ * @description Jsdoc server, and build system configs.
+ */
 const conf = {
 	jsdocServer: require('../jsdoc-server.json'),
 	jsdocBuild: require('../jsdoc-build.json')

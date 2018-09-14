@@ -7,7 +7,7 @@
  */
 
 /**
- * @name Create env taks path
+ * @name createEnvTaskPath Create env taks path
  * @constant
  * @summary Create env file taks path
  * @description Create env file taks path
