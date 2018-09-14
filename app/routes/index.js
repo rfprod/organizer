@@ -145,7 +145,8 @@ module.exports = function(app, cwd, fs, SrvInfo, appData, cryptoUtils) {
 		config: { error: 'Error updating user, check server logs for details'},
 		invalidEmailPass: { error: 'Invalid email and/or password' },
 		keysExist: { error: 'At least one user RSA key already exist' },
-		keysDoNotExist: { error: 'User RSA keys do not exist' }
+		keysDoNotExist: { error: 'User RSA keys do not exist' },
+		exportPasswords: { error: 'Error saving file while exporting passwords.' }
 	};
 
 	/**
@@ -367,6 +368,39 @@ module.exports = function(app, cwd, fs, SrvInfo, appData, cryptoUtils) {
 					res.json(updatedUser);
 				} else {
 					res.status(500).json(errorMessage.config);
+				}
+			});
+	});
+
+	/**
+	 * Saves user passwords to a separate file, encrypts saved passwords with current keypair.
+	 * @name Export user passwords
+	 * @path {GET} /api/user/passwords/export
+	 * @code {200}
+	 * @code {500} error saving user passwords
+	 * @response {object} - Information object about exported file
+	 */
+	app.get('/api/user/passwords/export', async(req, res) => {
+		appData.keyExists.publicRSA()
+			.then(() => appData.keyExists.privateRSA())
+			.catch(() => {
+				console.log('keys do not exist');
+				res.status(412).json(errorMessage.keysDoNotExist);
+			})
+			.then(async() => {
+				console.log('user RSA keys exist, ok to go on');
+				const user = await appData.user();
+				if (Object.keys(user).length) {
+					if (!user.encrypted) { // encrypt password if not encrypted
+						user.passwords = user.passwords.map((item) => {
+							item.password = cryptoUtils.encryptString(item.password, user.keys.public);
+							return item;
+						});
+					}
+					const exportInfo = await appData.exportPasswords(user.passwords);
+					res.json(exportInfo);
+				} else {
+					res.status(500).json(errorMessage.exportPasswords);
 				}
 			});
 	});

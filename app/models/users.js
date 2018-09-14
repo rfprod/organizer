@@ -28,6 +28,11 @@ module.exports = (cwd) => {
 	const userConfigPath = `${cwd}/app/config/user.json`;
 
 	/**
+	 * User exported passwords file path.
+	 */
+	const userPasswordsExportPath = () => `${cwd}/app/config/export.${new Date().getTime()}.json`;
+
+	/**
 	 * User private RSA key file path.
 	 */
 	const userPrivateKeyPath = `${cwd}/app/config/rsa.private`;
@@ -93,10 +98,35 @@ module.exports = (cwd) => {
 			fs.readFile(keyPath, (err, data) => {
 				if (err) {
 					console.log('# > private RSA key does not exist, ok');
-					reject();
+					reject(err);
 				} else {
 					resolve(data);
 				}
+			});
+		});
+	}
+
+	/**
+	 * @function exportPasswords
+	 * @summary Exports user passwords
+	 * @description Saves user passwords to a separate json file
+	 * @param {Array} passwords encrypted passwords array
+	 * @return {Promise} - file saved promise
+	 */
+	function exportPasswords(passwords) {
+		if (!passwords) {
+			passwords = [];
+		}
+		console.log('passwords, should be encrypted', passwords);
+		const exportPath = userPasswordsExportPath();
+		return new Promise((resolve, reject) => {
+			fs.writeFile(exportPath, passwords, (err) => {
+				if (err) {
+					console.log('error writing file while saving passwords');
+					reject(err);
+				}
+				console.log('export success');
+				resolve({path: exportPath, passwords: passwords});
 			});
 		});
 	}
@@ -261,6 +291,11 @@ module.exports = (cwd) => {
 					}
 				});
 			});
-		}
+		},
+
+		/**
+		 * Exports passwords, saves to a separate file.
+		 */
+		exportPasswords: exportPasswords
 	};
 };

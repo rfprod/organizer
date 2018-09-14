@@ -242,7 +242,8 @@ const appData = {
 	config: Users.config,
 	saveKeys: Users.saveKeys,
 	addPassword: Users.addPassword,
-	deletePassword: Users.deletePassword
+	deletePassword: Users.deletePassword,
+	exportPasswords: Users.exportPasswords
 };
 /**
  * @name cryptoUtils
