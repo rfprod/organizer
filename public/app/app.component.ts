@@ -9,8 +9,6 @@ import { MatIconRegistry, DateAdapter } from '@angular/material';
 
 import { ISupportedLanguage } from './interfaces';
 
-declare let $: JQueryStatic;
-
 /**
  * Main application component.
  */
@@ -102,13 +100,24 @@ export class AppComponent implements OnInit, OnDestroy {
 		}
 	}
 
+	/**
+	 * Removes UI initialization object, kind of splashscreen.
+	 */
+	private removeUIinit(): void {
+		const initUIobj: HTMLElement = this.window.document.getElementById('init');
+		console.log('initUIobj', initUIobj);
+		if (initUIobj) {
+			initUIobj.parentNode.removeChild(initUIobj);
+		}
+	}
+
 	public ngOnInit(): void {
 		console.log('ngOnInit: AppComponent initialized');
 
 		/*
 		* Remove initialization text.
 		*/
-		$('#init').remove();
+		this.removeUIinit();
 
 		/*
 		* Subscribe to event emitter service.

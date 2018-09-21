@@ -164,8 +164,6 @@ module.exports = {
 					'./node_modules/reflect-metadata/Reflect.js',
 					'./node_modules/web-animations-js/web-animations.min.js',
 
-					'./node_modules/jquery/dist/jquery.js',
-
 					// ng2nvd3 dependency
 					'./node_modules/d3/d3.js',
 					'./node_modules/nvd3/build/nv.d3.js'
