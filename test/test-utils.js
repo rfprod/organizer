@@ -1,3 +1,5 @@
+const os = require('os');
+
 module.exports = {
 	karmaHeadlessChromeFlags: () => {
 		const flags = [
@@ -15,5 +17,8 @@ module.exports = {
 			'--window-size=1680x1024'
 		];
 		return flags;
+	},
+	useCPUcores: () => {
+		return Math.ceil(os.cpus().length / 2);
 	}
 };

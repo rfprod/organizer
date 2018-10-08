@@ -37,7 +37,8 @@ describe('AppComponent', () => {
 							language: 'en',
 							languages: ['en'],
 							serviceWorker: window.navigator.serviceWorker
-						}
+						},
+						document: window.document
 					},
 					localStorage: window.localStorage,
 					sessionStorage: window.sessionStorage,

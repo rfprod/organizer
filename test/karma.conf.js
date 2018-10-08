@@ -1,7 +1,11 @@
 const testUtils = require('./test-utils');
 const headlessChromeFlags = testUtils.karmaHeadlessChromeFlags();
 
-module.exports = function(config){
+module.exports = function(config) {
+
+	const useCPUcores = testUtils.useCPUcores();
+	console.log(`Karma will use ${useCPUcores} cpu cores for parallel testing`);
+
 	config.set({
 
 		basePath : '../',
@@ -58,7 +62,7 @@ module.exports = function(config){
 
 		// exclude: [],
 
-		frameworks: ['jasmine'],
+		frameworks: ['parallel', 'jasmine'],
 
 		browserNoActivityTimeout: 20000,
 		browserDisconnectTimeout: 20000,
@@ -76,6 +80,7 @@ module.exports = function(config){
 		browsers: ['ChromeHeadless'],
 		
 		plugins: [
+			'karma-parallel',
 			'karma-redirect-preprocessor',
 			'karma-chrome-launcher',
 			'karma-html-reporter',
@@ -83,6 +88,11 @@ module.exports = function(config){
 			'karma-coverage',
 			'karma-jasmine'
 		],
+
+		parallelOptions: {
+			executors: useCPUcores,
+			shardStrategy: 'description-length'
+		},
 
 		preprocessors: {
 			'public/**/*.html': ['redirect'],
@@ -108,7 +118,7 @@ module.exports = function(config){
 			templatePath: null,
 			focusOnFailures: true,
 			namedFiles: false,
-			pageTitle: 'Ng2NS Client Unit Tests',
+			pageTitle: 'PasswordManager Client Unit Tests',
 			urlFriendlyName: true,
 			reportName: 'client'
 		},
@@ -121,7 +131,14 @@ module.exports = function(config){
 
 		autoWatch: true,
 		singleRun: true,
-		logLevel: config.LOG_DEBUG,
+
+		logLevel: config.LOG_ERROR, // LOG_DISABLE, LOG_ERROR, LOG_WARN, LOG_INFO, LOG_DEBUG
+		browserConsoleLogOptions: {
+			level: 'debug',
+			format: '%b %T %m',
+			path: 'logs/client-unit-browser-console.log',
+			terminal: false
+		},
 		colors: true
 
 	});
