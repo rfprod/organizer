@@ -62,6 +62,7 @@ module.exports = (fs, done) => {
 					<h3 class='flex-100'>Client Unit</h3>
 					<a class='flex-item' href='unit/client/index.html' target=_blank>Spec</a>
 					<a class='flex-item' href='coverage/html-report/index.html' target=_blank>Coverage</a>
+					<small class="flex-100"><a href="client-unit-browser-console.log" target=_blank>client-unit-browser-console.log</a></small>
 				</span>
 
 				<span class='flex-item'>
