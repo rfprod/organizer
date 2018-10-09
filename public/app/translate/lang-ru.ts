@@ -38,5 +38,7 @@ export const LANG_RU_TRANSLATIONS = {
 	required: 'Это обязательное значение',
 	delete: 'Удалить',
 	encrypt_passwords: 'Зашифровать пароли',
-	decrypt_passwords: 'Расшифровать пароли'
+	decrypt_passwords: 'Расшифровать пароли',
+	export_passwords: 'Экспортировать пароли',
+	exported_passwords: 'Экспортированные пароли'
 };

@@ -29,7 +29,8 @@ export class UserAPIService {
 		deletePassword: this.window.location.origin + '/api/user/password/delete' as string,
 		generateKeypair: this.window.location.origin + '/api/user/rsa/generate' as string,
 		encryptPasswords: this.window.location.origin + '/api/user/rsa/encrypt' as string,
-		decryptPasswords: this.window.location.origin + '/api/user/rsa/decrypt' as string
+		decryptPasswords: this.window.location.origin + '/api/user/rsa/decrypt' as string,
+		exportPasswords: this.window.location.origin + '/api/user/passwords/export' as string
 	};
 
 	/**
@@ -133,6 +134,18 @@ export class UserAPIService {
 	 */
 	public decryptPasswords(): Observable<any> {
 		return this.http.get(this.endpoints.decryptPasswords).pipe(
+			timeout(10000),
+			take(1),
+			map(this.httpHandlers.extractObject),
+			catchError(this.httpHandlers.handleError)
+		);
+	}
+
+	/**
+	 * Exports user passwords.
+	 */
+	public exportPasswords(): Observable<any> {
+		return this.http.get(this.endpoints.exportPasswords).pipe(
 			timeout(10000),
 			take(1),
 			map(this.httpHandlers.extractObject),

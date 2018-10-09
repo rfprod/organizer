@@ -38,5 +38,7 @@ export const LANG_EN_TRANSLATIONS = {
 	required: 'This value is required',
 	delete: 'Delete',
 	encrypt_passwords: 'Encrypt passwords',
-	decrypt_passwords: 'Decrypt passwords'
+	decrypt_passwords: 'Decrypt passwords',
+	export_passwords: 'Export passwords',
+	exported_passwords: 'Exported passwords'
 };

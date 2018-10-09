@@ -149,6 +149,22 @@ export class AppDataComponent implements OnInit, OnDestroy {
 			}
 		);
 	}
+	/**
+	 * Export user passwords encrypted with keypair.
+	 */
+	public exportPasswords(): void {
+		this.emitter.emitSpinnerStartEvent();
+		this.userAPIService.exportPasswords().subscribe(
+			(data: any) => {
+				console.log('TODO, let user save file to an arbitrary path, data', data);
+				this.emitter.emitSpinnerStopEvent();
+			},
+			(error: string) => {
+				this.errorMessage = error;
+				this.emitter.emitSpinnerStopEvent();
+			}
+		);
+	}
 
 	/**
 	 * Filters search value.

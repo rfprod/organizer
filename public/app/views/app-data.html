@@ -93,4 +93,17 @@
 		</span>
 
 	</span>
+
+	<h3 fxFlex="100">
+		{{ 'exported_passwords' | translate }} 
+		<button mat-icon-button (click)="exportPasswords()" color="primary" matTooltip="{{ 'export_passwords' | translate }}" matTooltipPosition="after">
+			<mat-icon class="material-icons">save_alt</mat-icon>
+		</button>
+	</h3>
+
+	<span fxFlex="100" fxLayout="row wrap">
+		<span fxFlex>
+			TODO: list exported passwords
+		</span>
+	</span>
 </span>
