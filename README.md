@@ -8,7 +8,21 @@ Password Manager - Electron application based on NodeJS and Angular.
 
 ### How does it work
 
-TODO
+#### Authenticate
+
+If this is a first launch, entering user credentials `email` and `password` will save these creadentials and use for subsequent authentications.
+
+#### Enable encryption
+
+Use UI `Generate RSA keypair` button to generate a pair of encryption keys if it does not exist.
+
+#### Manage passwords
+
+Use `Data` view to manage passwords.
+
+Passwords can be encrypted using UI button `Encrypt passwords`.
+
+Passwords can be exported using UI button `Export passwords`. Passwords are encrypted before export.
 
 ### Project structure
 
