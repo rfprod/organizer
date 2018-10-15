@@ -17,8 +17,6 @@ import { HttpClientModule } from '@angular/common/http';
 import '../../node_modules/hammerjs/hammer.js';
 import { CustomMaterialModule } from './modules/custom-material.module';
 
-import { NvD3Component } from 'ng2-nvd3';
-
 import { AppRoutingModule } from './app.barrel';
 
 import { AuthGuardGeneral } from './app.barrel';
@@ -48,7 +46,7 @@ import { PublicDataService } from './app.barrel';
  * Main application module.
  */
 @NgModule({
-	declarations: [ AppComponent, AppNavComponent, AppSummaryComponent, AppLoginComponent, AppInitializeComponent, AppDataComponent, NvD3Component ],
+	declarations: [ AppComponent, AppNavComponent, AppSummaryComponent, AppLoginComponent, AppInitializeComponent, AppDataComponent ],
 	imports 		: [ BrowserModule, BrowserAnimationsModule, FlexLayoutModule, CustomMaterialModule, FormsModule, ReactiveFormsModule, HttpClientModule,
 									TranslateModule.forRoot(), AppRoutingModule ],
 	providers 	: [ {provide: APP_BASE_HREF, useValue: '/'}, {provide: LocationStrategy, useClass: PathLocationStrategy}, { provide: 'Window', useValue: window },

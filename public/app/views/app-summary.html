@@ -9,9 +9,14 @@
 	</button>
 </p>
 
-<span fxFlex="100">
-	<nvd3 #chart [options]="chartOptions" [data]="appUsageData"></nvd3>
-</span>
+<div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="center start">
+	<span fxFlex="100" fxLayout="row" fxLayoutAlign="center start">
+		<span fxFlex="0 1 auto">user sessions</span>
+	</span>
+	<span fxFlex="0 1 auto">
+		<canvas #canvas></canvas>
+	</span>
+</div>
 
 <span fxFlex="100" fxFlexAlign="stretch" fxLayout="row wrap" fxLayoutAligh="start stretch">
 	<span fxFlex fxLayout="row" fxLayoutAlign="center center">

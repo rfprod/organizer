@@ -38,37 +38,9 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
 	private subscriptions: any[] = [];
 
 	/**
-	 * Chart options.
+	 * D3 chart view child reference.
 	 */
-	public chartOptions: object = {
-		chart: {
-			type: 'pieChart',
-			height: 450,
-			donut: true,
-			x: (d) => d.key,
-			y: (d) => d.y,
-			showLabels: true,
-			labelSunbeamLayout: false,
-			pie: {
-				startAngle: (d) => d.startAngle / 2 - Math.PI / 2,
-				endAngle: (d) => d.endAngle / 2 - Math.PI / 2,
-			},
-			duration: 1000,
-			title: 'user sessions',
-			legend: {
-				margin: {
-					top: 5,
-					right: 5,
-					bottom: 5,
-					left: 5,
-				},
-			},
-		},
-	};
-	/**
-	 * Char view child reference.
-	 */
-	@ViewChild ('chart') private nvd3: any;
+	@ViewChild('canvas') private canvas: any;
 
 	/**
 	 * Application usage data.
@@ -80,6 +52,57 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
 		{ key: 'Default', y: 1 },
 		{ key: 'Default', y: 1 }
 	];
+
+	/**
+	 * Draws chart.
+	 * TODO update chart data
+	 */
+	public drawChart(): void {
+		const context = this.canvas.nativeElement.getContext('2d');
+		const width = this.canvas.nativeElement.width;
+		const height = this.canvas.nativeElement.height;
+		const radius = Math.min(width, height) / 2;
+
+		const arc = d3.arc()
+			.outerRadius(radius - 10)
+			.innerRadius(0)
+			.context(context);
+
+		const labelArc = d3.arc()
+			.outerRadius(radius - 40)
+			.innerRadius(radius - 40)
+			.context(context);
+
+		const pie = d3.pie()
+			.sort(null)
+			.value((d) => d.y);
+
+		context.translate(width / 2, height / 2);
+
+		const arcs = pie(this.appUsageData);
+
+		const colors = ['#98abc5', '#8a89a6', '#7b6888', '#6b486b', '#a05d56', '#d0743c', '#ff8c00'];
+
+		arcs.forEach((d, i) => {
+			context.beginPath();
+			arc(d);
+			context.fillStyle = colors[i < colors.length ? i : Math.ceil(i % colors.length)];
+			context.fill();
+		});
+
+		context.beginPath();
+		arcs.forEach(arc);
+		context.strokeStyle = '#fff';
+		context.stroke();
+
+		context.textAlign = 'center';
+		context.textBaseline = 'middle';
+		context.fillStyle = '#000';
+		arcs.forEach((d) => {
+			const c = labelArc.centroid(d);
+			context.fillText(d.data.key, c[0], c[1]);
+		});
+	}
 
 	/**
 	 * Server diagnostic data.
@@ -120,8 +143,8 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
 		const def = new CustomDeferredService<any>();
 		this.publicDataService.getData().subscribe(
 			(data: any): void => {
-				this.nvd3.clearElement();
 				this.appUsageData = data;
+				this.drawChart();
 				def.resolve(this.appUsageData);
 			},
 			(error: any): void => def.reject(error)

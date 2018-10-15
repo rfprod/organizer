@@ -7,8 +7,6 @@ import { MockBackend, MockConnection } from '@angular/http/testing';
 import { FormsModule, ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 
-import { NvD3Component } from 'ng2-nvd3';
-
 import { EventEmitterService } from '../../../public/app/services/event-emitter.service';
 import { UserService } from '../../../public/app/services/user.service';
 import { CustomHttpHandlersService } from '../../../public/app/services/custom-http-handlers.service';
@@ -35,7 +33,7 @@ describe('AppSummaryComponent', () => {
 
 	beforeEach((done) => {
 		TestBed.configureTestingModule({
-			declarations: [ TranslatePipe, AppSummaryComponent, NvD3Component, DummyComponent ],
+			declarations: [ TranslatePipe, AppSummaryComponent, DummyComponent ],
 			imports: [ BrowserDynamicTestingModule, NoopAnimationsModule, FormsModule, ReactiveFormsModule,
 				CustomMaterialModule, FlexLayoutModule,
 				RouterTestingModule.withRoutes([
@@ -135,7 +133,6 @@ describe('AppSummaryComponent', () => {
 		expect(this.component.ws).toEqual(jasmine.any(WebSocket));
 		expect(this.component.getServerStaticData).toBeDefined();
 		expect(this.component.getPublicData).toBeDefined();
-		expect(this.component.nvd3).toEqual(jasmine.any(NvD3Component));
 		expect(this.component.ngOnInit).toBeDefined();
 		expect(this.component.ngOnDestroy).toBeDefined();
 	});

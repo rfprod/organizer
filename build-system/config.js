@@ -164,9 +164,8 @@ module.exports = {
 					'./node_modules/reflect-metadata/Reflect.js',
 					'./node_modules/web-animations-js/web-animations.min.js',
 
-					// ng2nvd3 dependency
-					'./node_modules/d3/d3.js',
-					'./node_modules/nvd3/build/nv.d3.js'
+					// angular dependency
+					'./node_modules/d3/dist/d3.js'
 				],
 				dest: './public/js'
 			},
@@ -181,7 +180,6 @@ module.exports = {
 					/*
 					*	add paths to required third party css files
 					*/
-					'./node_modules/nvd3/build/nv.d3.css',
 					'./node_modules/components-font-awesome/css/fontawesome-all.css'
 				],
 				dest: './public/css'
