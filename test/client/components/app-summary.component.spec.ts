@@ -2,15 +2,14 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { Http, BaseRequestOptions, Response, ResponseOptions, Headers } from '@angular/http';
-import { MockBackend, MockConnection } from '@angular/http/testing';
-import { FormsModule, ReactiveFormsModule, FormGroup } from '@angular/forms';
+import { Http, BaseRequestOptions } from '@angular/http';
+import { MockBackend } from '@angular/http/testing';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 
 import { EventEmitterService } from '../../../public/app/services/event-emitter.service';
 import { UserService } from '../../../public/app/services/user.service';
 import { CustomHttpHandlersService } from '../../../public/app/services/custom-http-handlers.service';
-import { CustomDeferredService } from '../../../public/app/services/custom-deferred.service';
 import { UserAPIService } from '../../../public/app/services/user-api.service';
 
 import { TranslateService, TranslatePipe, TRANSLATION_PROVIDERS } from '../../../public/app/translate/index';
@@ -18,8 +17,6 @@ import { TranslateService, TranslatePipe, TRANSLATION_PROVIDERS } from '../../..
 import { ServerStaticDataService } from '../../../public/app/services/server-static-data.service';
 import { PublicDataService } from '../../../public/app/services/public-data.service';
 import { WebsocketService } from '../../../public/app/services/websocket.service';
-
-import { ISupportedLanguage } from '../../../public/app/interfaces';
 
 import { FlexLayoutModule } from '@angular/flex-layout';
 import '../../../node_modules/hammerjs/hammer.js';
@@ -100,39 +97,21 @@ describe('AppSummaryComponent', () => {
 
 	it('should have variables defined', () => {
 		expect(this.component.subscriptions).toEqual(jasmine.any(Array));
-		expect(this.component.chartOptions).toEqual(jasmine.any(Object));
-		expect(this.component.chartOptions.chart).toBeDefined();
-		expect(this.component.chartOptions.chart).toEqual({
-			type: jasmine.any(String),
-			height: jasmine.any(Number),
-			donut: jasmine.any(Boolean),
-			x: jasmine.any(Function),
-			y: jasmine.any(Function),
-			showLabels: jasmine.any(Boolean),
-			labelSunbeamLayout: jasmine.any(Boolean),
-			pie: {
-				startAngle: jasmine.any(Function),
-				endAngle: jasmine.any(Function)
-			},
-			duration: jasmine.any(Number),
-			title: jasmine.any(String),
-			legend: {
-				margin: {
-					top: jasmine.any(Number),
-					right: jasmine.any(Number),
-					bottom: jasmine.any(Number),
-					left: jasmine.any(Number)
-				}
-			}
-		});
 		expect(this.component.appUsageData).toEqual(jasmine.any(Array));
+		expect(this.component.drawChart).toEqual(jasmine.any(Function));
 		expect(this.component.serverData).toEqual({
 			static: jasmine.any(Array),
 			dynamic: jasmine.any(Array)
 		});
 		expect(this.component.ws).toEqual(jasmine.any(WebSocket));
+		expect(this.component.errorMessage).toBeUndefined();
 		expect(this.component.getServerStaticData).toBeDefined();
 		expect(this.component.getPublicData).toBeDefined();
+		expect(this.component.userStatus).toBeDefined();
+		expect(this.component.getUserStatus).toBeDefined();
+		expect(this.component.generateKeypair).toBeDefined();
+		expect(this.component.showModal).toBeDefined();
+		expect(this.component.toggleModal).toBeDefined();
 		expect(this.component.ngOnInit).toBeDefined();
 		expect(this.component.ngOnDestroy).toBeDefined();
 	});
