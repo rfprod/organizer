@@ -39,6 +39,11 @@ export class AppDataComponent implements OnInit, OnDestroy {
 	public user: any = {};
 
 	/**
+	 * Exported passwords list.
+	 */
+	public exportedPasswords: string[] = [];
+
+	/**
 	 * UI error message.
 	 */
 	public errorMessage: string;
@@ -59,6 +64,25 @@ export class AppDataComponent implements OnInit, OnDestroy {
 				def.reject(false);
 			},
 			() => console.log('getUser done')
+		);
+		return def.promise;
+	}
+
+	/**
+	 * Get exported passwords list.
+	 */
+	public getExportedPasswordsList(): Promise<boolean> {
+		const def = new CustomDeferredService<boolean>();
+		this.userAPIService.listExportedPasswordFiles().subscribe(
+			(data: any) => {
+				this.exportedPasswords = data;
+				def.resolve(true);
+			},
+			(error: string) => {
+				this.errorMessage = error;
+				def.reject(false);
+			},
+			() => console.log('getExportedPasswordsList done')
 		);
 		return def.promise;
 	}
@@ -260,7 +284,9 @@ export class AppDataComponent implements OnInit, OnDestroy {
 		});
 		this.subscriptions.push(sub);
 
-		this.getUser().then(() => {
+		this.getUser()
+			.then(() => this.getExportedPasswordsList())
+			.then(() => {
 			console.log('all models updated');
 			this.emitter.emitSpinnerStopEvent();
 		});

@@ -2,6 +2,8 @@
 
 const fs = require('fs');
 
+const glob = require('glob');
+
 /**
  * User module.
  * @module app/users
@@ -127,6 +129,24 @@ module.exports = (cwd) => {
 				}
 				console.log('export success');
 				resolve({path: exportPath, passwords: passwords});
+			});
+		});
+	}
+
+	/**
+	 * @function listExportedPasswordFiles
+	 * @summary Lists exported user password files
+	 * @return {Promise} - object describing found files
+	 */
+	function listExportedPasswordFiles() {
+		return new Promise((resolve, reject) => {
+			glob('app/config/export.*.json', {}, (err, files) => {
+				if (err) {
+					console.log('error getting exports list');
+					reject(err);
+				}
+				console.log('esports list', files);
+				resolve(files);
 			});
 		});
 	}
@@ -296,6 +316,11 @@ module.exports = (cwd) => {
 		/**
 		 * Exports passwords, saves to a separate file.
 		 */
-		exportPasswords: exportPasswords
+		exportPasswords: exportPasswords,
+
+		/**
+		 * Lists password exports.
+		 */
+		listExportedPasswordFiles: listExportedPasswordFiles
 	};
 };

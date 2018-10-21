@@ -404,4 +404,24 @@ module.exports = function(app, cwd, fs, SrvInfo, appData, cryptoUtils) {
 				}
 			});
 	});
+
+	/**
+	 * Lists exported password files.
+	 * @name /api/user/passwords/exported list exported user passwords
+	 * @path {GET} /api/user/passwords/exported
+	 * @code {200}
+	 * @code {500} error listing user passwords
+	 * @response {object} - object with exported files info
+	 */
+	app.get('/api/user/passwords/list/exported', async(req, res) => {
+		appData.listExportedPasswordFiles()
+			.then((files) => {
+				console.log('exported password files', files);
+				res.json(files);
+			})
+			.catch((error) => {
+				console.log('error listing exported passwords', error);
+				res.status(400).json(error);
+			});
+	});
 };

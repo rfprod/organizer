@@ -30,7 +30,8 @@ export class UserAPIService {
 		generateKeypair: this.window.location.origin + '/api/user/rsa/generate' as string,
 		encryptPasswords: this.window.location.origin + '/api/user/rsa/encrypt' as string,
 		decryptPasswords: this.window.location.origin + '/api/user/rsa/decrypt' as string,
-		exportPasswords: this.window.location.origin + '/api/user/passwords/export' as string
+		exportPasswords: this.window.location.origin + '/api/user/passwords/export' as string,
+		listExportedPasswordFiles: this.window.location.origin + '/api/user/passwords/list/exported' as string
 	};
 
 	/**
@@ -149,6 +150,18 @@ export class UserAPIService {
 			timeout(10000),
 			take(1),
 			map(this.httpHandlers.extractObject),
+			catchError(this.httpHandlers.handleError)
+		);
+	}
+
+	/**
+	 * Lists exported passwords.
+	 */
+	public listExportedPasswordFiles(): Observable<any> {
+		return this.http.get(this.endpoints.listExportedPasswordFiles).pipe(
+			timeout(10000),
+			take(1),
+			map(this.httpHandlers.extractArray),
 			catchError(this.httpHandlers.handleError)
 		);
 	}

@@ -102,8 +102,8 @@
 	</h3>
 
 	<span fxFlex="100" fxLayout="row wrap">
-		<span fxFlex>
-			TODO: list exported passwords
+		<span fxFlex *ngFor="let filePath of exportedPasswords">
+			{{filePath}}
 		</span>
 	</span>
 </span>

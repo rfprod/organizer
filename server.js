@@ -243,7 +243,8 @@ const appData = {
 	saveKeys: Users.saveKeys,
 	addPassword: Users.addPassword,
 	deletePassword: Users.deletePassword,
-	exportPasswords: Users.exportPasswords
+	exportPasswords: Users.exportPasswords,
+	listExportedPasswordFiles: Users.listExportedPasswordFiles
 };
 /**
  * @name cryptoUtils
