@@ -95,37 +95,12 @@ const crypto = require('crypto');
 const keypair = require('keypair');
 
 /**
- * @name cluster
- * @constant
- * @summary NodeJS cluster
- * @description NodeJS cluster
- */
-const cluster = require('cluster');
-
-/**
- * @name os
- * @constant
- * @summary OS utility module
- * @description OS utility module
- */
-const os = require('os');
-
-/**
  * @name path
  * @constant
  * @summary Directory paths utility module
  * @description Directory paths utility module
  */
 const fs = require('fs');
-
-/**
- * @name clusterStop
- * @type {boolean}
- * @default {false}
- * @summary Indicates if cluster is stopped
- * @description Indicates if cluster is stopped, which prevents workers from spawning
- */
-let clusterStop = false;
 
 require('dotenv').config();
 
@@ -272,13 +247,7 @@ routes(app, cwd, fs, SrvInfo, appData, cryptoUtils);
  * @summary Application port
  * @description Application port
  */
-const port = process.env.PORT || 8079;
-/**
- * @name ip
- * @summary Application ip
- * @description Application ip
- */
-const ip = process.env.IP;
+const port = process.env.PORT || 8080;
 
 /**
  * @function terminator
@@ -288,14 +257,7 @@ const ip = process.env.IP;
 function terminator(sig) {
   if (typeof sig === 'string') {
     console.log(`\n${Date(Date.now())}: Received signal ${sig} - terminating app...\n`);
-    if (cluster.isMaster && !clusterStop) {
-      cluster.fork();
-    } else {
-      process.exit(0);
-      if (!cluster.isMaster) {
-        console.log(`${Date(Date.now())}: Node server stopped`);
-      }
-    }
+    process.exit(0);
   }
 }
 
@@ -326,31 +288,6 @@ function terminator(sig) {
   });
 })();
 
-if (cluster.isMaster && process.env.DEV_MODE === 'true') {
-  const workersCount = os.cpus().length;
-  console.log(`\n# > START > CLUSTER > Node.js listening on ${ip}:${port}...\n`);
-  console.log(`Cluster setup, workers count: ${workersCount}`);
-  for (let i = 0; i < workersCount; i++) {
-    console.log('Starting worker', i);
-    cluster.fork();
-  }
-  cluster.on('online', (worker, error) => {
-    if (error) throw error;
-    console.log('Worker pid', worker.process.pid, 'is online');
-  });
-  cluster.on('exit', (worker, code, signal) => {
-    console.log('Worker pid', worker.process.pid, 'exited with code', code, 'and signal', signal);
-    if (!clusterStop) {
-      console.log('Starting a new worker...');
-      cluster.fork();
-    }
-  });
-} else if (ip) {
-  app.listen(port, ip, () => {
-    console.log(`\n# > START > IP > Node.js listening on ${ip}:${port}...\n`);
-  });
-} else {
-  app.listen(port, () => {
-    console.log(`\n# > START > NO IP > Node.js listening on port ${port}...\n`);
-  });
-}
+app.listen(port, () => {
+  console.log(`\n# > START > NO IP > Node.js listening on port ${port}...\n`);
+});

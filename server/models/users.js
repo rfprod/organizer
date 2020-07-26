@@ -6,7 +6,7 @@ const glob = require('glob');
 
 /**
  * User module.
- * @module app/users
+ * @module server/users
  */
 
 module.exports = cwd => {
@@ -26,21 +26,21 @@ module.exports = cwd => {
   /**
    * User configuration file path.
    */
-  const userConfigPath = `${cwd}/app/config/user.json`;
+  const userConfigPath = `${cwd}/server/config/user.json`;
 
   /**
    * User exported passwords file path.
    */
-  const userPasswordsExportPath = () => `${cwd}/app/config/export.${new Date().getTime()}.json`;
+  const userPasswordsExportPath = () => `${cwd}/server/config/export.${new Date().getTime()}.json`;
 
   /**
    * User private RSA key file path.
    */
-  const userPrivateKeyPath = `${cwd}/app/config/rsa.private`;
+  const userPrivateKeyPath = `${cwd}/server/config/rsa.private`;
   /**
    * User public RSA key file path.
    */
-  const userPublicKeyPath = `${cwd}/app/config/rsa.public`;
+  const userPublicKeyPath = `${cwd}/server/config/rsa.public`;
 
   /**
    * @name handlers
@@ -141,7 +141,7 @@ module.exports = cwd => {
    */
   function listExportedPasswordFiles() {
     return new Promise((resolve, reject) => {
-      glob('app/config/export.*.json', {}, (err, files) => {
+      glob('server/config/export.*.json', {}, (err, files) => {
         if (err) {
           console.log('error getting exports list');
           reject(err);

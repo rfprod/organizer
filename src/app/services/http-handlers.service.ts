@@ -1,6 +1,6 @@
 import { HttpHeaderResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +13,6 @@ export class AppHttpHandlersService {
       ? `${error.status} - ${error.statusText}`
       : 'Server error';
     console.error(errMsg);
-    return caught;
+    return throwError(error);
   }
 }

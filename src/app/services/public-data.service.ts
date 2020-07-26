@@ -1,8 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { catchError, take, timeout } from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
 
-import { TIMEOUT } from '../utils/constants';
 import { WINDOW } from '../utils/injection-tokens';
 import { AppHttpHandlersService } from './http-handlers.service';
 
@@ -29,6 +28,6 @@ export class AppPublicDataService {
   public getData() {
     return this.http
       .get<{ key: string; y: number }[]>(this.endpoints.usage)
-      .pipe(timeout(TIMEOUT.LONG), take(1), catchError(this.httpHandlers.handleError));
+      .pipe(catchError(this.httpHandlers.handleError));
   }
 }

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, HostBinding, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostBinding } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { concatMap, tap } from 'rxjs/operators';
@@ -11,7 +11,7 @@ import { AppUserService, IAppUser } from '../../services/user.service';
   templateUrl: './initialize.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppInitializeComponent implements OnInit {
+export class AppInitializeComponent {
   constructor(
     private readonly fb: FormBuilder,
     private readonly router: Router,
@@ -64,26 +64,5 @@ export class AppInitializeComponent implements OnInit {
         )
         .subscribe();
     }
-  }
-
-  private checkUserStatus() {
-    return this.userApiService.getUserStatus().pipe(
-      tap(data => {
-        this.userStatus = data;
-      }),
-    );
-  }
-
-  public ngOnInit(): void {
-    this.userService.resetUser();
-    void this.checkUserStatus()
-      .pipe(
-        tap(data => {
-          if (data.initialized) {
-            void this.router.navigate(['login']);
-          }
-        }),
-      )
-      .subscribe();
   }
 }

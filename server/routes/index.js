@@ -27,17 +27,6 @@ module.exports = function (app, cwd, fs, SrvInfo, appData, cryptoUtils) {
   });
 
   /**
-   * Serves service worker on root path to capture root scope
-   * @name Service worker
-   * @path {GET} /service-worker.js
-   * @code {200}
-   * @response {js} service-worker.js Service worker
-   */
-  app.get('/service-worker.js', (req, res) => {
-    res.sendFile(cwd + '/dist/organizer/service-worker.js');
-  });
-
-  /**
    * Returns application build hashsum from .env file.
    * Is used by service worker when caching.
    * @name App-diag build hashsum

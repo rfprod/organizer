@@ -1,8 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { catchError, take, timeout } from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
 
-import { TIMEOUT } from '../utils/constants';
 import { WINDOW } from '../utils/injection-tokens';
 import { AppHttpHandlersService } from './http-handlers.service';
 import { IAppUser, IAppUserPassword } from './user.service';
@@ -38,11 +37,9 @@ export class AppUserApiService {
    * Gets user.
    */
   public getUser() {
-    return this.http.get<IAppUser>(this.endpoints.user).pipe(
-      timeout(TIMEOUT.LONG),
-      take(1),
-      catchError((e, c) => this.httpHandlers.handleError<IAppUser>(e, c)),
-    );
+    return this.http
+      .get<IAppUser>(this.endpoints.user)
+      .pipe(catchError((e, c) => this.httpHandlers.handleError<IAppUser>(e, c)));
   }
 
   /**
@@ -51,7 +48,7 @@ export class AppUserApiService {
   public getUserStatus() {
     return this.http
       .get<IAppUser['status']>(this.endpoints.status)
-      .pipe(timeout(TIMEOUT.LONG), take(1), catchError(this.httpHandlers.handleError));
+      .pipe(catchError(this.httpHandlers.handleError));
   }
 
   /**
@@ -60,7 +57,7 @@ export class AppUserApiService {
   public login(formData: Partial<IAppUser>) {
     return this.http
       .post<{ token: string }>(this.endpoints.login, formData)
-      .pipe(timeout(TIMEOUT.LONG), take(1), catchError(this.httpHandlers.handleError));
+      .pipe(catchError(this.httpHandlers.handleError));
   }
 
   /**
@@ -69,7 +66,7 @@ export class AppUserApiService {
   public configUser(formData: Record<string, unknown>) {
     return this.http
       .post(this.endpoints.config, formData)
-      .pipe(timeout(TIMEOUT.LONG), take(1), catchError(this.httpHandlers.handleError));
+      .pipe(catchError(this.httpHandlers.handleError));
   }
 
   /**
@@ -78,7 +75,7 @@ export class AppUserApiService {
   public addPassword(formData: Partial<IAppUserPassword>) {
     return this.http
       .post(this.endpoints.addPassword, formData)
-      .pipe(timeout(TIMEOUT.LONG), take(1), catchError(this.httpHandlers.handleError));
+      .pipe(catchError(this.httpHandlers.handleError));
   }
 
   /**
@@ -87,7 +84,7 @@ export class AppUserApiService {
   public deletePassword(formData: IAppUserPassword) {
     return this.http
       .post(this.endpoints.deletePassword, formData)
-      .pipe(timeout(TIMEOUT.LONG), take(1), catchError(this.httpHandlers.handleError));
+      .pipe(catchError(this.httpHandlers.handleError));
   }
 
   /**
@@ -96,7 +93,7 @@ export class AppUserApiService {
   public generateKeypair() {
     return this.http
       .get(this.endpoints.generateKeypair)
-      .pipe(timeout(TIMEOUT.LONG), take(1), catchError(this.httpHandlers.handleError));
+      .pipe(catchError(this.httpHandlers.handleError));
   }
 
   /**
@@ -105,7 +102,7 @@ export class AppUserApiService {
   public encryptPasswords() {
     return this.http
       .get(this.endpoints.encryptPasswords)
-      .pipe(timeout(TIMEOUT.LONG), take(1), catchError(this.httpHandlers.handleError));
+      .pipe(catchError(this.httpHandlers.handleError));
   }
 
   /**
@@ -114,7 +111,7 @@ export class AppUserApiService {
   public decryptPasswords() {
     return this.http
       .get(this.endpoints.decryptPasswords)
-      .pipe(timeout(TIMEOUT.LONG), take(1), catchError(this.httpHandlers.handleError));
+      .pipe(catchError(this.httpHandlers.handleError));
   }
 
   /**
@@ -123,7 +120,7 @@ export class AppUserApiService {
   public exportPasswords() {
     return this.http
       .get(this.endpoints.exportPasswords)
-      .pipe(timeout(TIMEOUT.LONG), take(1), catchError(this.httpHandlers.handleError));
+      .pipe(catchError(this.httpHandlers.handleError));
   }
 
   /**
@@ -132,6 +129,6 @@ export class AppUserApiService {
   public listExportedPasswordFiles() {
     return this.http
       .get(this.endpoints.listExportedPasswordFiles)
-      .pipe(timeout(TIMEOUT.LONG), take(1), catchError(this.httpHandlers.handleError));
+      .pipe(catchError(this.httpHandlers.handleError));
   }
 }
