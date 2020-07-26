@@ -1,0 +1,153 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "organizer": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/organizer",
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "tsconfig.app.json",
+            "aot": true,
+            "assets": ["src/favicon.ico", "src/assets"],
+            "styles": [
+              "node_modules/roboto-fontface/css/roboto/roboto-fontface.css",
+              "node_modules/material-design-icon-fonts/iconfont/material-icons.css",
+              "node_modules/components-font-awesome/css/all.css",
+              "src/styles.scss"
+            ],
+            "scripts": ["src/assets/js/electron-preload.js"],
+            "allowedCommonJsDependencies": ["node_modules/hammerjs/hammer.js"]
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "organizer:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "organizer:build:production"
+            }
+          }
+        },
+        "cypress-open": {
+          "builder": "@briebug/cypress-schematic:cypress",
+          "configurations": {
+            "production": {
+              "devServerTarget": "organizer:serve:production"
+            }
+          },
+          "options": {
+            "devServerTarget": "organizer:serve",
+            "headless": false,
+            "tsConfig": "cypress/tsconfig.e2e.json",
+            "watch": true
+          }
+        },
+        "cypress-run": {
+          "builder": "@briebug/cypress-schematic:cypress",
+          "configurations": {
+            "production": {
+              "devServerTarget": "organizer:serve:production"
+            }
+          },
+          "options": {
+            "devServerTarget": "organizer:serve",
+            "tsConfig": "cypress/tsconfig.e2e.json"
+          }
+        },
+        "e2e": {
+          "builder": "@briebug/cypress-schematic:cypress",
+          "configurations": {
+            "production": {
+              "devServerTarget": "organizer:serve:production"
+            }
+          },
+          "options": {
+            "devServerTarget": "organizer:serve",
+            "headless": false,
+            "tsConfig": "cypress/tsconfig.e2e.json",
+            "watch": true
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "organizer:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-builders/jest:run",
+          "options": {
+            "collectCoverage": true,
+            "jestConfig": "src/jest.config.js",
+            "passWithNoTests": true,
+            "scripts": [],
+            "setupFile": "src/test-setup.ts",
+            "styles": [
+              "node_modules/roboto-fontface/css/roboto/roboto-fontface.css",
+              "node_modules/material-design-icon-fonts/iconfont/material-icons.css",
+              "node_modules/components-font-awesome/css/all.css",
+              "src/styles.scss"
+            ],
+            "tsConfig": "src/tsconfig.spec.json"
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "eslintConfig": "src/.eslintrc",
+            "tsConfig": ["tsconfig.app.json", "tsconfig.spec.json", "cypress/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**", "!src/**/*.ts"]
+          }
+        }
+      }
+    }
+  },
+  "defaultProject": "organizer"
+}

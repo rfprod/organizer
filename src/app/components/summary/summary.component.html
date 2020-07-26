@@ -1,0 +1,69 @@
+<p fxFlex="100">
+  {{ 'description' | translate }}
+  <button mat-icon-button (click)="toggleModal()" matTooltip="{{ 'diag' | translate }}">
+    <mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-cogs"></mat-icon>
+  </button>
+</p>
+
+<div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="center start">
+  <span fxFlex="100" fxLayout="row" fxLayoutAlign="center start">
+    <span fxFlex="0 1 auto">user sessions</span>
+  </span>
+  <span fxFlex="0 1 auto">
+    <canvas #canvas></canvas>
+  </span>
+</div>
+
+<span fxFlex="100" fxFlexAlign="stretch" fxLayout="row wrap" fxLayoutAligh="start stretch">
+  <span fxFlex fxLayout="row" fxLayoutAlign="center center">
+    <span fxFlex="0 1 auto">{{ 'initialized' | translate }}: {{ userStatus.initialized }}</span>
+  </span>
+  <span fxFlex fxLayout="row" fxLayoutAlign="center center">
+    <span fxFlex="0 1 auto">{{ 'encryption' | translate }}: {{ userStatus.encryption }}</span>
+    <button mat-icon-button *ngIf="!userStatus.encryption" color="warn" (click)="generateKeypair()">
+      <mat-icon
+        class="material-icons"
+        matTooltip="{{ 'generateKeypair' | translate }}"
+        matTooltipPosition="above"
+        >enhanced_encryption</mat-icon
+      >
+    </button>
+  </span>
+  <span fxFlex fxLayout="row" fxLayoutAlign="center center">
+    <span fxFlex="0 1 auto">{{ 'passwordsCount' | translate }}: {{ userStatus.passwords }}</span>
+  </span>
+</span>
+
+<span id="modal" *ngIf="showModal" fxLayout="row wrap" fxLayoutAligh="start stretch">
+  <span fxFlex="100" fxLayout="row" fxLayoutAligh="start stretch">
+    <h4 fxFlex="1 1 auto">{{ 'diag' | translate }}</h4>
+    <span fxFlex="0 1 auto">
+      <button mat-icon-button (click)="toggleModal()">
+        <mat-icon class="material-icons">close</mat-icon>
+      </button>
+    </span>
+  </span>
+
+  <span fxFlex="100" fxLayout="row wrap" fxLayoutAligh="start stretch">
+    <span
+      fxFlex="100"
+      *ngFor="let unit of serverData.static"
+      fxLayout="row wrap"
+      fxLayoutAligh="center stretch"
+    >
+      <span fxFlex="50">{{ unit.name }}</span>
+      <span fxFlex="50">{{ unit.value }}</span>
+      <hr fxFlex />
+    </span>
+    <span
+      fxFlex="100"
+      *ngFor="let unit of serverData.dynamic"
+      fxLayout="row wrap"
+      fxLayoutAligh="start stretch"
+    >
+      <span fxFlex="50">{{ unit.name }}</span>
+      <span fxFlex="50">{{ unit.value }}</span>
+      <hr fxFlex />
+    </span>
+  </span>
+</span>

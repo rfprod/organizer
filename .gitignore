@@ -1,34 +1,9 @@
-# dependencies
-node_modules/
+# See http://help.github.com/ignore-files/ for more about ignoring files.
 
 # environment variables and logs
 *.env
 .*.env
 *.log
-
-# logs
-*.log
-logs/*
-!logs/*.gitkeep
-
-# compiled client app
-public/app/*.js
-public/app/*.js.map
-public/app/**/*.js
-public/app/**/*.js.map
-
-# compiled client tests
-test/client/*.js
-test/client/*.js.map
-test/client/**/*.js
-test/client/**/*.js.map
-
-# built client app files
-public/js/*.min.js
-public/css/*.min.css
-public/webfonts/*.*
-!public/webfonts/*.gitkeep
-public/SHA1SUMS.json
 
 # sessions storage
 sessions/*.*
@@ -38,6 +13,51 @@ sessions/*.*
 desktop/
 
 # user config except js files
-app/config/*.*
-!app/config/*.gitkeep
-!app/config/*.js
+server/config/*.*
+!server/config/*.gitkeep
+!server/config/*.js
+
+# compiled output
+/dist
+/tmp
+/out-tsc
+# Only exists if Bazel was run
+/bazel-out
+
+# dependencies
+/node_modules
+
+# profiling files
+chrome-profiler-events*.json
+speed-measure-plugin*.json
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+# misc
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+yarn-error.log
+testem.log
+/typings
+
+# System Files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,162 @@
+<mat-toolbar color="primary" fxLayoutGap="10px">
+  <mat-icon
+    class="material-icons"
+    [fxHide.sm]="true"
+    [fxHide.md]="true"
+    [fxHide.lg]="true"
+    matTooltip="{{ 'title' | translate }}"
+    matTooltipPosition="after"
+  >
+    lock
+  </mat-icon>
+  <span
+    fxFlex="0 1 auto"
+    fxLayout="row"
+    fxLayoutAligh="center center"
+    fxLayoutGap="10px"
+    [fxHide.xs]="true"
+  >
+    <h1 fxFlex>
+      {{ 'title' | translate }}
+    </h1>
+  </span>
+
+  <span fxFlex="1 1 auto" fxLayout="row" fxLayoutAligh="center center"> </span>
+
+  <span fxFlex="0 1 auto">
+    <button
+      mat-button
+      [routerLink]="['login']"
+      routerLinkActive
+      #rlaIndex="routerLinkActive"
+      [disabled]="rlaIndex.isActive"
+      [color]="rlaIndex.isActive ? 'accent' : null"
+      [fxHide.xs]="true"
+      [fxHide.sm]="true"
+      *ngIf="!isLoggedIn()"
+    >
+      <mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-sign-in-alt"></mat-icon>
+      {{ 'login' | translate }}
+    </button>
+
+    <button
+      mat-button
+      [routerLink]="['summary']"
+      routerLinkActive
+      #rlaIndex="routerLinkActive"
+      [disabled]="rlaIndex.isActive"
+      [color]="rlaIndex.isActive ? 'accent' : null"
+      [fxHide.xs]="true"
+      [fxHide.sm]="true"
+      *ngIf="isLoggedIn()"
+    >
+      <mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-columns"></mat-icon>
+      {{ 'summary' | translate }}
+    </button>
+    <button
+      mat-button
+      [routerLink]="['data']"
+      routerLinkActive
+      #rlaIndex="routerLinkActive"
+      [disabled]="rlaIndex.isActive"
+      [color]="rlaIndex.isActive ? 'accent' : null"
+      [fxHide.xs]="true"
+      [fxHide.sm]="true"
+      *ngIf="isLoggedIn()"
+    >
+      <mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-database"></mat-icon>
+      {{ 'data' | translate }}
+    </button>
+
+    <button
+      mat-button
+      (click)="logOut()"
+      [fxHide.xs]="true"
+      [fxHide.sm]="true"
+      *ngIf="isLoggedIn()"
+    >
+      <mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-sign-out-alt"></mat-icon>
+      {{ 'logout' | translate }}
+    </button>
+
+    <button mat-button [matMenuTriggerFor]="languageMenu" [fxHide.xs]="true" [fxHide.sm]="true">
+      <mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-globe"></mat-icon>
+      {{ 'language' | translate }}
+    </button>
+    <mat-menu #languageMenu="matMenu" [fxHide.xs]="true" [fxHide.sm]="true">
+      <ng-template matMenuContent>
+        <button
+          mat-menu-item
+          *ngFor="let lang of supportedLanguages"
+          color="isLanguageSelected(lang.key) ? 'accent' : null"
+          (click)="selectLanguage(lang.key)"
+        >
+          {{ lang.name }}
+        </button>
+      </ng-template>
+    </mat-menu>
+
+    <button mat-icon-button [matMenuTriggerFor]="mobileMenu" [fxHide.md]="true" [fxHide.lg]="true">
+      <mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-ellipsis-v"></mat-icon>
+    </button>
+    <mat-menu #mobileMenu="matMenu" [fxHide.md]="true" [fxHide.lg]="true">
+      <ng-template matMenuContent>
+        <button
+          mat-menu-item
+          [routerLink]="['login']"
+          routerLinkActive
+          #rlaIndex="routerLinkActive"
+          [disabled]="rlaIndex.isActive"
+          *ngIf="!isLoggedIn()"
+        >
+          <mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-sign-in-alt"></mat-icon>
+          {{ 'login' | translate }}
+        </button>
+
+        <button
+          mat-menu-item
+          [routerLink]="['summary']"
+          routerLinkActive
+          #rlaIndex="routerLinkActive"
+          [disabled]="rlaIndex.isActive"
+          *ngIf="isLoggedIn()"
+        >
+          <mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-columns"></mat-icon>
+          {{ 'summary' | translate }}
+        </button>
+        <button
+          mat-menu-item
+          [routerLink]="['data']"
+          routerLinkActive
+          #rlaIndex="routerLinkActive"
+          [disabled]="rlaIndex.isActive"
+          *ngIf="isLoggedIn()"
+        >
+          <mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-database"></mat-icon>
+          {{ 'data' | translate }}
+        </button>
+
+        <hr />
+
+        <button (click)="logOut()" mat-menu-item *ngIf="isLoggedIn()">
+          <mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-sign-out-alt"></mat-icon>
+          {{ 'logout' | translate }}
+        </button>
+        <hr *ngIf="isLoggedIn()" />
+
+        <span mat-menu-item disabled="true">
+          <mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-globe"></mat-icon>
+          {{ 'language' | translate }}
+        </span>
+        <button
+          mat-button
+          *ngFor="let lang of supportedLanguages"
+          [color]="isLanguageSelected(lang.key) ? 'accent' : null"
+          (click)="selectLanguage(lang.key)"
+        >
+          {{ lang.name }}
+        </button>
+      </ng-template>
+    </mat-menu>
+  </span>
+</mat-toolbar>
