@@ -1,0 +1,10 @@
+/* To learn more about this file see: https://angular.io/config/tsconfig. */
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": ".../out-tsc/spec",
+    "types": ["jest", "node"]
+  },
+  "files": ["./test-setup.ts", "./polyfills.ts"],
+  "include": ["app/**/*.spec.ts", "app/**/*.d.ts"]
+}

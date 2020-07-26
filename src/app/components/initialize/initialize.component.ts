@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, HostBinding, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { concatMap, tap } from 'rxjs/operators';
 
@@ -16,42 +16,37 @@ export class AppInitializeComponent implements OnInit {
     private readonly fb: FormBuilder,
     private readonly router: Router,
     private readonly userService: AppUserService,
-    private readonly userAPIService: AppUserApiService,
+    private readonly userApiService: AppUserApiService,
   ) {}
 
   @HostBinding('class.mat-body-1') protected matBody1 = true;
 
-  public initForm: FormGroup;
+  public initForm = this.fb.group({
+    email: ['', Validators.compose([Validators.required, Validators.email])],
+    password: [
+      '',
+      Validators.compose([
+        Validators.required,
+        Validators.pattern(/[a-z]+/),
+        Validators.pattern(/[A-Z]+/),
+        Validators.pattern(/\d+/),
+      ]),
+    ],
+  });
 
   public userStatus: IAppUser['status'];
-
-  public resetForm(): void {
-    this.initForm = this.fb.group({
-      email: ['', Validators.compose([Validators.required, Validators.email])],
-      password: [
-        '',
-        Validators.compose([
-          Validators.required,
-          Validators.pattern(/[a-z]+/),
-          Validators.pattern(/[A-Z]+/),
-          Validators.pattern(/\d+/),
-        ]),
-      ],
-    });
-    this.userService.resetUser();
-  }
 
   public submitForm(): void {
     if (this.initForm.valid) {
       const formData = this.initForm.value;
-      void this.userAPIService
+      void this.userApiService
         .configUser(formData)
         .pipe(
           concatMap(() => {
             this.userService.saveUser({ email: this.initForm.controls.email.value });
             // make subsequent login request for user after successful initialization request
             const authFormData = this.initForm.value;
-            return this.userAPIService.login(authFormData).pipe(
+            return this.userApiService.login(authFormData).pipe(
               tap(
                 authData => {
                   this.userService.saveUser({
@@ -72,7 +67,7 @@ export class AppInitializeComponent implements OnInit {
   }
 
   private checkUserStatus() {
-    return this.userAPIService.getUserStatus().pipe(
+    return this.userApiService.getUserStatus().pipe(
       tap(data => {
         this.userStatus = data;
       }),
@@ -80,7 +75,7 @@ export class AppInitializeComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.resetForm();
+    this.userService.resetUser();
     void this.checkUserStatus()
       .pipe(
         tap(data => {

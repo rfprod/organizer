@@ -2,10 +2,9 @@ export const LANG_RU_NAME = 'ru';
 
 // keys map for Russian language
 export const LANG_RU_TRANSLATIONS = {
-  title: 'Менеджер Паролей',
+  title: 'Органайзер Паролей',
   description: 'Хранилище паролей с возможным шифрованием',
 
-  toggleServiceWorker: 'Переключить Сервисного Рабочего',
   language: 'Язык',
 
   initialization: 'Инициализация пользовательской учётной записи',

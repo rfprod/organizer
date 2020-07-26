@@ -129,7 +129,7 @@ let clusterStop = false;
 
 require('dotenv').config();
 
-process.title = 'passmngr';
+process.title = 'organizer';
 
 /**
  * @name cwd

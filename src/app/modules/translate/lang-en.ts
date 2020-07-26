@@ -2,10 +2,9 @@ export const LANG_EN_NAME = 'en';
 
 // keys map for English language
 export const LANG_EN_TRANSLATIONS = {
-  title: 'Password Manager',
+  title: 'Passwords Organizer',
   description: 'Passwords storage with optional encryption',
 
-  toggleServiceWorker: 'Toggle Service Worker',
   language: 'Language',
 
   initialization: 'User account initialization',

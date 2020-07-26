@@ -21,7 +21,7 @@
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
-            "tsConfig": "tsconfig.app.json",
+            "tsConfig": "src/tsconfig.app.json",
             "aot": true,
             "assets": ["src/favicon.ico", "src/assets"],
             "styles": [
@@ -142,7 +142,11 @@
           "builder": "@angular-eslint/builder:lint",
           "options": {
             "eslintConfig": "src/.eslintrc",
-            "tsConfig": ["tsconfig.app.json", "tsconfig.spec.json", "cypress/tsconfig.e2e.json"],
+            "tsConfig": [
+              "src/tsconfig.app.json",
+              "src/tsconfig.spec.json",
+              "cypress/tsconfig.e2e.json"
+            ],
             "exclude": ["**/node_modules/**", "!src/**/*.ts"]
           }
         }
