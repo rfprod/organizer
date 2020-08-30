@@ -13,10 +13,14 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [12.x]
+        node-version: [14.x]
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout sources
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Get variables (yarn cache directory path, commit hash)
         id: get-variables
@@ -43,8 +47,18 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - run: yarn install --frozen-lockfile
-      - run: npm i -g typescript @angular/cli
-      - run: ng lint
-      - run: ng test --passWithNoTests --coverage=false --watch=false --maxWorkers=2 --ci --updateSnapshot
-      - run: ng build
+
+      - name: Install global dependencies
+        run: npm i -g typescript @angular/cli
+
+      - name: Install project dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Lint
+        run: ng lint
+
+      - name: Test
+        run: ng test --passWithNoTests --coverage=false --watch=false --maxWorkers=2 --ci --updateSnapshot
+
+      - name: Build
+        run: ng build

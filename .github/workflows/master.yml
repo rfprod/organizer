@@ -8,12 +8,12 @@ on:
     branches: [master]
 
 jobs:
-  build-test:
+  test-build-deploy:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [12.x]
+        node-version: [14.x]
 
     steps:
       - name: Checkout sources
@@ -22,12 +22,12 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
 
-      - name: Get yarn cache directory path and commit hash
+      - name: Get variables (yarn cache directory path, commit hash)
         id: get-variables
         shell: bash
         run: echo "::set-output name=yarncachedir::$(yarn cache dir)"; echo "::set-output name=commitsha::$(echo ${GITHUB_SHA})"
 
-      - name: Yarn/npm + Jest cache
+      - name: Workspace cache (npm, yarn, jest)
         uses: actions/cache@v2
         id: workspace-cache # use this to check for `cache-hit` (`steps.workspace-cache.outputs.cache-hit != 'true'`)
         env:
@@ -47,8 +47,18 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - run: npm i -g typescript @angular/cli
-      - run: yarn install --frozen-lockfile
-      - run: ng lint
-      - run: ng test --passWithNoTests --coverage=false --watch=false --maxWorkers=2 --ci --updateSnapshot
-      - run: ng build
+
+      - name: Install global dependencies
+        run: npm i -g typescript @angular/cli
+
+      - name: Install project dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Lint
+        run: ng lint
+
+      - name: Test
+        run: ng test --passWithNoTests --coverage=false --watch=false --maxWorkers=2 --ci --updateSnapshot
+
+      - name: Build
+        run: ng build
