@@ -1,5 +1,8 @@
 # Organizer
 
+![PR validation](https://github.com/rfprod/organizer/workflows/PR%20validation/badge.svg)
+![Master](https://github.com/rfprod/organizer/workflows/Master/badge.svg)
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 10.0.4.
 
 ## Development server
