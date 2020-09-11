@@ -8,8 +8,9 @@
     "build:app:prod": "ng build --project organizer --prod",
     "build:app:stats": "ng build --stats-json --project organizer --configuration analyze-bundle",
     "build:electron": "electron-builder",
+    "build:electron:all": "electron-builder -mwl",
     "build:electron:mac": "electron-builder --macos",
-    "build:electron:nix": "electron-builder --linux",
+    "build:electron:nix": "electron-builder --linux deb tar.xz",
     "build:electron:win": "electron-builder --windows",
     "compodoc:generate": "compodoc -p src/tsconfig.app.json",
     "compodoc:generate:report": "compodoc -p src/tsconfig.app.json && cp -r ./documentation ./dist/documentation",
@@ -143,11 +144,5 @@
   "engines": {
     "node": ">=14.8.0",
     "npm": ">=6.14.8"
-  },
-  "build": {
-    "appId": "com.organizer.app",
-    "mac": {
-      "category": "organizer"
-    }
   }
 }
