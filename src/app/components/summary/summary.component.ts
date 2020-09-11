@@ -78,50 +78,52 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
    */
   public drawChart(): void {
     const context = this.canvas.nativeElement.getContext('2d');
-    const width = this.canvas.nativeElement.width;
-    const height = this.canvas.nativeElement.height;
-    const divisor = 2;
-    const radius = Math.min(width, height) / divisor;
+    if (context !== null) {
+      const width = this.canvas.nativeElement.width;
+      const height = this.canvas.nativeElement.height;
+      const divisor = 2;
+      const radius = Math.min(width, height) / divisor;
 
-    const createArc = arc()
-      .outerRadius(radius - 10)
-      .innerRadius(0)
-      .context(context);
+      const createArc = arc()
+        .outerRadius(radius - 10)
+        .innerRadius(0)
+        .context(context);
 
-    const createLabel = arc()
-      .outerRadius(radius - 40)
-      .innerRadius(radius - 40)
-      .context(context);
+      const createLabel = arc()
+        .outerRadius(radius - 40)
+        .innerRadius(radius - 40)
+        .context(context);
 
-    const createPieChart = pie()
-      .sort(null)
-      .value(d => ((d as unknown) as { y: number }).y);
+      const createPieChart = pie()
+        .sort(null)
+        .value(d => ((d as unknown) as { y: number }).y);
 
-    context.translate(width / divisor, height / divisor);
+      context.translate(width / divisor, height / divisor);
 
-    const arcs = createPieChart([0], this.appUsageData);
+      const arcs = createPieChart([0], this.appUsageData);
 
-    const colors = ['#98abc5', '#8a89a6', '#7b6888', '#6b486b', '#a05d56', '#d0743c', '#ff8c00'];
+      const colors = ['#98abc5', '#8a89a6', '#7b6888', '#6b486b', '#a05d56', '#d0743c', '#ff8c00'];
 
-    arcs.forEach((d, i) => {
+      arcs.forEach((d, i) => {
+        context.beginPath();
+        createArc((d as unknown) as DefaultArcObject);
+        context.fillStyle = colors[i < colors.length ? i : Math.ceil(i % colors.length)];
+        context.fill();
+      });
+
       context.beginPath();
-      createArc((d as unknown) as DefaultArcObject);
-      context.fillStyle = colors[i < colors.length ? i : Math.ceil(i % colors.length)];
-      context.fill();
-    });
+      arcs.forEach(d => createArc);
+      context.strokeStyle = '#fff';
+      context.stroke();
 
-    context.beginPath();
-    arcs.forEach(d => createArc);
-    context.strokeStyle = '#fff';
-    context.stroke();
-
-    context.textAlign = 'center';
-    context.textBaseline = 'middle';
-    context.fillStyle = '#000';
-    arcs.forEach(d => {
-      const c = createLabel.centroid((d as unknown) as DefaultArcObject);
-      context.fillText(((d.data as unknown) as { key: string }).key, c[0], c[1]);
-    });
+      context.textAlign = 'center';
+      context.textBaseline = 'middle';
+      context.fillStyle = '#000';
+      arcs.forEach(d => {
+        const c = createLabel.centroid((d as unknown) as DefaultArcObject);
+        context.fillText(((d.data as unknown) as { key: string }).key, c[0], c[1]);
+      });
+    }
   }
 
   /**

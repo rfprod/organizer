@@ -112,7 +112,7 @@ function createWindow() {
     resizable: true,
     webPreferences: {
       nodeIntegration: false, // if set to true, breaks client: d3, nv, nvd3
-      preload: './assets/js/electron.preload.js', // restores node globals
+      preload: './src/assets/js/electron.preload.js', // restores node globals
       webSecurity: true,
     },
   });
@@ -120,7 +120,7 @@ function createWindow() {
   // win.maximize();
 
   // and load the index.html of the app.
-  win.loadURL('http://localhost:8079');
+  win.loadURL('http://localhost:8080');
 
   // Open the DevTools.
   // win.webContents.openDevTools();

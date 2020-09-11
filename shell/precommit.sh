@@ -41,7 +41,7 @@ lint() {
     ${DEFAULT}\n\n" "$TITLE"
 
   ng lint || exitWithError
-  yarn prettier:html || exitWithError
+  yarn lint:html || exitWithError
   yarn stylelint || exitWithError
 }
 

@@ -1,109 +1,87 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
-  "version": 1,
+  "defaultProject": "organizer",
   "newProjectRoot": "projects",
   "projects": {
     "organizer": {
-      "projectType": "application",
-      "schematics": {
-        "@schematics/angular:component": {
-          "style": "scss"
-        }
-      },
-      "root": "",
-      "sourceRoot": "src",
-      "prefix": "app",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
-          "options": {
-            "outputPath": "dist/organizer",
-            "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
-            "tsConfig": "src/tsconfig.app.json",
-            "aot": true,
-            "assets": ["src/favicon.ico", "src/assets"],
-            "styles": [
-              "node_modules/roboto-fontface/css/roboto/roboto-fontface.css",
-              "node_modules/material-design-icon-fonts/iconfont/material-icons.css",
-              "node_modules/components-font-awesome/css/all.css",
-              "src/styles.scss"
-            ],
-            "scripts": [],
-            "allowedCommonJsDependencies": ["node_modules/hammerjs/hammer.js"]
-          },
           "configurations": {
-            "production": {
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
-                }
-              ],
-              "optimization": true,
-              "outputHashing": "all",
-              "sourceMap": false,
-              "extractCss": true,
-              "namedChunks": false,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
+            "electron": {
               "budgets": [
                 {
-                  "type": "initial",
+                  "maximumError": "5mb",
                   "maximumWarning": "2mb",
-                  "maximumError": "5mb"
+                  "type": "initial"
                 },
                 {
-                  "type": "anyComponentStyle",
+                  "maximumError": "10kb",
                   "maximumWarning": "6kb",
-                  "maximumError": "10kb"
+                  "type": "anyComponentStyle"
                 }
-              ]
-            },
-            "electron": {
-              "scripts": ["src/assets/js/electron-preload.js"],
+              ],
+              "buildOptimizer": true,
+              "extractCss": true,
+              "extractLicenses": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.electron.ts"
                 }
               ],
+              "namedChunks": false,
+              "optimization": true,
+              "outputHashing": "all",
+              "scripts": ["src/assets/js/electron-preload.js"],
+              "sourceMap": false,
+              "vendorChunk": false
+            },
+            "production": {
+              "budgets": [
+                {
+                  "maximumError": "5mb",
+                  "maximumWarning": "2mb",
+                  "type": "initial"
+                },
+                {
+                  "maximumError": "10kb",
+                  "maximumWarning": "6kb",
+                  "type": "anyComponentStyle"
+                }
+              ],
+              "buildOptimizer": true,
+              "extractCss": true,
+              "extractLicenses": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
+              "namedChunks": false,
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
-              "namedChunks": false,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "5mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "6kb",
-                  "maximumError": "10kb"
-                }
-              ]
+              "vendorChunk": false
             }
-          }
-        },
-        "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
-          "options": {
-            "baseHref": "/",
-            "browserTarget": "organizer:build",
-            "proxyConfig": "proxy.conf.json"
           },
-          "configurations": {
-            "production": {
-              "browserTarget": "organizer:build:production"
-            }
+          "options": {
+            "allowedCommonJsDependencies": ["node_modules/hammerjs/hammer.js"],
+            "aot": true,
+            "assets": ["src/favicon.ico", "src/assets"],
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "outputPath": "dist/organizer",
+            "polyfills": "src/polyfills.ts",
+            "scripts": [],
+            "styles": [
+              "node_modules/roboto-fontface/css/roboto/roboto-fontface.css",
+              "node_modules/material-design-icon-fonts/iconfont/material-icons.css",
+              "node_modules/components-font-awesome/css/all.css",
+              "src/styles.scss"
+            ],
+            "tsConfig": "src/tsconfig.app.json"
           }
         },
         "cypress-open": {
@@ -146,10 +124,39 @@
             "watch": true
           }
         },
+        "e2e-lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "eslintConfig": "cypress/.eslintrc",
+            "exclude": ["**/node_modules/**", "!cypress/**/*.ts"],
+            "lintFilePatterns": ["cypress/**/*.ts"]
+          }
+        },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
             "browserTarget": "organizer:build"
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "eslintConfig": "src/.eslintrc",
+            "exclude": ["**/node_modules/**", "!src/**/*.ts"],
+            "lintFilePatterns": ["src/**/*.ts"]
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "browserTarget": "organizer:build:production"
+            }
+          },
+          "options": {
+            "baseHref": "/",
+            "browserTarget": "organizer:build",
+            "proxyConfig": "proxy.conf.json"
           }
         },
         "test": {
@@ -168,21 +175,18 @@
             ],
             "tsConfig": "src/tsconfig.spec.json"
           }
-        },
-        "lint": {
-          "builder": "@angular-eslint/builder:lint",
-          "options": {
-            "eslintConfig": "src/.eslintrc",
-            "tsConfig": [
-              "src/tsconfig.app.json",
-              "src/tsconfig.spec.json",
-              "cypress/tsconfig.e2e.json"
-            ],
-            "exclude": ["**/node_modules/**", "!src/**/*.ts"]
-          }
         }
-      }
+      },
+      "prefix": "app",
+      "projectType": "application",
+      "root": "",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "sourceRoot": "src"
     }
   },
-  "defaultProject": "organizer"
+  "version": 1
 }

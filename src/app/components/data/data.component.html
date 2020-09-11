@@ -88,7 +88,7 @@
           matInput
           type="text"
           name="name"
-          [formControl]="passwordForm.controls.name"
+          formControlName="name"
           placeholder="{{ 'name' | translate }}"
           required
         />
@@ -105,7 +105,7 @@
           matInput
           type="text"
           name="password"
-          [formControl]="passwordForm.controls.password"
+          formControlName="password"
           placeholder="{{ 'password' | translate }}"
           required
         />

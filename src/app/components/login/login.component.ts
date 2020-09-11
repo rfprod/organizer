@@ -1,40 +1,44 @@
-import { ChangeDetectionStrategy, Component, HostBinding } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, HostBinding, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
 
 import { AppUserApiService } from '../../services/user-api.service';
 import { AppUserService } from '../../services/user.service';
 
+const passwordMinLength = 3;
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppLoginComponent {
+export class AppLoginComponent implements OnInit {
   constructor(
     private readonly fb: FormBuilder,
     private readonly router: Router,
     private readonly userService: AppUserService,
     private readonly userAPIService: AppUserApiService,
-  ) {
-    const restoredModel = this.userService.getUser();
-    const passwordMinLength = 3;
-    this.loginForm = this.fb.group({
-      email: [restoredModel.email, Validators.compose([Validators.required, Validators.email])],
-      password: [
-        '',
-        Validators.compose([Validators.required, Validators.minLength(passwordMinLength)]),
-      ],
-    });
-  }
+  ) {}
 
   @HostBinding('class.mat-body-1') protected matBody1 = true;
 
   /**
    * Login form.
    */
-  public loginForm: FormGroup;
+  public loginForm = this.fb.group({
+    email: ['', Validators.compose([Validators.required, Validators.email])],
+    password: [
+      '',
+      Validators.compose([Validators.required, Validators.minLength(passwordMinLength)]),
+    ],
+  });
+
+  public ngOnInit() {
+    const restoredModel = this.userService.getUser();
+    this.loginForm.patchValue({ email: restoredModel.email, password: '' });
+    this.loginForm.updateValueAndValidity();
+  }
 
   /**
    * Resolves if user is logged in.

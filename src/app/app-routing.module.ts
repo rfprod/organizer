@@ -17,9 +17,6 @@ export const APP_ROUTES: Routes = [
   { path: '**', redirectTo: 'login' },
 ];
 
-/**
- * Application routing module.
- */
 @NgModule({
   imports: [RouterModule.forRoot(APP_ROUTES)],
   exports: [RouterModule],

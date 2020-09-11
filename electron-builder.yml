@@ -1,0 +1,15 @@
+appId: com.organizer.app
+
+mac:
+  category: organizer
+
+win:
+  target:
+    - target: snap
+      arch:
+        - x64
+        - ia32
+    - target: nsis
+      arch:
+        - x64
+        - ia32

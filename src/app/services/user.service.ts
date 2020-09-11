@@ -36,8 +36,8 @@ export class AppUserService {
    */
   private initializeModel(): void {
     this.model = {
-      email: null,
-      token: null,
+      email: '',
+      token: '',
       status: {
         initialized: false,
         encryption: false,
@@ -83,8 +83,9 @@ export class AppUserService {
    * Restores user model.
    */
   public restoreUser(): void {
-    if (localStorage.getItem('userService')) {
-      this.model = JSON.parse(localStorage.getItem('userService'));
+    const userServiceModel = localStorage.getItem('userService');
+    if (userServiceModel !== null) {
+      this.model = JSON.parse(userServiceModel);
     }
   }
 
