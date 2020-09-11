@@ -145,7 +145,7 @@ app.use(
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.use('/dist/organizer', express.static(cwd + '/dist/organizer'));
+app.use('/', express.static(cwd + '/dist/organizer'));
 
 app.use((req, res, next) => {
   /*

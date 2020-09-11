@@ -16,7 +16,7 @@
       matInput
       type="text"
       name="email"
-      [formControl]="initForm.controls.email"
+      formControlName="email"
       placeholder="{{ 'email' | translate }}"
       required
     />
@@ -31,7 +31,7 @@
       matInput
       type="text"
       name="password"
-      [formControl]="initForm.controls.password"
+      formControlName="password"
       placeholder="{{ 'password' | translate }}"
       required
     />

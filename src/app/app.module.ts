@@ -24,6 +24,7 @@ import { AppUserApiService } from './services/user-api.service';
 import { AppUserService } from './services/user.service';
 import { AppWebsocketService } from './services/websocket.service';
 import { WINDOW } from './utils/injection-tokens';
+import { getWindow } from './utils/providers';
 
 /**
  * Main application module.
@@ -51,7 +52,7 @@ import { WINDOW } from './utils/injection-tokens';
   providers: [
     { provide: APP_BASE_HREF, useValue: '/' },
     { provide: LocationStrategy, useClass: PathLocationStrategy },
-    { provide: WINDOW, useValue: window },
+    { provide: WINDOW, useFactory: getWindow },
     AppHttpHandlersService,
     AppWebsocketService,
     AppUserService,
