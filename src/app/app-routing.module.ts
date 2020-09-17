@@ -2,17 +2,15 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { AppDataComponent } from './components/data/data.component';
-import { AppInitializeComponent } from './components/initialize/initialize.component';
 import { AppLoginComponent } from './components/login/login.component';
 import { AppSummaryComponent } from './components/summary/summary.component';
-import { AppAnonimousGuard } from './services/anonimous-guard.service';
-import { AppAuthGuardGeneral } from './services/auth-guard-general.service';
+import { AppAnonimousGuard } from './guards/anonimous.guard';
+import { AppAuthenticatedGuard } from './guards/authenticated.guard';
 
 export const APP_ROUTES: Routes = [
   { path: 'login', component: AppLoginComponent, canActivate: [AppAnonimousGuard] },
-  { path: 'initialize', component: AppInitializeComponent, canActivate: [AppAnonimousGuard] },
-  { path: 'summary', component: AppSummaryComponent, canActivate: [AppAuthGuardGeneral] },
-  { path: 'data', component: AppDataComponent, canActivate: [AppAuthGuardGeneral] },
+  { path: 'summary', component: AppSummaryComponent, canActivate: [AppAuthenticatedGuard] },
+  { path: 'data', component: AppDataComponent, canActivate: [AppAuthenticatedGuard] },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: '**', redirectTo: 'login' },
 ];

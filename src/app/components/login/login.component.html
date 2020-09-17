@@ -3,7 +3,7 @@
   fxLayout="row wrap"
   fxLayoutAlign="start stretch"
   fxFlayoutGap="10px"
-  [formGroup]="loginForm"
+  [formGroup]="form"
   (ngSubmit)="submitForm()"
   novalidate
 >
@@ -21,7 +21,7 @@
       required
     />
     <mat-icon matSuffix class="material-icons">email</mat-icon>
-    <mat-error *ngIf="loginForm.controls.email.invalid">
+    <mat-error *ngIf="form.controls.email.invalid">
       invalid value, required: email, at least 7 characters long
     </mat-error>
   </mat-form-field>
@@ -36,22 +36,22 @@
       required
     />
     <mat-icon matSuffix class="material-icons">lock</mat-icon>
-    <mat-error *ngIf="loginForm.controls.password.invalid">
+    <mat-error *ngIf="form.controls.password.invalid">
       invalid value, required: at least 1 character
     </mat-error>
   </mat-form-field>
 
   <span fxFlex="100">
-    <span *ngIf="isLoggedIn()"
-      ><a (click)="resetForm()">{{ 'forgetMyAddress' | translate }}</a></span
-    >
+    <span>
+      <a (click)="resetForm()">{{ 'forgetMyAddress' | translate }}</a>
+    </span>
   </span>
 
   <button
     fxFlex
     mat-button
     type="submit"
-    [disabled]="loginForm.pristine || loginForm.invalid"
+    [disabled]="form.pristine || form.invalid"
     [attr.aria-label]="'submit'"
   >
     {{ 'submit' | translate }}
