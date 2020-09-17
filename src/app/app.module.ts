@@ -9,20 +9,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './components/app/app.component';
 import { AppDataComponent } from './components/data/data.component';
-import { AppInitializeComponent } from './components/initialize/initialize.component';
 import { AppLoginComponent } from './components/login/login.component';
 import { AppNavComponent } from './components/navbar/navbar.component';
 import { AppSummaryComponent } from './components/summary/summary.component';
 import { AppMaterialModule } from './modules/material/material.module';
 import { AppTranslateModule } from './modules/translate/translate.module';
-import { AppAnonimousGuard } from './services/anonimous-guard.service';
-import { AppAuthGuardGeneral } from './services/auth-guard-general.service';
-import { AppHttpHandlersService } from './services/http-handlers.service';
-import { AppPublicDataService } from './services/public-data.service';
-import { AppServerStaticDataService } from './services/server-static-data.service';
-import { AppUserApiService } from './services/user-api.service';
-import { AppUserService } from './services/user.service';
-import { AppWebsocketService } from './services/websocket.service';
 import { WINDOW } from './utils/injection-tokens';
 import { getWindow } from './utils/providers';
 
@@ -35,7 +26,6 @@ import { getWindow } from './utils/providers';
     AppNavComponent,
     AppSummaryComponent,
     AppLoginComponent,
-    AppInitializeComponent,
     AppDataComponent,
   ],
   imports: [
@@ -53,14 +43,6 @@ import { getWindow } from './utils/providers';
     { provide: APP_BASE_HREF, useValue: '/' },
     { provide: LocationStrategy, useClass: PathLocationStrategy },
     { provide: WINDOW, useFactory: getWindow },
-    AppHttpHandlersService,
-    AppWebsocketService,
-    AppUserService,
-    AppAuthGuardGeneral,
-    AppAnonimousGuard,
-    AppUserApiService,
-    AppServerStaticDataService,
-    AppPublicDataService,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent],

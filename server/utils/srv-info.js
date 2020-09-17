@@ -14,7 +14,7 @@ const os = require('os'),
  * @return {string} - installed NPM version or 'N/A' if the app is packed in Electron or if npm --version returns error
  */
 function npmVersion() {
-  require('dotenv').load();
+  require('dotenv').config();
   if (process.env.ELECTRON) return 'N/A';
   let version;
   try {
