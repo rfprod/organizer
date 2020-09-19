@@ -23,7 +23,7 @@ export class AppDataComponent implements OnInit {
   /**
    * Currently logged in user object.
    */
-  public user = {} as IAppUser;
+  public user?: IAppUser;
 
   /**
    * Exported passwords list.
@@ -139,16 +139,18 @@ export class AppDataComponent implements OnInit {
    * @param id local model array index
    */
   public deletePassword(id: number): void {
-    const formData = this.user.status.passwords[id];
-    void this.userApiService
-      .deletePassword(formData)
-      .pipe(
-        concatMap(() => this.getUser()),
-        tap(() => {
-          this.resetPasswordForm();
-        }),
-      )
-      .subscribe();
+    const formData = this.user?.status?.passwords[id];
+    if (typeof formData !== 'undefined') {
+      void this.userApiService
+        .deletePassword(formData)
+        .pipe(
+          concatMap(() => this.getUser()),
+          tap(() => {
+            this.resetPasswordForm();
+          }),
+        )
+        .subscribe();
+    }
   }
 
   /**
@@ -184,7 +186,7 @@ export class AppDataComponent implements OnInit {
    * @param index element array index
    */
   public hideElement(index: number): boolean {
-    const result = !this.user.status.passwords[index].name.includes(this.searchValue);
+    const result = Boolean(this.user?.status?.passwords[index].name?.includes(this.searchValue));
     return this.searchValue ? result : false;
   }
 
@@ -194,9 +196,9 @@ export class AppDataComponent implements OnInit {
    */
   private performSorting(val: string): void {
     if (val === 'registered') {
-      this.user.status.passwords.sort((a, b) => parseInt(a[val], 10) - parseInt(b[val], 10));
+      this.user?.status?.passwords.sort((a, b) => parseInt(a[val], 10) - parseInt(b[val], 10));
     } else if (val === 'role') {
-      this.user.status.passwords.sort((a, b) => {
+      this.user?.status?.passwords.sort((a, b) => {
         if (a[val] < b[val]) {
           return -1;
         }
@@ -209,7 +211,7 @@ export class AppDataComponent implements OnInit {
       /*
        *	sort by name if sorting is set to none
        */
-      this.user.status.passwords.sort((a, b) => Number(a.name) - Number(b.name));
+      this.user?.status?.passwords.sort((a, b) => Number(a.name) - Number(b.name));
     }
   }
 

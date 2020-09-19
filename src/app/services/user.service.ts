@@ -9,7 +9,7 @@ export interface IAppUserPassword {
 export interface IAppUser {
   email: string;
   token: string;
-  status: {
+  status?: {
     initialized: boolean;
     encryption: boolean;
     passwords: IAppUserPassword[];
@@ -69,7 +69,7 @@ export class AppUserService {
     for (const [key, value] of Object.entries(this.model)) {
       if (key !== 'status') {
         this.model[key] = key in newValues ? newValues[key] : value;
-      } else {
+      } else if (typeof this.model.status !== 'undefined') {
         for (const [statusKey, statusValue] of Object.entries(this.model.status)) {
           this.model.status[statusKey] =
             statusKey in newValues ? newValues[statusKey] : statusValue;

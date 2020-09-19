@@ -16,11 +16,16 @@
 
 <span fxFlex="100" fxFlexAlign="stretch" fxLayout="row wrap" fxLayoutAligh="start stretch">
   <span fxFlex fxLayout="row" fxLayoutAlign="center center">
-    <span fxFlex="0 1 auto">{{ 'initialized' | translate }}: {{ userStatus.initialized }}</span>
+    <span fxFlex="0 1 auto">{{ 'initialized' | translate }}: {{ userStatus?.initialized }}</span>
   </span>
   <span fxFlex fxLayout="row" fxLayoutAlign="center center">
-    <span fxFlex="0 1 auto">{{ 'encryption' | translate }}: {{ userStatus.encryption }}</span>
-    <button mat-icon-button *ngIf="!userStatus.encryption" color="warn" (click)="generateKeypair()">
+    <span fxFlex="0 1 auto">{{ 'encryption' | translate }}: {{ userStatus?.encryption }}</span>
+    <button
+      mat-icon-button
+      *ngIf="!userStatus?.encryption"
+      color="warn"
+      (click)="generateKeypair()"
+    >
       <mat-icon
         class="material-icons"
         matTooltip="{{ 'generateKeypair' | translate }}"
@@ -30,7 +35,7 @@
     </button>
   </span>
   <span fxFlex fxLayout="row" fxLayoutAlign="center center">
-    <span fxFlex="0 1 auto">{{ 'passwordsCount' | translate }}: {{ userStatus.passwords }}</span>
+    <span fxFlex="0 1 auto">{{ 'passwordsCount' | translate }}: {{ userStatus?.passwords }}</span>
   </span>
 </span>
 

@@ -50,7 +50,7 @@
     <button
       mat-icon-button
       (click)="encryptPasswords()"
-      *ngIf="!user.status.encrypted"
+      *ngIf="!user?.status?.encrypted"
       color="primary"
       matTooltip="{{ 'encryptPasswords' | translate }}"
       matTooltipPosition="after"
@@ -60,7 +60,7 @@
     <button
       mat-icon-button
       (click)="decryptPasswords()"
-      *ngIf="user.status.encrypted"
+      *ngIf="user?.status?.encrypted"
       color="primary"
       matTooltip="{{ 'decryptPasswords' | translate }}"
       matTooltipPosition="after"
@@ -130,7 +130,7 @@
 
     <span fxFlex="100" fxLayout="row wrap" fxLayoutAlign="start stretch">
       <span
-        *ngFor="let passObj of user.status.passwords; let j = index"
+        *ngFor="let passObj of user?.status?.passwords; let j = index"
         fxFlex="100"
         fxLayout="row"
         fxLayoutAlign="start stretch"
@@ -153,8 +153,8 @@
           matTooltip="{{ 'password' | translate }}"
           matTooltipPosition="above"
         >
-          <span *ngIf="!user.status.encrypted">{{ passObj.password }}</span>
-          <span *ngIf="user.status.encrypted" matTooltip="{{ passObj.password }}">
+          <span *ngIf="!user?.status?.encrypted">{{ passObj.password }}</span>
+          <span *ngIf="user?.status?.encrypted" matTooltip="{{ passObj.password }}">
             <mat-icon class="material-icons">lock</mat-icon>
           </span>
         </span>

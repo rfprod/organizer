@@ -12,7 +12,7 @@ export class AppAuthenticatedGuard implements CanActivate {
   public canActivate(): boolean | UrlTree {
     const user = this.userService.getUser();
 
-    if (!user.token && user.status.initialized) {
+    if (!user.token && Boolean(user?.status?.initialized)) {
       // eslint-disable-next-line no-alert
       window.alert('to access data you need to log in first');
       return this.router.createUrlTree(['login']);
