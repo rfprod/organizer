@@ -9,6 +9,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { arc, DefaultArcObject, pie } from 'd3-shape';
+import { BehaviorSubject } from 'rxjs';
 import { concatMap, tap } from 'rxjs/operators';
 
 import { AppPublicDataService } from '../../services/public-data.service';
@@ -60,7 +61,9 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
   /**
    * User status.
    */
-  public userStatus = {} as IAppUser['status'];
+  private readonly userStatus = new BehaviorSubject<IAppUser['status']>({} as IAppUser['status']);
+
+  public userStatus$ = this.userStatus.asObservable();
 
   /**
    * Indicates if modal should be displayed or not.
@@ -155,7 +158,7 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
   private getUserStatus() {
     return this.userAPIService.getUserStatus().pipe(
       tap(data => {
-        this.userStatus = data;
+        this.userStatus.next(data);
         const userModelUpdate = {
           status: data,
         };
