@@ -1,14 +1,16 @@
 import { ChangeDetectionStrategy, Component, HostBinding, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDatepicker } from '@angular/material/datepicker';
-import { concatMap, tap } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { concatMap, first, map, tap } from 'rxjs/operators';
 
 import { AppUserApiService } from '../../services/user-api.service';
-import { AppUserService, IAppUser } from '../../services/user.service';
+import { AppUserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-data',
   templateUrl: './data.component.html',
+  styleUrls: ['./data.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppDataComponent implements OnInit {
@@ -23,7 +25,7 @@ export class AppDataComponent implements OnInit {
   /**
    * Currently logged in user object.
    */
-  public user?: IAppUser;
+  public user$ = this.userService.user$;
 
   /**
    * Exported passwords list.
@@ -95,8 +97,7 @@ export class AppDataComponent implements OnInit {
   private getUser() {
     return this.userApiService.getUser().pipe(
       tap(data => {
-        this.user = data;
-        this.userService.saveUser(this.user);
+        this.userService.saveUser(data);
       }),
     );
   }
@@ -139,18 +140,22 @@ export class AppDataComponent implements OnInit {
    * @param id local model array index
    */
   public deletePassword(id: number): void {
-    const formData = this.user?.status?.passwords[id];
-    if (typeof formData !== 'undefined') {
-      void this.userApiService
-        .deletePassword(formData)
-        .pipe(
-          concatMap(() => this.getUser()),
-          tap(() => {
-            this.resetPasswordForm();
-          }),
-        )
-        .subscribe();
-    }
+    void this.user$
+      .pipe(
+        first(),
+        concatMap(user => {
+          const formData = user.status?.passwords[id];
+          return typeof formData !== 'undefined'
+            ? this.userApiService.deletePassword(formData).pipe(
+                concatMap(() => this.getUser()),
+                tap(() => {
+                  this.resetPasswordForm();
+                }),
+              )
+            : of(null);
+        }),
+      )
+      .subscribe();
   }
 
   /**
@@ -185,34 +190,50 @@ export class AppDataComponent implements OnInit {
    * Resolves if DOM element should be hidden or not.
    * @param index element array index
    */
-  public hideElement(index: number): boolean {
-    const result = Boolean(this.user?.status?.passwords[index].name?.includes(this.searchValue));
-    return this.searchValue ? result : false;
-  }
+  public hideElement$ = (index: number) => {
+    return this.user$.pipe(
+      map(user => {
+        if (typeof user.status !== 'undefined' && user.status.passwords.length > 0) {
+          const result = Boolean(user.status.passwords[index].name?.includes(this.searchValue));
+          return this.searchValue ? result : false;
+        }
+        return false;
+      }),
+    );
+  };
 
   /**
    * Sorts data model by property.
    * @param val property which values should be used to sort model
    */
   private performSorting(val: string): void {
-    if (val === 'registered') {
-      this.user?.status?.passwords.sort((a, b) => parseInt(a[val], 10) - parseInt(b[val], 10));
-    } else if (val === 'role') {
-      this.user?.status?.passwords.sort((a, b) => {
-        if (a[val] < b[val]) {
-          return -1;
-        }
-        if (a[val] > b[val]) {
-          return 1;
-        }
-        return 0;
-      });
-    } else if (val === '') {
-      /*
-       *	sort by name if sorting is set to none
-       */
-      this.user?.status?.passwords.sort((a, b) => Number(a.name) - Number(b.name));
-    }
+    void this.user$
+      .pipe(
+        first(),
+        tap(user => {
+          const sorted = { ...user };
+          if (val === 'registered') {
+            sorted.status?.passwords.sort((a, b) => parseInt(a[val], 10) - parseInt(b[val], 10));
+          } else if (val === 'role') {
+            sorted.status?.passwords.sort((a, b) => {
+              if (a[val] < b[val]) {
+                return -1;
+              }
+              if (a[val] > b[val]) {
+                return 1;
+              }
+              return 0;
+            });
+          } else if (val === '') {
+            /*
+             *	sort by name if sorting is set to none
+             */
+            sorted.status?.passwords.sort((a, b) => Number(a.name) - Number(b.name));
+          }
+          this.userService.saveUser(sorted);
+        }),
+      )
+      .subscribe();
   }
 
   /**

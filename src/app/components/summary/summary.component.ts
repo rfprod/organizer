@@ -9,18 +9,18 @@ import {
   ViewChild,
 } from '@angular/core';
 import { arc, DefaultArcObject, pie } from 'd3-shape';
-import { BehaviorSubject } from 'rxjs';
-import { concatMap, tap } from 'rxjs/operators';
+import { concatMap, map, tap } from 'rxjs/operators';
 
 import { AppPublicDataService } from '../../services/public-data.service';
 import { AppServerStaticDataService } from '../../services/server-static-data.service';
 import { AppUserApiService } from '../../services/user-api.service';
-import { AppUserService, IAppUser } from '../../services/user.service';
+import { AppUserService } from '../../services/user.service';
 import { AppWebsocketService } from '../../services/websocket.service';
 
 @Component({
   selector: 'app-summary',
   templateUrl: './summary.component.html',
+  styleUrls: ['./summary.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppSummaryComponent implements OnInit, OnDestroy {
@@ -58,12 +58,7 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
     dynamic: [],
   };
 
-  /**
-   * User status.
-   */
-  private readonly userStatus = new BehaviorSubject<IAppUser['status']>({} as IAppUser['status']);
-
-  public userStatus$ = this.userStatus.asObservable();
+  public userStatus$ = this.userService.user$.pipe(map(user => user.status));
 
   /**
    * Indicates if modal should be displayed or not.
@@ -158,7 +153,6 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
   private getUserStatus() {
     return this.userAPIService.getUserStatus().pipe(
       tap(data => {
-        this.userStatus.next(data);
         const userModelUpdate = {
           status: data,
         };

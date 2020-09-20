@@ -2,6 +2,11 @@
   "name": "organizer",
   "version": "1.0.0",
   "private": true,
+  "author": {
+    "name": "rfprod",
+    "email": "connect@rfprod.tk",
+    "url": "https://rfprod.tk/"
+  },
   "scripts": {
     "analyze:app": "npm run build:app:stats; npx webpack-bundle-analyzer ./dist/organizer/stats.json",
     "build": "ng build",
@@ -10,7 +15,7 @@
     "build:electron": "electron-builder",
     "build:electron:all": "electron-builder -mwl",
     "build:electron:mac": "electron-builder --macos",
-    "build:electron:nix": "electron-builder --linux deb tar.xz",
+    "build:electron:nix": "electron-builder --linux AppImage deb tar.xz",
     "build:electron:win": "electron-builder --windows",
     "compodoc:generate": "compodoc -p src/tsconfig.app.json",
     "compodoc:generate:report": "compodoc -p src/tsconfig.app.json && cp -r ./documentation ./dist/documentation",

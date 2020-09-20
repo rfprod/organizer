@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 export interface IAppUserPassword {
   name: string;
@@ -22,14 +24,28 @@ export interface IAppUser {
 })
 export class AppUserService {
   constructor() {
-    this.initializeModel();
     this.restoreUser();
   }
 
   /**
    * User model.
    */
-  private model: IAppUser;
+  private model: IAppUser = {
+    email: '',
+    token: '',
+    status: {
+      initialized: false,
+      encryption: false,
+      passwords: [],
+      encrypted: false,
+    },
+  };
+
+  private readonly user = new BehaviorSubject<IAppUser>(this.model);
+
+  public readonly user$ = this.user.asObservable();
+
+  public readonly isLoggedIn$ = this.user.asObservable().pipe(map(user => Boolean(user.token)));
 
   /**
    * Initializes user model with default values.
@@ -45,20 +61,7 @@ export class AppUserService {
         encrypted: false,
       },
     };
-  }
-
-  /**
-   * Gets user model.
-   */
-  public getUser() {
-    return this.model;
-  }
-
-  /**
-   * Gets user token.
-   */
-  public isLoggedIn() {
-    return this.model.token;
+    this.user.next(this.model);
   }
 
   /**
@@ -76,6 +79,7 @@ export class AppUserService {
         }
       }
     }
+    this.user.next(this.model);
     localStorage.setItem('userService', JSON.stringify(this.model));
   }
 
@@ -86,6 +90,7 @@ export class AppUserService {
     const userServiceModel = localStorage.getItem('userService');
     if (userServiceModel !== null) {
       this.model = JSON.parse(userServiceModel);
+      this.user.next(this.model);
     }
   }
 

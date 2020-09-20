@@ -1,7 +1,10 @@
 appId: com.organizer.app
 
 mac:
-  category: organizer
+  category: Utility
+
+linux:
+  category: Utility
 
 win:
   target:
@@ -13,3 +16,10 @@ win:
       arch:
         - x64
         - ia32
+
+files:
+  - ./dist/organizer/**
+  - ./server/**
+  - ./sessions/**
+  - ./.*
+  - ./*.*

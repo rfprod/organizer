@@ -13,6 +13,8 @@ import { WINDOW } from '../../utils/injection-tokens';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppNavComponent implements OnInit {
+  public readonly isLoggedIn$ = this.userService.isLoggedIn$;
+
   constructor(
     private readonly userService: AppUserService,
     private readonly router: Router,
@@ -30,13 +32,6 @@ export class AppNavComponent implements OnInit {
     { key: 'en', name: 'English' },
     { key: 'ru', name: 'Russian' },
   ];
-
-  /**
-   * Resolves if user is logged in.
-   */
-  public isLoggedIn(): boolean {
-    return this.userService.getUser().token ? true : false;
-  }
 
   /**
    * Loggs user out.

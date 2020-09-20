@@ -1,3 +1,5 @@
+<ng-container *ngIf="$any(isLoggedIn$ | async)"></ng-container>
+
 <mat-toolbar color="primary" fxLayoutGap="10px">
   <mat-icon
     class="material-icons"
@@ -33,7 +35,7 @@
       [color]="rlaIndex.isActive ? 'accent' : null"
       [fxHide.xs]="true"
       [fxHide.sm]="true"
-      *ngIf="!isLoggedIn()"
+      *ngIf="!$any(isLoggedIn$ | async)"
     >
       <mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-sign-in-alt"></mat-icon>
       {{ 'login' | translate }}
@@ -48,7 +50,7 @@
       [color]="rlaIndex.isActive ? 'accent' : null"
       [fxHide.xs]="true"
       [fxHide.sm]="true"
-      *ngIf="isLoggedIn()"
+      *ngIf="$any(isLoggedIn$ | async)"
     >
       <mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-columns"></mat-icon>
       {{ 'summary' | translate }}
@@ -62,7 +64,7 @@
       [color]="rlaIndex.isActive ? 'accent' : null"
       [fxHide.xs]="true"
       [fxHide.sm]="true"
-      *ngIf="isLoggedIn()"
+      *ngIf="$any(isLoggedIn$ | async)"
     >
       <mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-database"></mat-icon>
       {{ 'data' | translate }}
@@ -73,7 +75,7 @@
       (click)="logOut()"
       [fxHide.xs]="true"
       [fxHide.sm]="true"
-      *ngIf="isLoggedIn()"
+      *ngIf="$any(isLoggedIn$ | async)"
     >
       <mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-sign-out-alt"></mat-icon>
       {{ 'logout' | translate }}
@@ -107,7 +109,7 @@
           routerLinkActive
           #rlaIndex="routerLinkActive"
           [disabled]="rlaIndex.isActive"
-          *ngIf="!isLoggedIn()"
+          *ngIf="!$any(isLoggedIn$ | async)"
         >
           <mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-sign-in-alt"></mat-icon>
           {{ 'login' | translate }}
@@ -119,7 +121,7 @@
           routerLinkActive
           #rlaIndex="routerLinkActive"
           [disabled]="rlaIndex.isActive"
-          *ngIf="isLoggedIn()"
+          *ngIf="$any(isLoggedIn$ | async)"
         >
           <mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-columns"></mat-icon>
           {{ 'summary' | translate }}
@@ -130,7 +132,7 @@
           routerLinkActive
           #rlaIndex="routerLinkActive"
           [disabled]="rlaIndex.isActive"
-          *ngIf="isLoggedIn()"
+          *ngIf="$any(isLoggedIn$ | async)"
         >
           <mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-database"></mat-icon>
           {{ 'data' | translate }}
@@ -138,11 +140,11 @@
 
         <hr />
 
-        <button (click)="logOut()" mat-menu-item *ngIf="isLoggedIn()">
+        <button (click)="logOut()" mat-menu-item *ngIf="$any(isLoggedIn$ | async)">
           <mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-sign-out-alt"></mat-icon>
           {{ 'logout' | translate }}
         </button>
-        <hr *ngIf="isLoggedIn()" />
+        <hr *ngIf="$any(isLoggedIn$ | async)" />
 
         <span mat-menu-item disabled="true">
           <mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-globe"></mat-icon>

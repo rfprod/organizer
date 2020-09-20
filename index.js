@@ -112,7 +112,7 @@ function createWindow() {
     resizable: true,
     webPreferences: {
       nodeIntegration: false, // if set to true, breaks client: d3, nv, nvd3
-      preload: './src/assets/js/electron.preload.js', // restores node globals
+      preload: __dirname + '/dist/organizer/assets/js/electron.preload.js', // restores node globals
       webSecurity: true,
     },
   });

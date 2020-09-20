@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, HostBinding, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { concatMap, tap } from 'rxjs/operators';
+import { concatMap, first, tap } from 'rxjs/operators';
 
 import { AppUserApiService } from '../../services/user-api.service';
 import { AppUserService } from '../../services/user.service';
@@ -38,9 +38,15 @@ export class AppLoginComponent implements OnInit {
   });
 
   public ngOnInit() {
-    const restoredModel = this.userService.getUser();
-    this.form.patchValue({ email: restoredModel.email, password: '' });
-    this.form.updateValueAndValidity();
+    void this.userService.user$
+      .pipe(
+        first(),
+        tap(user => {
+          this.form.patchValue({ email: user.email, password: '' });
+          this.form.updateValueAndValidity();
+        }),
+      )
+      .subscribe();
   }
 
   /**
@@ -59,14 +65,15 @@ export class AppLoginComponent implements OnInit {
    */
   public submitForm(): void {
     if (this.form.valid) {
-      const user = this.userService.getUser();
-      const formData: { email: string; password: string } = this.form.value;
-
-      if (user.token) {
-        void this.logUserIn(formData).subscribe();
-      } else {
-        void this.initializeUser(formData).subscribe();
-      }
+      void this.userService.user$
+        .pipe(
+          first(),
+          concatMap(user => {
+            const formData: { email: string; password: string } = this.form.value;
+            return user.token ? this.logUserIn(formData) : this.initializeUser(formData);
+          }),
+        )
+        .subscribe();
     }
   }
 
