@@ -9,18 +9,6 @@
           "builder": "@angular-devkit/build-angular:browser",
           "configurations": {
             "electron": {
-              "budgets": [
-                {
-                  "maximumError": "5mb",
-                  "maximumWarning": "2mb",
-                  "type": "initial"
-                },
-                {
-                  "maximumError": "10kb",
-                  "maximumWarning": "6kb",
-                  "type": "anyComponentStyle"
-                }
-              ],
               "buildOptimizer": true,
               "extractCss": true,
               "extractLicenses": true,
@@ -38,18 +26,6 @@
               "vendorChunk": false
             },
             "production": {
-              "budgets": [
-                {
-                  "maximumError": "5mb",
-                  "maximumWarning": "2mb",
-                  "type": "initial"
-                },
-                {
-                  "maximumError": "10kb",
-                  "maximumWarning": "6kb",
-                  "type": "anyComponentStyle"
-                }
-              ],
               "buildOptimizer": true,
               "extractCss": true,
               "extractLicenses": true,
@@ -70,6 +46,18 @@
             "allowedCommonJsDependencies": ["node_modules/hammerjs/hammer.js"],
             "aot": true,
             "assets": ["src/favicon.ico", "src/assets"],
+            "budgets": [
+              {
+                "maximumError": "5mb",
+                "maximumWarning": "2mb",
+                "type": "initial"
+              },
+              {
+                "maximumError": "10kb",
+                "maximumWarning": "6kb",
+                "type": "anyComponentStyle"
+              }
+            ],
             "index": "src/index.html",
             "main": "src/main.ts",
             "outputPath": "dist/organizer",
@@ -142,7 +130,6 @@
           "builder": "@angular-eslint/builder:lint",
           "options": {
             "eslintConfig": "src/.eslintrc",
-            "exclude": ["**/node_modules/**", "!src/**/*.ts"],
             "lintFilePatterns": ["src/**/*.ts"]
           }
         },
