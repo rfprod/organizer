@@ -128,7 +128,7 @@ export class AppUserApiService {
    */
   public listExportedPasswordFiles() {
     return this.http
-      .get(this.endpoints.listExportedPasswordFiles)
+      .get<string[]>(this.endpoints.listExportedPasswordFiles)
       .pipe(catchError(this.httpHandlers.handleError));
   }
 }

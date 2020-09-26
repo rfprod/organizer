@@ -1,6 +1,10 @@
 <ng-container *ngIf="$any(isLoggedIn$ | async)"></ng-container>
 
-<mat-toolbar color="primary" fxLayoutGap="10px">
+<mat-toolbar
+  color="primary"
+  fxLayoutGap="10px"
+  *ngIf="selectedLanguage$ | async as selectedLanguage"
+>
   <mat-icon
     class="material-icons"
     [fxHide.sm]="true"
@@ -90,8 +94,8 @@
         <button
           mat-menu-item
           *ngFor="let lang of supportedLanguages"
-          color="isLanguageSelected(lang.key) ? 'accent' : null"
           (click)="selectLanguage(lang.key)"
+          [disabled]="selectedLanguage === lang.key"
         >
           {{ lang.name }}
         </button>
@@ -153,7 +157,7 @@
         <button
           mat-button
           *ngFor="let lang of supportedLanguages"
-          [color]="isLanguageSelected(lang.key) ? 'accent' : null"
+          [color]="selectedLanguage === lang.key ? 'accent' : null"
           (click)="selectLanguage(lang.key)"
         >
           {{ lang.name }}

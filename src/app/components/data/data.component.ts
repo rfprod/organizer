@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, HostBinding, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { MatDatepicker } from '@angular/material/datepicker';
 import { of } from 'rxjs';
 import { concatMap, first, map, tap } from 'rxjs/operators';
@@ -11,7 +11,8 @@ import { AppUserService } from '../../services/user.service';
   selector: 'app-data',
   templateUrl: './data.component.html',
   styleUrls: ['./data.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  // eslint-disable-next-line @angular-eslint/prefer-on-push-component-change-detection
+  changeDetection: ChangeDetectionStrategy.Default,
 })
 export class AppDataComponent implements OnInit {
   constructor(
@@ -30,12 +31,15 @@ export class AppDataComponent implements OnInit {
   /**
    * Exported passwords list.
    */
-  public exportedPasswords: string[] = [];
+  public exportedPasswordFiles: string[] = [];
 
   /**
    * New password form.
    */
-  public passwordForm: FormGroup;
+  public form = this.fb.group({
+    name: ['', Validators.compose([Validators.required])],
+    password: ['', Validators.compose([Validators.required])],
+  });
 
   /**
    * Datepicker date.
@@ -106,14 +110,18 @@ export class AppDataComponent implements OnInit {
    * Get exported passwords list.
    */
   public getExportedPasswordsList() {
-    return this.userApiService.listExportedPasswordFiles();
+    return this.userApiService.listExportedPasswordFiles().pipe(
+      tap(result => {
+        this.exportedPasswordFiles = [...result];
+      }),
+    );
   }
 
   /**
    * Resets new password form.
    */
   private resetPasswordForm(): void {
-    this.passwordForm = this.fb.group({
+    this.form = this.fb.group({
       name: ['', Validators.compose([Validators.required])],
       password: ['', Validators.compose([Validators.required])],
     });
@@ -123,7 +131,7 @@ export class AppDataComponent implements OnInit {
    * Adds user password.
    */
   public addPassword(): void {
-    const formData = this.passwordForm.value;
+    const formData = this.form.value;
     void this.userApiService
       .addPassword(formData)
       .pipe(
@@ -140,7 +148,7 @@ export class AppDataComponent implements OnInit {
    * @param id local model array index
    */
   public deletePassword(id: number): void {
-    void this.user$
+    void this.userService.user$
       .pipe(
         first(),
         concatMap(user => {
@@ -191,11 +199,11 @@ export class AppDataComponent implements OnInit {
    * @param index element array index
    */
   public hideElement$ = (index: number) => {
-    return this.user$.pipe(
+    return this.userService.user$.pipe(
       map(user => {
-        if (typeof user.status !== 'undefined' && user.status.passwords.length > 0) {
-          const result = Boolean(user.status.passwords[index].name?.includes(this.searchValue));
-          return this.searchValue ? result : false;
+        if (typeof user.status !== 'undefined' && user.status.passwords > 0) {
+          const result = Boolean(user.passwords[index].name.includes(this.searchValue));
+          return this.searchValue ? !result : false;
         }
         return false;
       }),
@@ -207,15 +215,15 @@ export class AppDataComponent implements OnInit {
    * @param val property which values should be used to sort model
    */
   private performSorting(val: string): void {
-    void this.user$
+    void this.userService.user$
       .pipe(
         first(),
         tap(user => {
           const sorted = { ...user };
           if (val === 'registered') {
-            sorted.status?.passwords.sort((a, b) => parseInt(a[val], 10) - parseInt(b[val], 10));
+            sorted.passwords.sort((a, b) => parseInt(a[val], 10) - parseInt(b[val], 10));
           } else if (val === 'role') {
-            sorted.status?.passwords.sort((a, b) => {
+            sorted.passwords.sort((a, b) => {
               if (a[val] < b[val]) {
                 return -1;
               }
@@ -228,7 +236,7 @@ export class AppDataComponent implements OnInit {
             /*
              *	sort by name if sorting is set to none
              */
-            sorted.status?.passwords.sort((a, b) => Number(a.name) - Number(b.name));
+            sorted.passwords.sort((a, b) => Number(a.name) - Number(b.name));
           }
           this.userService.saveUser(sorted);
         }),
@@ -244,8 +252,7 @@ export class AppDataComponent implements OnInit {
   }
 
   public ngOnInit() {
-    this.resetPasswordForm();
     void this.getUser().subscribe();
-    void this.getExportedPasswordsList();
+    void this.getExportedPasswordsList().subscribe();
   }
 }

@@ -28,7 +28,6 @@ export const LANG_RU_TRANSLATIONS = {
   submit: 'Отправить',
 
   data: 'Данные',
-  passwords: 'Пароли',
   sortBy: 'Сортировать по',
   pickDate: 'Выберите дату',
   addPassword: 'Добавить пароль',
@@ -36,8 +35,12 @@ export const LANG_RU_TRANSLATIONS = {
   timestamp: 'Метка времени',
   required: 'Это обязательное значение',
   delete: 'Удалить',
-  encryptPasswords: 'Зашифровать пароли',
-  decryptPasswords: 'Расшифровать пароли',
-  exportPasswords: 'Экспортировать пароли',
-  exportedPasswords: 'Экспортированные пароли',
+  passwords: {
+    title: 'Пароли',
+    count: 'Количество паролей',
+    encrypt: 'Зашифровать пароли',
+    decrypt: 'Расшифровать пароли',
+    export: 'Экспортировать пароли',
+    exported: 'Экспортированные пароли',
+  },
 };
