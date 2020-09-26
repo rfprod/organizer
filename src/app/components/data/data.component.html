@@ -47,13 +47,13 @@
   </span>
   <span fxFlex="100" fxLayout="row wrap" fxLayoutAlign="start start" *ngIf="user$ | async as user">
     <h3 fxFlex="100">
-      {{ 'passwords' | translate }}
+      {{ 'passwords.title' | translate }}
       <button
         mat-icon-button
         (click)="encryptPasswords()"
-        *ngIf="!user.status?.encrypted"
+        *ngIf="!user.status.encrypted"
         color="primary"
-        matTooltip="{{ 'encryptPasswords' | translate }}"
+        matTooltip="{{ 'passwords.encrypt' | translate }}"
         matTooltipPosition="after"
       >
         <mat-icon class="material-icons">lock</mat-icon>
@@ -61,22 +61,22 @@
       <button
         mat-icon-button
         (click)="decryptPasswords()"
-        *ngIf="user.status?.encrypted"
+        *ngIf="user.status.encrypted"
         color="primary"
-        matTooltip="{{ 'decryptPasswords' | translate }}"
+        matTooltip="{{ 'passwords.decrypt' | translate }}"
         matTooltipPosition="after"
       >
         <mat-icon class="material-icons">lock_open</mat-icon>
       </button>
     </h3>
 
-    <span fxFlex="100" fxLayout="row wrap">
+    <span fxFlex="100" fxLayout="row wrap" *ngIf="form">
       <form
         fxFlex="100"
         fxLayout="row wrap"
         fxLayoutAlign="start stretch"
         fxFlayoutGap="10px"
-        [formGroup]="passwordForm"
+        [formGroup]="form"
         (ngSubmit)="addPassword()"
         novalidate
       >
@@ -94,7 +94,7 @@
             required
           />
           <mat-icon matSuffix class="material-icons">web</mat-icon>
-          <mat-error *ngIf="passwordForm.controls.name.invalid">
+          <mat-error *ngIf="form.controls.name.invalid">
             {{ 'required' | translate }}
           </mat-error>
         </mat-form-field>
@@ -111,7 +111,7 @@
             required
           />
           <mat-icon matSuffix class="material-icons">lock</mat-icon>
-          <mat-error *ngIf="passwordForm.controls.password.invalid">
+          <mat-error *ngIf="form.controls.password.invalid">
             {{ 'required' | translate }}
           </mat-error>
         </mat-form-field>
@@ -120,7 +120,7 @@
           fxFlex
           mat-button
           type="submit"
-          [disabled]="passwordForm.pristine || passwordForm.invalid"
+          [disabled]="form.pristine || form.invalid"
           [attr.aria-label]="'submit'"
         >
           {{ 'submit' | translate }}
@@ -131,7 +131,7 @@
 
       <span fxFlex="100" fxLayout="row wrap" fxLayoutAlign="start stretch">
         <span
-          *ngFor="let passObj of user.status?.passwords; let j = index"
+          *ngFor="let passObj of user.passwords; let j = index"
           fxFlex="100"
           fxLayout="row"
           fxLayoutAlign="start stretch"
@@ -145,8 +145,10 @@
             fxLayoutAlign="start center"
             matTooltip="{{ 'name' | translate }}"
             matTooltipPosition="above"
-            >{{ passObj.name }}</span
           >
+            {{ passObj.name }}
+          </span>
+
           <span
             fxFlex="4 1 auto"
             fxLayout="row"
@@ -154,31 +156,33 @@
             matTooltip="{{ 'password' | translate }}"
             matTooltipPosition="above"
           >
-            <span *ngIf="!user.status?.encrypted">{{ passObj.password }}</span>
-            <span *ngIf="user.status?.encrypted" matTooltip="{{ passObj.password }}">
+            <span *ngIf="!user.status.encrypted">
+              {{ passObj.password }}
+            </span>
+            <span *ngIf="user.status.encrypted" [matTooltip]="passObj.password">
               <mat-icon class="material-icons">lock</mat-icon>
             </span>
           </span>
+
           <span
             fxFlex="0 1 auto"
             fxLayout="row"
             fxLayoutAlign="start center"
-            matTooltip="{{ 'timestamp' | translate }}: {{
-              passObj.timestamp | date: 'yyyy.MM.dd HH:mm Z'
-            }}"
+            [matTooltip]="$any(passObj.timestamp | date: 'yyyy.MM.dd HH:mm Z')"
             matTooltipPosition="above"
           >
-            <mat-icon class="material-icons" fxShow="true" [fxHide.gt-sm]="true"
-              >access_time</mat-icon
-            >
-            <span fxHide="true" [fxShow.gt-sm]="true">{{
-              passObj.timestamp | date: 'yyyy.MM.dd HH:mm Z'
-            }}</span>
+            <mat-icon class="material-icons" fxShow="true" [fxHide.gt-sm]="true">
+              access_time
+            </mat-icon>
+            <span fxHide="true" [fxShow.gt-sm]="true">
+              {{ passObj.timestamp | date: 'yyyy.MM.dd HH:mm Z' }}
+            </span>
           </span>
+
           <button
             mat-icon-button
             (click)="deletePassword(j)"
-            matTooltip="{{ 'delete' | translate }}"
+            [matTooltip]="'delete' | translate"
             matTooltipPosition="above"
           >
             <mat-icon class="material-icons">delete</mat-icon>
@@ -188,12 +192,12 @@
     </span>
 
     <h3 fxFlex="100">
-      {{ 'exportedPasswords' | translate }}
+      {{ 'passwords.exported' | translate }}
       <button
         mat-icon-button
         (click)="exportPasswords()"
         color="primary"
-        matTooltip="{{ 'exportPasswords' | translate }}"
+        matTooltip="{{ 'passwords.export' | translate }}"
         matTooltipPosition="after"
       >
         <mat-icon class="material-icons">save_alt</mat-icon>
@@ -201,7 +205,7 @@
     </h3>
 
     <span fxFlex="100" fxLayout="row wrap">
-      <span fxFlex *ngFor="let filePath of exportedPasswords">
+      <span fxFlex *ngFor="let filePath of exportedPasswordFiles">
         {{ filePath }}
       </span>
     </span>

@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, HostBinding, Inject, OnInit } from '@angular/core';
 import { DateAdapter } from '@angular/material/core';
 import { Router } from '@angular/router';
+import { first, tap } from 'rxjs/operators';
+import { SUPPORTED_LANGUAGE_KEY, supportedLanguages } from 'src/app/modules/translate';
 
-import { ISupportedLanguage } from '../../interfaces/supported-language.interface';
 import { AppTranslateService } from '../../modules/translate/translate.service';
 import { AppUserService } from '../../services/user.service';
 import { WINDOW } from '../../utils/injection-tokens';
@@ -10,10 +11,18 @@ import { WINDOW } from '../../utils/injection-tokens';
 @Component({
   selector: 'app-nav',
   templateUrl: './navbar.component.html',
+  styleUrls: ['./navbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppNavComponent implements OnInit {
   public readonly isLoggedIn$ = this.userService.isLoggedIn$;
+
+  public readonly selectedLanguage$ = this.translate.language$;
+
+  /**
+   * Supported languages.
+   */
+  public supportedLanguages = [...supportedLanguages];
 
   constructor(
     private readonly userService: AppUserService,
@@ -26,14 +35,6 @@ export class AppNavComponent implements OnInit {
   @HostBinding('class.mat-body-1') protected matBody1 = true;
 
   /**
-   * Supported languages.
-   */
-  public supportedLanguages: ISupportedLanguage[] = [
-    { key: 'en', name: 'English' },
-    { key: 'ru', name: 'Russian' },
-  ];
-
-  /**
    * Loggs user out.
    */
   public logOut(): void {
@@ -42,22 +43,21 @@ export class AppNavComponent implements OnInit {
   }
 
   /**
-   * Resolves if language is selected.
-   * @param key language key
-   */
-  public isLanguageSelected(key: string): boolean {
-    return key === this.translate.currentLanguage;
-  }
-
-  /**
    * Selects language.
    * @param key language key
    */
-  public selectLanguage(key: string): void {
-    if (!this.isLanguageSelected(key)) {
-      this.translate.use(key);
-      this.setDatepickersLocale(key);
-    }
+  public selectLanguage(key: SUPPORTED_LANGUAGE_KEY): void {
+    void this.translate.language$
+      .pipe(
+        first(),
+        tap(lng => {
+          if (lng !== key) {
+            this.translate.use(key);
+            this.setDatepickersLocale(key);
+          }
+        }),
+      )
+      .subscribe();
   }
 
   /**
@@ -79,8 +79,10 @@ export class AppNavComponent implements OnInit {
      *	set Russian if it is preferred, else use English
      */
     const nav = this.window.navigator;
-    const userPreference: string =
-      nav.language === 'ru-RU' || nav.language === 'ru' || nav.languages[0] === 'ru' ? 'ru' : 'en';
+    const userPreference =
+      nav.language === 'ru-RU' || nav.language === 'ru' || nav.languages[0] === 'ru'
+        ? SUPPORTED_LANGUAGE_KEY.RUSSIAN
+        : SUPPORTED_LANGUAGE_KEY.ENGLISH;
     this.selectLanguage(userPreference);
   }
 }

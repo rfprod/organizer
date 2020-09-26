@@ -11,10 +11,11 @@ export interface IAppUserPassword {
 export interface IAppUser {
   email: string;
   token: string;
-  status?: {
+  passwords: IAppUserPassword[];
+  status: {
     initialized: boolean;
     encryption: boolean;
-    passwords: IAppUserPassword[];
+    passwords: number;
     encrypted: boolean;
   };
 }
@@ -33,10 +34,11 @@ export class AppUserService {
   private model: IAppUser = {
     email: '',
     token: '',
+    passwords: [],
     status: {
       initialized: false,
       encryption: false,
-      passwords: [],
+      passwords: 0,
       encrypted: false,
     },
   };
@@ -54,10 +56,11 @@ export class AppUserService {
     this.model = {
       email: '',
       token: '',
+      passwords: [],
       status: {
         initialized: false,
         encryption: false,
-        passwords: [],
+        passwords: 0,
         encrypted: false,
       },
     };
@@ -69,16 +72,7 @@ export class AppUserService {
    * @param newValues new model values object
    */
   public saveUser(newValues: Partial<IAppUser>): void {
-    for (const [key, value] of Object.entries(this.model)) {
-      if (key !== 'status') {
-        this.model[key] = key in newValues ? newValues[key] : value;
-      } else if (typeof this.model.status !== 'undefined') {
-        for (const [statusKey, statusValue] of Object.entries(this.model.status)) {
-          this.model.status[statusKey] =
-            statusKey in newValues ? newValues[statusKey] : statusValue;
-        }
-      }
-    }
+    this.model = { ...this.model, ...newValues };
     this.user.next(this.model);
     localStorage.setItem('userService', JSON.stringify(this.model));
   }

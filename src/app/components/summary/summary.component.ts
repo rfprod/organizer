@@ -9,6 +9,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { arc, DefaultArcObject, pie } from 'd3-shape';
+import { BehaviorSubject } from 'rxjs';
 import { concatMap, map, tap } from 'rxjs/operators';
 
 import { AppPublicDataService } from '../../services/public-data.service';
@@ -21,9 +22,47 @@ import { AppWebsocketService } from '../../services/websocket.service';
   selector: 'app-summary',
   templateUrl: './summary.component.html',
   styleUrls: ['./summary.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  // eslint-disable-next-line @angular-eslint/prefer-on-push-component-change-detection
+  changeDetection: ChangeDetectionStrategy.Default,
 })
 export class AppSummaryComponent implements OnInit, OnDestroy {
+  public userStatus$ = this.userService.user$.pipe(map(user => user.status));
+
+  private readonly showModal = new BehaviorSubject<boolean>(false);
+
+  public readonly showModal$ = this.showModal.asObservable();
+
+  /**
+   * Application usage data.
+   */
+  private readonly appUsageData = new BehaviorSubject<{ key: string; y: number }[]>([
+    { key: 'Default', y: 1 },
+    { key: 'Default', y: 1 },
+    { key: 'Default', y: 1 },
+    { key: 'Default', y: 1 },
+    { key: 'Default', y: 1 },
+  ]);
+
+  public readonly appUsageData$ = this.appUsageData.asObservable();
+
+  /**
+   * Server diagnostic data.
+   */
+  private readonly serverData = new BehaviorSubject<{
+    static: Record<string, unknown>[];
+    dynamic: Record<string, unknown>[];
+  }>({
+    static: [],
+    dynamic: [],
+  });
+
+  public readonly serverData$ = this.serverData.asObservable();
+
+  /**
+   * Websocket connection.
+   */
+  private ws: WebSocket = new WebSocket(this.websocket.generateUrl('dynamicServerData'));
+
   constructor(
     private readonly websocket: AppWebsocketService,
     private readonly serverStaticDataService: AppServerStaticDataService,
@@ -38,37 +77,6 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
    * D3 chart view child reference.
    */
   @ViewChild('canvas') private readonly canvas: ElementRef<HTMLCanvasElement>;
-
-  /**
-   * Application usage data.
-   */
-  public appUsageData: { key: string; y: number }[] = [
-    { key: 'Default', y: 1 },
-    { key: 'Default', y: 1 },
-    { key: 'Default', y: 1 },
-    { key: 'Default', y: 1 },
-    { key: 'Default', y: 1 },
-  ];
-
-  /**
-   * Server diagnostic data.
-   */
-  public serverData: { static: Record<string, unknown>[]; dynamic: Record<string, unknown>[] } = {
-    static: [],
-    dynamic: [],
-  };
-
-  public userStatus$ = this.userService.user$.pipe(map(user => user.status));
-
-  /**
-   * Indicates if modal should be displayed or not.
-   */
-  public showModal = false;
-
-  /**
-   * Websocket connection.
-   */
-  private ws: WebSocket = new WebSocket(this.websocket.generateUrl('dynamicServerData'));
 
   /**
    * Draws chart.
@@ -130,7 +138,7 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
   private getServerStaticData() {
     return this.serverStaticDataService.getData().pipe(
       tap(data => {
-        this.serverData.static = data;
+        this.serverData.next({ static: [...data], dynamic: [...this.serverData.value.dynamic] });
       }),
     );
   }
@@ -141,7 +149,7 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
   private getPublicData() {
     return this.publicDataService.getData().pipe(
       tap(data => {
-        this.appUsageData = data;
+        this.appUsageData.next(data);
         this.drawChart();
       }),
     );
@@ -175,12 +183,12 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
    * Toggles modal visibility.
    */
   public toggleModal(): void {
-    if (this.showModal) {
+    if (!this.showModal.value) {
       this.ws.send(JSON.stringify({ action: 'pause' }));
     } else {
       this.ws.send(JSON.stringify({ action: 'get' }));
     }
-    this.showModal = !this.showModal ? true : false;
+    this.showModal.next(!this.showModal.value);
   }
 
   public ngOnInit(): void {
@@ -195,12 +203,13 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
     };
     this.ws.onmessage = (message: { data: string }): void => {
       console.warn('websocket incoming message:', message);
-      this.serverData.dynamic = [];
+      const dynamic = [];
       const data: Record<string, unknown>[] = JSON.parse(message.data);
       for (const item of data) {
-        this.serverData.dynamic.push(item);
+        dynamic.push(item);
       }
-      console.warn('this.serverData.dynamic:', this.serverData.dynamic);
+      console.warn('dynamic:', dynamic);
+      this.serverData.next({ dynamic, static: [...this.serverData.value.static] });
     };
     this.ws.onerror = (evt: Event): void => {
       console.warn('websocket error:', evt);

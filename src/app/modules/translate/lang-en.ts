@@ -13,7 +13,6 @@ export const LANG_EN_TRANSLATIONS = {
   diag: 'Platform diagnostics',
   initialized: 'User initialized',
   encryption: 'Encryption available',
-  passwordsCount: 'Passwords count',
 
   generateKeypair: 'Generate RSA keypair',
 
@@ -28,7 +27,6 @@ export const LANG_EN_TRANSLATIONS = {
   submit: 'Submit',
 
   data: 'Data',
-  passwords: 'Passwords',
   sortBy: 'Sort by',
   pickDate: 'Pick a date',
   addPassword: 'Add password',
@@ -36,8 +34,12 @@ export const LANG_EN_TRANSLATIONS = {
   timestamp: 'Timestamp',
   required: 'This value is required',
   delete: 'Delete',
-  encryptPasswords: 'Encrypt passwords',
-  decryptPasswords: 'Decrypt passwords',
-  exportPasswords: 'Export passwords',
-  exportedPasswords: 'Exported passwords',
+  passwords: {
+    title: 'Passwords',
+    count: 'Passwords count',
+    encrypt: 'Encrypt passwords',
+    decrypt: 'Decrypt passwords',
+    export: 'Export passwords',
+    exported: 'Exported passwords',
+  },
 };

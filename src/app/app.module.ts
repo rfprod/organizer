@@ -1,6 +1,6 @@
 import { APP_BASE_HREF, LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
@@ -32,10 +32,10 @@ import { getWindow } from './utils/providers';
     BrowserModule,
     BrowserAnimationsModule,
     FlexLayoutModule,
-    AppMaterialModule,
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    AppMaterialModule.forRoot(),
     AppTranslateModule.forRoot(),
     AppRoutingModule,
   ],
@@ -44,7 +44,6 @@ import { getWindow } from './utils/providers';
     { provide: LocationStrategy, useClass: PathLocationStrategy },
     { provide: WINDOW, useFactory: getWindow },
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

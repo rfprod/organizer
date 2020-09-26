@@ -22,25 +22,26 @@
   *ngIf="userStatus$ | async as status"
 >
   <span fxFlex fxLayout="row" fxLayoutAlign="center center">
-    <span fxFlex="0 1 auto">{{ 'initialized' | translate }}: {{ status?.initialized }}</span>
+    <span fxFlex="0 1 auto">{{ 'initialized' | translate }}: {{ status.initialized }}</span>
   </span>
   <span fxFlex fxLayout="row" fxLayoutAlign="center center">
-    <span fxFlex="0 1 auto">{{ 'encryption' | translate }}: {{ status?.encryption }}</span>
-    <button mat-icon-button *ngIf="!status?.encryption" color="warn" (click)="generateKeypair()">
+    <span fxFlex="0 1 auto">{{ 'encryption' | translate }}: {{ status.encryption }}</span>
+    <button mat-icon-button *ngIf="!status.encryption" color="warn" (click)="generateKeypair()">
       <mat-icon
         class="material-icons"
         matTooltip="{{ 'generateKeypair' | translate }}"
         matTooltipPosition="above"
-        >enhanced_encryption</mat-icon
       >
+        enhanced_encryption
+      </mat-icon>
     </button>
   </span>
   <span fxFlex fxLayout="row" fxLayoutAlign="center center">
-    <span fxFlex="0 1 auto">{{ 'passwordsCount' | translate }}: {{ status?.passwords }}</span>
+    <span fxFlex="0 1 auto">{{ 'passwords.count' | translate }}: {{ status?.passwords }}</span>
   </span>
 </span>
 
-<span id="modal" *ngIf="showModal" fxLayout="row wrap" fxLayoutAligh="start stretch">
+<span id="modal" *ngIf="showModal$ | async" fxLayout="row wrap" fxLayoutAligh="start stretch">
   <span fxFlex="100" fxLayout="row" fxLayoutAligh="start stretch">
     <h4 fxFlex="1 1 auto">{{ 'diag' | translate }}</h4>
     <span fxFlex="0 1 auto">
@@ -50,10 +51,15 @@
     </span>
   </span>
 
-  <span fxFlex="100" fxLayout="row wrap" fxLayoutAligh="start stretch">
+  <span
+    fxFlex="100"
+    fxLayout="row wrap"
+    fxLayoutAligh="start stretch"
+    *ngIf="serverData$ | async as data"
+  >
     <span
       fxFlex="100"
-      *ngFor="let unit of serverData.static"
+      *ngFor="let unit of data.static"
       fxLayout="row wrap"
       fxLayoutAligh="center stretch"
     >
@@ -63,7 +69,7 @@
     </span>
     <span
       fxFlex="100"
-      *ngFor="let unit of serverData.dynamic"
+      *ngFor="let unit of data.dynamic"
       fxLayout="row wrap"
       fxLayoutAligh="start stretch"
     >
