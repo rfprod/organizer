@@ -1,11 +1,11 @@
 /**
- * Electron main
+ * Electron main file.
  */
 
 const { app, BrowserWindow } = require('electron');
 
 /**
- * for more information about Squirrel events handling check:
+ * For more information about Squirrel events handling check:
  * https://github.com/electron/windows-installer#handling-squirrel-events
  */
 
@@ -14,7 +14,7 @@ if (require('electron-squirrel-startup')) {
 }
 
 /**
- * handle Squirrel events
+ * Handle Squirrel events.
  */
 function handleSquirrelEvent() {
   if (process.argv.length === 1) {
@@ -73,9 +73,8 @@ function handleSquirrelEvent() {
       return true;
     case '--squirrel-firstrun':
       /**
-       * this is the first time the application is launched
-       *
-       * user can be shown a splashscreen, settings, or something else
+       * This is the first time the application is launched.
+       * User can be shown a splashscreen, settings, or something else.
        */
       return true;
   }
@@ -104,9 +103,11 @@ process.on('uncaughtException', error => {
 let win;
 
 function createWindow() {
-  // Create the browser window.
+  /**
+   * Create the browser window.
+   * Check all options here: https://www.npmjs.com/package/electron-browser-window-options
+   */
   win = new BrowserWindow({
-    // check all options here: https://www.npmjs.com/package/electron-browser-window-options
     width: 1440,
     height: 900,
     resizable: true,
@@ -122,16 +123,20 @@ function createWindow() {
   // and load the index.html of the app.
   win.loadURL('http://localhost:8080');
 
-  // Open the DevTools.
+  /**
+   * Open the DevTools.
+   */
   // win.webContents.openDevTools();
 
   win.focus();
 
   // Emitted when the window is closed.
   win.on('closed', () => {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
+    /**
+     * Dereference the window object, usually you would store windows
+     * in an array if your app supports multi windows, this is the time
+     * when you should delete the corresponding element.
+     */
     win = null;
   });
 }

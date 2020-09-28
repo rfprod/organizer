@@ -68,7 +68,7 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
     private readonly serverStaticDataService: AppServerStaticDataService,
     private readonly publicDataService: AppPublicDataService,
     private readonly userService: AppUserService,
-    private readonly userAPIService: AppUserApiService,
+    private readonly userApiService: AppUserApiService,
   ) {}
 
   @HostBinding('class.mat-body-1') protected matBody1 = true;
@@ -76,7 +76,7 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
   /**
    * D3 chart view child reference.
    */
-  @ViewChild('canvas') private readonly canvas: ElementRef<HTMLCanvasElement>;
+  @ViewChild('canvas') private readonly canvas!: ElementRef<HTMLCanvasElement>;
 
   /**
    * Draws chart.
@@ -159,7 +159,7 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
    * Gets user status.
    */
   private getUserStatus() {
-    return this.userAPIService.getUserStatus().pipe(
+    return this.userApiService.getUserStatus().pipe(
       tap(data => {
         const userModelUpdate = {
           status: data,
@@ -173,7 +173,7 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
    * Generates private/public RSA keys for a user.
    */
   public generateKeypair(): void {
-    void this.userAPIService
+    void this.userApiService
       .generateKeypair()
       .pipe(concatMap(() => this.getUserStatus()))
       .subscribe();

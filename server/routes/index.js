@@ -332,7 +332,10 @@ module.exports = function (app, cwd, fs, SrvInfo, appData, cryptoUtils) {
             item.password = cryptoUtils.encryptString(item.password, user.keys.public);
             return item;
           });
-          const updatedUser = await appData.config({ passwords: user.passwords, encrypted: true });
+          const updatedUser = await appData.config({
+            passwords: [...user.passwords],
+            encrypted: true,
+          });
           res.json(updatedUser);
         } else {
           res.status(500).json(errorMessage.config);
