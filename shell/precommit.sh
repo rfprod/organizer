@@ -6,13 +6,6 @@
 source shell/colors.sh ''
 
 ##
-# Exits with error.
-##
-exitWithError() {
-  exit 1
-}
-
-##
 # Reports usage error and exits.
 ##
 reportUsage() {
@@ -31,7 +24,7 @@ reportUsageError() {
     ${LIGHT_RED}- wrong argument: ${1}
     ${DEFAULT}\n\n" "$TITLE"
   reportUsage
-  exitWithError
+  exit 1
 }
 
 lint() {
@@ -40,9 +33,9 @@ lint() {
     ${LIGHT_BLUE}%s
     ${DEFAULT}\n\n" "$TITLE"
 
-  ng lint || exitWithError
-  yarn lint:html || exitWithError
-  yarn stylelint || exitWithError
+  ng lint || exit 1
+  yarn lint:html || exit 1
+  yarn stylelint || exit 1
 }
 
 if [ $# -ne 1 ] || [ "$1" = "?" ]; then
@@ -50,5 +43,6 @@ if [ $# -ne 1 ] || [ "$1" = "?" ]; then
 elif [ "$1" = "lint" ]; then
   lint
 else
-  reportUsageError "$1"
+  reportUsage
+  exit 1
 fi

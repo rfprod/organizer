@@ -6,13 +6,6 @@
 source shell/colors.sh ''
 
 ##
-# Exits with error.
-##
-exitWithError() {
-  exit 1
-}
-
-##
 # Reports usage error and exits.
 ##
 reportUsage() {
@@ -40,13 +33,13 @@ elif [ "$1" = "global" ]; then
   printf "
     ${LIGHT_BLUE}%s
     ${DEFAULT}\n\n" "$TITLE"
-  sudo npm install -g @angular/cli@latest typescript@latest firebase-tools@latest @compodoc/compodoc@latest @ngxs/cli@latest commitizen@latest cz-conventional-changelog@latest yarn || exitWithError
+  sudo npm install -g @angular/cli@latest typescript@latest firebase-tools@latest @compodoc/compodoc@latest @ngxs/cli@latest commitizen@latest cz-conventional-changelog@latest yarn || exit 1
 else
   TITLE="<< ERROR >>"
   printf "
     ${RED}%s
-    ${LIGHT_RED}- wrong argument: ${1}
-    ${DEFAULT}\n\n" "$TITLE"
+    ${LIGHT_RED}- wrong argument: %s
+    ${DEFAULT}\n\n" "$TITLE" "$1"
   reportUsage
-  exitWithError
+  exit 1
 fi

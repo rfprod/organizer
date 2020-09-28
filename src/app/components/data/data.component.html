@@ -36,7 +36,7 @@
           [(ngModel)]="sortByCriterion"
           floatPlaceholder="auto"
         >
-          <mat-option value="">None</mat-option>
+          <mat-option value="">{{ 'name' | translate }}</mat-option>
           <mat-option value="timestamp">{{ 'timestamp' | translate }}</mat-option>
         </mat-select>
         <mat-placeholder>

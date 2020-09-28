@@ -5,7 +5,7 @@ import { of } from 'rxjs';
 import { concatMap, first, map, tap } from 'rxjs/operators';
 
 import { AppUserApiService } from '../../services/user-api.service';
-import { AppUserService } from '../../services/user.service';
+import { AppUserService, IAppUser } from '../../services/user.service';
 
 @Component({
   selector: 'app-data',
@@ -49,7 +49,7 @@ export class AppDataComponent implements OnInit {
   /**
    * Filters search value.
    */
-  private searchValue: string;
+  private searchValue = '';
 
   /**
    * Filters search query getter.
@@ -69,7 +69,7 @@ export class AppDataComponent implements OnInit {
   /**
    * Filters sort value.
    */
-  private sortValue: string;
+  private sortValue = '';
 
   /**
    * Filters sort value getter.
@@ -93,15 +93,31 @@ export class AppDataComponent implements OnInit {
   /**
    * Datepicker view child reference.
    */
-  @ViewChild('datePicker') private readonly datePicker: MatDatepicker<string>;
+  @ViewChild('datePicker') private readonly datePicker!: MatDatepicker<string>;
 
   /**
    * Gets currently logged in user.
    */
   private getUser() {
     return this.userApiService.getUser().pipe(
-      tap(data => {
-        this.userService.saveUser(data);
+      concatMap(user => {
+        this.userService.saveUser(user);
+        return this.userService.user$
+          .pipe(
+            first(),
+            map(savedUser => savedUser.status),
+          )
+          .pipe(
+            tap(status => {
+              const newStatusObject = {
+                status: {
+                  ...status,
+                  encrypted: ((user as unknown) as IAppUser & { encrypted: boolean }).encrypted,
+                },
+              };
+              this.userService.saveUser(newStatusObject);
+            }),
+          );
       }),
     );
   }
@@ -220,23 +236,13 @@ export class AppDataComponent implements OnInit {
         first(),
         tap(user => {
           const sorted = { ...user };
-          if (val === 'registered') {
-            sorted.passwords.sort((a, b) => parseInt(a[val], 10) - parseInt(b[val], 10));
-          } else if (val === 'role') {
-            sorted.passwords.sort((a, b) => {
-              if (a[val] < b[val]) {
-                return -1;
-              }
-              if (a[val] > b[val]) {
-                return 1;
-              }
-              return 0;
-            });
+          if (val === 'timestamp') {
+            sorted.passwords.sort((a, b) => b[val] - a[val]);
           } else if (val === '') {
             /*
              *	sort by name if sorting is set to none
              */
-            sorted.passwords.sort((a, b) => Number(a.name) - Number(b.name));
+            sorted.passwords.sort((a, b) => a.name.localeCompare(b.name));
           }
           this.userService.saveUser(sorted);
         }),
