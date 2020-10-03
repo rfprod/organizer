@@ -207,7 +207,10 @@ export class AppDataComponent implements OnInit {
    * TODO: let user save file to an arbitrary path.
    */
   public exportPasswords(): void {
-    void this.userApiService.exportPasswords().subscribe();
+    void this.userApiService
+      .exportPasswords()
+      .pipe(concatMap(() => this.getExportedPasswordsList()))
+      .subscribe();
   }
 
   /**

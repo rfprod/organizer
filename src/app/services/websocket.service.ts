@@ -1,17 +1,16 @@
-import { Inject, Injectable } from '@angular/core';
+import { Inject, Injectable, OnDestroy } from '@angular/core';
+import { WebSocketSubject } from 'rxjs/webSocket';
 
 import { WINDOW } from '../utils/injection-tokens';
 
 @Injectable({
   providedIn: 'root',
 })
-export class AppWebsocketService {
-  constructor(@Inject(WINDOW) public window: Window) {}
-
+export class AppWebsocketService implements OnDestroy {
   /**
    * Host used for websocket url formation.
    */
-  private readonly host: string = this.window.location.host;
+  private readonly host = 'localhost:8080';
 
   /**
    * Protocol used for websocket url formation.
@@ -26,12 +25,32 @@ export class AppWebsocketService {
   };
 
   /**
+   * All socket connections.
+   */
+  public readonly sockets = {
+    dynamicServerData$: new WebSocketSubject<
+      { name: string; value: number }[] | Record<string, string>
+    >(this.generateUrl(this.endpoints.dynamicServerData)),
+  };
+
+  constructor(@Inject(WINDOW) public window: Window) {}
+
+  /**
    * Generates websocket url.
    * @param endpoint endpoint key
    */
   public generateUrl(endpoint: string): string {
-    return Boolean(this.endpoints[endpoint])
-      ? `${this.protocol}${this.host}${this.endpoints[endpoint]}`
-      : `Endpoint ${endpoint} does not exist`;
+    return `${this.protocol}${this.host}${endpoint}`;
+  }
+
+  /**
+   * Closes all websocket connections.
+   */
+  public ngOnDestroy() {
+    const socketKeys = Object.keys(this.sockets);
+    for (const key of socketKeys) {
+      const socket: WebSocketSubject<Record<string, string>> = this.sockets[key];
+      socket.complete();
+    }
   }
 }

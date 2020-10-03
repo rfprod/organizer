@@ -44,9 +44,15 @@
     </mat-form-field>
 
     <span fxFlex="100">
-      <span>
-        <a (click)="resetForm()">{{ 'forgetMyAddress' | translate }}</a>
-      </span>
+      <button
+        mat-button
+        type="button"
+        (click)="resetForm()"
+        [disabled]="form.pristine"
+        attr.aria-label="{{ 'form.clear' | translate }}"
+      >
+        {{ 'form.clear' | translate }}
+      </button>
     </span>
 
     <button
@@ -54,9 +60,9 @@
       mat-button
       type="submit"
       [disabled]="form.pristine || form.invalid"
-      [attr.aria-label]="'submit'"
+      attr.aria-label="{{ 'form.submit' | translate }}"
     >
-      {{ 'submit' | translate }}
+      {{ 'form.submit' | translate }}
     </button>
   </form>
 </div>

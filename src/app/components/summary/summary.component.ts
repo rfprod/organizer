@@ -8,9 +8,11 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { arc, DefaultArcObject, pie } from 'd3-shape';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { arc, pie, PieArcDatum } from 'd3-shape';
 import { BehaviorSubject } from 'rxjs';
 import { concatMap, map, tap } from 'rxjs/operators';
+import { getRandomColor } from 'src/app/utils/ui.utils';
 
 import { AppPublicDataService } from '../../services/public-data.service';
 import { AppServerStaticDataService } from '../../services/server-static-data.service';
@@ -18,6 +20,12 @@ import { AppUserApiService } from '../../services/user-api.service';
 import { AppUserService } from '../../services/user.service';
 import { AppWebsocketService } from '../../services/websocket.service';
 
+interface IChartDataNode {
+  key: string;
+  y: number;
+}
+
+@UntilDestroy()
 @Component({
   selector: 'app-summary',
   templateUrl: './summary.component.html',
@@ -35,7 +43,7 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
   /**
    * Application usage data.
    */
-  private readonly appUsageData = new BehaviorSubject<{ key: string; y: number }[]>([
+  private readonly appUsageData = new BehaviorSubject<IChartDataNode[]>([
     { key: 'Default', y: 1 },
     { key: 'Default', y: 1 },
     { key: 'Default', y: 1 },
@@ -61,7 +69,22 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
   /**
    * Websocket connection.
    */
-  private ws: WebSocket = new WebSocket(this.websocket.generateUrl('dynamicServerData'));
+  private readonly ws = this.websocket.sockets.dynamicServerData$.pipe(
+    tap(
+      message => {
+        const dynamic = [];
+        const data: Record<string, unknown>[] = message as { name: string; value: number }[];
+        for (const item of data) {
+          dynamic.push(item);
+        }
+        this.serverData.next({ dynamic, static: [...this.serverData.value.static] });
+      },
+      error => {
+        console.warn('socket$, error', error);
+      },
+      () => console.warn('socket$, completed'),
+    ),
+  );
 
   constructor(
     private readonly websocket: AppWebsocketService,
@@ -90,44 +113,38 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
       const divisor = 2;
       const radius = Math.min(width, height) / divisor;
 
-      const createArc = arc()
+      const createArc = arc<PieArcDatum<IChartDataNode>>()
         .outerRadius(radius - 10)
-        .innerRadius(0)
+        .innerRadius(50)
         .context(context);
 
-      const createLabel = arc()
+      const createLabel = arc<PieArcDatum<IChartDataNode>>()
         .outerRadius(radius - 40)
         .innerRadius(radius - 40)
         .context(context);
 
-      const createPieChart = pie()
-        .sort(null)
-        .value(d => ((d as unknown) as { y: number }).y);
+      const createPieChart = pie<IChartDataNode>().value(datum => datum.y);
 
       context.translate(width / divisor, height / divisor);
 
-      const arcs = createPieChart([0], this.appUsageData);
+      const arcs = createPieChart(
+        this.appUsageData.value.concat([{ key: 'aaa', y: new Date().getTime() % 160000000 }]),
+      );
 
-      const colors = ['#98abc5', '#8a89a6', '#7b6888', '#6b486b', '#a05d56', '#d0743c', '#ff8c00'];
-
-      arcs.forEach((d, i) => {
+      arcs.forEach((datum, i) => {
+        context.fillStyle = getRandomColor();
         context.beginPath();
-        createArc((d as unknown) as DefaultArcObject);
-        context.fillStyle = colors[i < colors.length ? i : Math.ceil(i % colors.length)];
+        createArc(datum);
+        context.closePath();
         context.fill();
       });
 
-      context.beginPath();
-      arcs.forEach(d => createArc);
-      context.strokeStyle = '#fff';
-      context.stroke();
-
-      context.textAlign = 'center';
-      context.textBaseline = 'middle';
-      context.fillStyle = '#000';
-      arcs.forEach(d => {
-        const c = createLabel.centroid((d as unknown) as DefaultArcObject);
-        context.fillText(((d.data as unknown) as { key: string }).key, c[0], c[1]);
+      arcs.forEach(datum => {
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillStyle = '#000';
+        const c = createLabel.centroid(datum);
+        context.fillText(datum.data.key, c[0], c[1]);
       });
     }
   }
@@ -172,62 +189,29 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
   /**
    * Generates private/public RSA keys for a user.
    */
-  public generateKeypair(): void {
-    void this.userApiService
-      .generateKeypair()
-      .pipe(concatMap(() => this.getUserStatus()))
-      .subscribe();
-  }
-
-  /**
-   * Toggles modal visibility.
-   */
-  public toggleModal(): void {
-    if (!this.showModal.value) {
-      this.ws.send(JSON.stringify({ action: 'pause' }));
-    } else {
-      this.ws.send(JSON.stringify({ action: 'get' }));
+  public generateKeypair(encryptionEnabled = true): void {
+    if (!encryptionEnabled) {
+      void this.userApiService
+        .generateKeypair()
+        .pipe(concatMap(() => this.getUserStatus()))
+        .subscribe();
     }
-    this.showModal.next(!this.showModal.value);
   }
 
   public ngOnInit(): void {
-    this.ws.onopen = (evt: Event): void => {
-      console.warn('websocket opened:', evt);
-      /*
-       *	ws connection is established, but data is requested
-       *	only when this.showModal switches to true, i.e.
-       *	app diagnostics modal is visible to a user
-       */
-      // this.ws.send(JSON.stringify({action: 'get'}));
-    };
-    this.ws.onmessage = (message: { data: string }): void => {
-      console.warn('websocket incoming message:', message);
-      const dynamic = [];
-      const data: Record<string, unknown>[] = JSON.parse(message.data);
-      for (const item of data) {
-        dynamic.push(item);
-      }
-      console.warn('dynamic:', dynamic);
-      this.serverData.next({ dynamic, static: [...this.serverData.value.static] });
-    };
-    this.ws.onerror = (evt: Event): void => {
-      console.warn('websocket error:', evt);
-      this.ws.close();
-    };
-    this.ws.onclose = (evt: Event): void => {
-      console.warn('websocket closed:', evt);
-    };
-
+    void this.ws.pipe(untilDestroyed(this)).subscribe();
     void this.getPublicData()
       .pipe(
         concatMap(() => this.getServerStaticData()),
         concatMap(() => this.getUserStatus()),
+        tap(() => {
+          this.websocket.sockets.dynamicServerData$.next({ action: 'get' });
+        }),
       )
       .subscribe();
   }
 
-  public ngOnDestroy(): void {
-    this.ws.close();
+  public ngOnDestroy() {
+    this.websocket.sockets.dynamicServerData$.next({ action: 'pause' });
   }
 }

@@ -5,27 +5,22 @@
   fxLayoutGap="10px"
   *ngIf="selectedLanguage$ | async as selectedLanguage"
 >
-  <mat-icon
-    class="material-icons"
-    [fxHide.sm]="true"
-    [fxHide.md]="true"
-    [fxHide.lg]="true"
-    matTooltip="{{ 'title' | translate }}"
-    matTooltipPosition="after"
-  >
-    lock
-  </mat-icon>
-  <span
-    fxFlex="0 1 auto"
-    fxLayout="row"
-    fxLayoutAligh="center center"
-    fxLayoutGap="10px"
-    [fxHide.xs]="true"
-  >
-    <h1 fxFlex>
-      {{ 'title' | translate }}
-    </h1>
-  </span>
+  <div matTooltip="{{ 'description' | translate }}" matTooltipPosition="after">
+    <mat-icon class="material-icons" [fxHide.sm]="true" [fxHide.md]="true" [fxHide.lg]="true">
+      lock
+    </mat-icon>
+    <span
+      fxFlex="0 1 auto"
+      fxLayout="row"
+      fxLayoutAligh="center center"
+      fxLayoutGap="10px"
+      [fxHide.xs]="true"
+    >
+      <h1 fxFlex>
+        {{ 'title' | translate }}
+      </h1>
+    </span>
+  </div>
 
   <span fxFlex="1 1 auto" fxLayout="row" fxLayoutAligh="center center"> </span>
 

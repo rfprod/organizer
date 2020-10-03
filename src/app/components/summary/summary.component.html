@@ -1,81 +1,78 @@
-<p fxFlex="100">
-  {{ 'description' | translate }}
-  <button mat-icon-button (click)="toggleModal()" matTooltip="{{ 'diag' | translate }}">
-    <mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-cogs"></mat-icon>
-  </button>
-</p>
+<div fxLayout="row wrap">
+  <h3 fxFlex="100">
+    {{ 'user.title' | translate }}
+  </h3>
 
-<div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="center start">
-  <span fxFlex="100" fxLayout="row" fxLayoutAlign="center start">
-    <span fxFlex="0 1 auto">user sessions</span>
-  </span>
-  <span fxFlex="0 1 auto">
-    <canvas #canvas></canvas>
-  </span>
-</div>
+  <mat-chip-list
+    [attr.aria-label]="'user.status' | translate"
+    *ngIf="userStatus$ | async as status"
+  >
+    <mat-chip [color]="status.initialized ? 'primary' : 'warn'" [disabled]="true" [selected]="true">
+      <mat-icon>verified_user</mat-icon>
+      &nbsp;
+      {{ 'user.initialized' | translate }}
+    </mat-chip>
 
-<span
-  fxFlex="100"
-  fxFlexAlign="stretch"
-  fxLayout="row wrap"
-  fxLayoutAligh="start stretch"
-  *ngIf="userStatus$ | async as status"
->
-  <span fxFlex fxLayout="row" fxLayoutAlign="center center">
-    <span fxFlex="0 1 auto">{{ 'initialized' | translate }}: {{ status.initialized }}</span>
-  </span>
-  <span fxFlex fxLayout="row" fxLayoutAlign="center center">
-    <span fxFlex="0 1 auto">{{ 'encryption' | translate }}: {{ status.encryption }}</span>
-    <button mat-icon-button *ngIf="!status.encryption" color="warn" (click)="generateKeypair()">
-      <mat-icon
-        class="material-icons"
-        matTooltip="{{ 'generateKeypair' | translate }}"
-        matTooltipPosition="above"
-      >
-        enhanced_encryption
-      </mat-icon>
-    </button>
-  </span>
-  <span fxFlex fxLayout="row" fxLayoutAlign="center center">
-    <span fxFlex="0 1 auto">{{ 'passwords.count' | translate }}: {{ status?.passwords }}</span>
-  </span>
-</span>
+    <mat-chip
+      [color]="status.encryption ? 'primary' : 'warn'"
+      selectable="false"
+      [disabled]="status.encryption"
+      [selected]="true"
+      (click)="generateKeypair(status.encryption)"
+    >
+      <mat-icon>enhanced_encryption</mat-icon>
+      &nbsp;
+      {{ 'user.encryption' | translate }}
+    </mat-chip>
 
-<span id="modal" *ngIf="showModal$ | async" fxLayout="row wrap" fxLayoutAligh="start stretch">
-  <span fxFlex="100" fxLayout="row" fxLayoutAligh="start stretch">
-    <h4 fxFlex="1 1 auto">{{ 'diag' | translate }}</h4>
-    <span fxFlex="0 1 auto">
-      <button mat-icon-button (click)="toggleModal()">
-        <mat-icon class="material-icons">close</mat-icon>
-      </button>
-    </span>
-  </span>
+    <mat-chip [color]="status.passwords ? 'primary' : 'warn'" [disabled]="true" [selected]="true">
+      <mat-icon>bookmarks</mat-icon>
+      &nbsp;
+      {{ 'passwords.count' | translate }}: {{ status.passwords }}
+    </mat-chip>
+  </mat-chip-list>
 
-  <span
+  <div
     fxFlex="100"
     fxLayout="row wrap"
-    fxLayoutAligh="start stretch"
-    *ngIf="serverData$ | async as data"
+    fxLayoutAlign="center start"
+    [ngStyle]="{ padding: '10px 0' }"
   >
-    <span
-      fxFlex="100"
-      *ngFor="let unit of data.static"
-      fxLayout="row wrap"
-      fxLayoutAligh="center stretch"
-    >
-      <span fxFlex="50">{{ unit.name }}</span>
-      <span fxFlex="50">{{ unit.value }}</span>
-      <hr fxFlex />
+    <span fxFlex="0 1 auto">
+      <canvas #canvas></canvas>
+      <div class="mat-caption" [ngStyle]="{ 'text-align': 'center' }">
+        {{ 'user.sessions' | translate }}
+      </div>
     </span>
-    <span
-      fxFlex="100"
-      *ngFor="let unit of data.dynamic"
-      fxLayout="row wrap"
-      fxLayoutAligh="start stretch"
-    >
-      <span fxFlex="50">{{ unit.name }}</span>
-      <span fxFlex="50">{{ unit.value }}</span>
-      <hr fxFlex />
-    </span>
-  </span>
-</span>
+  </div>
+
+  <mat-divider fxFlex="100"></mat-divider>
+
+  <h3 fxFlex="100">
+    {{ 'platform.title' | translate }}
+  </h3>
+
+  <div fxFlex="100" fxLayout="row wrap" *ngIf="serverData$ | async as data">
+    <mat-list fxFlex fxFlex.lt-sm="100" fxShow [fxHide]="data.dynamic.length === 0">
+      <mat-list-item *ngFor="let unit of data.dynamic">
+        <span
+          fxFlex="5px"
+          [ngStyle]="{ height: '80%', 'background-color': '#cecece', margin: '0 5px 0 0 ' }"
+        ></span>
+        <span fxFlex="50">{{ unit.name }}</span>
+        <span fxFlex="50">{{ unit.value }}</span>
+      </mat-list-item>
+    </mat-list>
+
+    <mat-list fxFlex fxFlex.lt-sm="100" fxShow [fxHide]="data.static.length === 0">
+      <mat-list-item *ngFor="let unit of data.static">
+        <span
+          fxFlex="5px"
+          [ngStyle]="{ height: '80%', 'background-color': '#cecece', margin: '0 5px 0 0 ' }"
+        ></span>
+        <span fxFlex="50">{{ unit.name }}</span>
+        <span fxFlex="50">{{ unit.value }}</span>
+      </mat-list-item>
+    </mat-list>
+  </div>
+</div>
