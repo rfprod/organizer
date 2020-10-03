@@ -4,6 +4,8 @@
 
 const { app, BrowserWindow } = require('electron');
 
+const path = require('path');
+
 /**
  * For more information about Squirrel events handling check:
  * https://github.com/electron/windows-installer#handling-squirrel-events
@@ -113,7 +115,7 @@ function createWindow() {
     resizable: true,
     webPreferences: {
       nodeIntegration: false, // if set to true, breaks client: d3, nv, nvd3
-      preload: __dirname + '/dist/organizer/assets/js/electron.preload.js', // restores node globals
+      preload: path.join(app.getAppPath() + '/electron.preload.js'), // restores node globals
       webSecurity: true,
     },
   });

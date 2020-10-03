@@ -58,7 +58,7 @@ module.exports = function (app, cwd, fs, SrvInfo, appData, cryptoUtils) {
         const contents = JSON.parse(fs.readFileSync(cwd + '/sessions/' + file).toString());
         const item = {
           key: file.substring(0, 6),
-          y: contents.views,
+          y: new Date(contents.cookie.expires).getTime() % 160000000,
         };
         output.push(item);
       }
@@ -104,20 +104,20 @@ module.exports = function (app, cwd, fs, SrvInfo, appData, cryptoUtils) {
     console.log('websocket opened /app-diag/dynamic');
     let sender = null;
     ws.on('message', msg => {
-      console.log('message:', msg);
+      const message = JSON.parse(msg);
       function sendData() {
         ws.send(JSON.stringify(SrvInfo['dynamic']()), err => {
           if (err) throw err;
         });
       }
-      if (JSON.parse(msg).action === 'get') {
+      if (message.action === 'get') {
         console.log('ws open, data sending started');
         sendData();
         sender = setInterval(() => {
           sendData();
         }, 5000);
       }
-      if (JSON.parse(msg).action === 'pause') {
+      if (message.action === 'pause') {
         console.log('ws open, data sending paused');
         clearInterval(sender);
       }

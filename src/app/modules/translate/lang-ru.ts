@@ -1,6 +1,5 @@
 export const LANG_RU_NAME = 'ru';
 
-// keys map for Russian language
 export const LANG_RU_TRANSLATIONS = {
   title: 'Органайзер Паролей',
   description: 'Хранилище паролей с возможным шифрованием',
@@ -10,10 +9,6 @@ export const LANG_RU_TRANSLATIONS = {
   initialization: 'Инициализация пользовательской учётной записи',
 
   summary: 'Сводка',
-  diag: 'Диагностика платформы',
-  initialized: 'Пользователь инициализирован',
-  encryption: 'Шифрование доступно',
-  passwordsCount: 'Количество паролей',
 
   generateKeypair: 'Сгенерировать пару RSA-ключей',
 
@@ -25,7 +20,22 @@ export const LANG_RU_TRANSLATIONS = {
 
   logout: 'Выход',
 
-  submit: 'Отправить',
+  form: {
+    clear: 'Очистить',
+    submit: 'Отправить',
+  },
+
+  platform: {
+    title: 'Платформа',
+  },
+
+  user: {
+    title: 'Пользователь',
+    status: 'Статус пользователя',
+    sessions: 'Пользовательские сессии (по времени истечения)',
+    initialized: 'Пользователь инициализирован',
+    encryption: 'Шифрование включено',
+  },
 
   data: 'Данные',
   sortBy: 'Сортировать по',

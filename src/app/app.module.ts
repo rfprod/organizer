@@ -3,6 +3,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatIconRegistry } from '@angular/material/icon';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -46,4 +47,17 @@ import { getWindow } from './utils/providers';
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(private readonly matIconRegistry: MatIconRegistry) {
+    /**
+     *	register fontawesome for usage in mat-icon by adding directives
+     *	fontSet="fab" fontIcon="fa-icon"
+     *	fontSet="fas" fontIcon="fa-icon"
+     *
+     *	note: free plan includes only fab (font-awesome-brands) and fas (font-awesome-solid) groups
+     *
+     *	icons reference: https://fontawesome.com/icons/
+     */
+    this.matIconRegistry.registerFontClassAlias('fontawesome-all');
+  }
+}

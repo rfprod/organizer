@@ -120,10 +120,12 @@ module.exports = cwd => {
     if (!passwords) {
       passwords = [];
     }
-    console.log('passwords, should be encrypted', passwords);
+    // console.log('passwords, should be encrypted', passwords);
     const exportPath = userPasswordsExportPath();
+    console.log('exportPath', exportPath);
     return new Promise((resolve, reject) => {
-      fs.writeFile(exportPath, passwords, err => {
+      const data = JSON.stringify(passwords);
+      fs.writeFile(exportPath, data, err => {
         if (err) {
           console.log('error writing file while saving passwords');
           reject(err);

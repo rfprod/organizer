@@ -1,6 +1,5 @@
 export const LANG_EN_NAME = 'en';
 
-// keys map for English language
 export const LANG_EN_TRANSLATIONS = {
   title: 'Passwords Organizer',
   description: 'Passwords storage with optional encryption',
@@ -10,9 +9,6 @@ export const LANG_EN_TRANSLATIONS = {
   initialization: 'User account initialization',
 
   summary: 'Summary',
-  diag: 'Platform diagnostics',
-  initialized: 'User initialized',
-  encryption: 'Encryption available',
 
   generateKeypair: 'Generate RSA keypair',
 
@@ -24,7 +20,22 @@ export const LANG_EN_TRANSLATIONS = {
 
   logout: 'Log out',
 
-  submit: 'Submit',
+  form: {
+    clear: 'Clear',
+    submit: 'Submit',
+  },
+
+  platform: {
+    title: 'Platform',
+  },
+
+  user: {
+    title: 'User',
+    status: 'User status',
+    sessions: 'User sessions (by expiration date)',
+    initialized: 'User initialized',
+    encryption: 'Encryption enabled',
+  },
 
   data: 'Data',
   sortBy: 'Sort by',
