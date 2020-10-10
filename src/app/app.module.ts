@@ -8,26 +8,28 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './components/app/app.component';
+import { AppAuthComponent } from './components/auth/auth.component';
+import { AppChatComponent } from './components/chat/chat.component';
 import { AppDataComponent } from './components/data/data.component';
-import { AppLoginComponent } from './components/login/login.component';
 import { AppNavComponent } from './components/navbar/navbar.component';
+import { AppRootComponent } from './components/root/root.component';
 import { AppSummaryComponent } from './components/summary/summary.component';
 import { AppMaterialModule } from './modules/material/material.module';
 import { AppTranslateModule } from './modules/translate/translate.module';
-import { WINDOW } from './utils/injection-tokens';
-import { getWindow } from './utils/providers';
+import { NAVIGATOR, WINDOW } from './utils/injection-tokens';
+import { getNavigator, getWindow } from './utils/providers';
 
 /**
  * Main application module.
  */
 @NgModule({
   declarations: [
-    AppComponent,
+    AppRootComponent,
     AppNavComponent,
     AppSummaryComponent,
-    AppLoginComponent,
+    AppAuthComponent,
     AppDataComponent,
+    AppChatComponent,
   ],
   imports: [
     BrowserModule,
@@ -44,8 +46,9 @@ import { getWindow } from './utils/providers';
     { provide: APP_BASE_HREF, useValue: '/' },
     { provide: LocationStrategy, useClass: PathLocationStrategy },
     { provide: WINDOW, useFactory: getWindow },
+    { provide: NAVIGATOR, useFactory: getNavigator },
   ],
-  bootstrap: [AppComponent],
+  bootstrap: [AppRootComponent],
 })
 export class AppModule {
   constructor(private readonly matIconRegistry: MatIconRegistry) {

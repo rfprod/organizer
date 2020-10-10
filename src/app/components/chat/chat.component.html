@@ -1,0 +1,64 @@
+<div fxLayout="row wrap" fxLayoutAlign="start stretch" *ngIf="language$ | async">
+  <h3 fxFlex="100">{{ 'chat.title' | translate }}</h3>
+
+  <div fxFlex="100" xLayout="row wrap" fxLayoutAlign="center center">
+    <video #video autoplay muted></video>
+  </div>
+
+  <mat-divider [ngStyle]="{ margin: '8px 0' }" fxFlex="100"></mat-divider>
+
+  <h4 fxFlex="100">{{ 'chat.devices' | translate }}</h4>
+
+  <div
+    fxFlex="100"
+    fxLayout="row wrap"
+    fxLayoutAlign="center space-around"
+    *ngIf="mediaDevices$ | async as devices"
+  >
+    <mat-card [ngStyle]="{ margin: '16px' }" *ngFor="let device of devices">
+      <mat-card-header>
+        <div mat-card-avatar fxLayout="row" fxLayoutAlign="center center">
+          <mat-icon>devices</mat-icon>
+        </div>
+        <mat-card-title>{{ device.kind }}</mat-card-title>
+
+        <mat-card-subtitle>
+          <div
+            [ngStyle]="{ width: '100px', overflow: 'hidden' }"
+            class="clamp"
+            matTooltip="{{ device.deviceId }}"
+          >
+            <span class="mat-body-2">Device id:</span>
+            <span>
+              {{ device.deviceId || 'N/A' }}
+            </span>
+          </div>
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div
+          [ngStyle]="{ width: '150px', overflow: 'hidden' }"
+          class="clamp"
+          matTooltip="{{ device.groupId }}"
+        >
+          <span class="mat-body-2">Group id:</span>
+          <span>
+            {{ device.groupId }}
+          </span>
+        </div>
+
+        <div
+          [ngStyle]="{ width: '150px', overflow: 'hidden' }"
+          class="clamp"
+          matTooltip="{{ device.label }}"
+        >
+          <span class="mat-body-2">Label:</span>
+          <span>
+            {{ device.label || 'N/A' }}
+          </span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

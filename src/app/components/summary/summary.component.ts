@@ -14,6 +14,7 @@ import { BehaviorSubject } from 'rxjs';
 import { concatMap, map, tap } from 'rxjs/operators';
 import { getRandomColor } from 'src/app/utils/ui.utils';
 
+import { AppTranslateService } from '../../modules/translate/translate.service';
 import { AppPublicDataService } from '../../services/public-data.service';
 import { AppServerStaticDataService } from '../../services/server-static-data.service';
 import { AppUserApiService } from '../../services/user-api.service';
@@ -30,8 +31,7 @@ interface IChartDataNode {
   selector: 'app-summary',
   templateUrl: './summary.component.html',
   styleUrls: ['./summary.component.scss'],
-  // eslint-disable-next-line @angular-eslint/prefer-on-push-component-change-detection
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppSummaryComponent implements OnInit, OnDestroy {
   public userStatus$ = this.userService.user$.pipe(map(user => user.status));
@@ -86,12 +86,15 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
     ),
   );
 
+  public readonly language$ = this.translate.language$;
+
   constructor(
     private readonly websocket: AppWebsocketService,
     private readonly serverStaticDataService: AppServerStaticDataService,
     private readonly publicDataService: AppPublicDataService,
     private readonly userService: AppUserService,
     private readonly userApiService: AppUserApiService,
+    private readonly translate: AppTranslateService,
   ) {}
 
   @HostBinding('class.mat-body-1') protected matBody1 = true;

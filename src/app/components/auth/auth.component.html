@@ -1,4 +1,9 @@
-<div [ngStyle]="{ 'min-height': '100%' }" fxLayout="row" fxLayoutAlign="center center">
+<div
+  [ngStyle]="{ 'min-height': '100%' }"
+  fxLayout="row"
+  fxLayoutAlign="center center"
+  *ngIf="language$ | async"
+>
   <form
     fxFlex="50"
     fxLayout.lt-sm="75"

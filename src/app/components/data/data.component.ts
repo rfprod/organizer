@@ -4,6 +4,7 @@ import { MatDatepicker } from '@angular/material/datepicker';
 import { of } from 'rxjs';
 import { concatMap, first, map, tap } from 'rxjs/operators';
 
+import { AppTranslateService } from '../../modules/translate/translate.service';
 import { AppUserApiService } from '../../services/user-api.service';
 import { AppUserService, IAppUser } from '../../services/user.service';
 
@@ -11,14 +12,16 @@ import { AppUserService, IAppUser } from '../../services/user.service';
   selector: 'app-data',
   templateUrl: './data.component.html',
   styleUrls: ['./data.component.scss'],
-  // eslint-disable-next-line @angular-eslint/prefer-on-push-component-change-detection
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppDataComponent implements OnInit {
+  public readonly language$ = this.translate.language$;
+
   constructor(
     private readonly fb: FormBuilder,
     private readonly userService: AppUserService,
     private readonly userApiService: AppUserApiService,
+    private readonly translate: AppTranslateService,
   ) {}
 
   @HostBinding('class.mat-body-1') protected matBody1 = true;
