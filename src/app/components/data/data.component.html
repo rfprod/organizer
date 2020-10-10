@@ -1,4 +1,8 @@
-<div fxLayout="row wrap" fxLayoutAlign="start start" *ngIf="user$ | async as user">
+<div
+  fxLayout="row wrap"
+  fxLayoutAlign="start start"
+  *ngIf="(language$ | async) && user$ | async as user"
+>
   <mat-toolbar>
     <button mat-button (click)="encryptPasswords()" *ngIf="!user.status.encrypted" color="primary">
       <mat-icon class="material-icons">lock</mat-icon>

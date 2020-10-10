@@ -1,4 +1,4 @@
-<div fxLayout="row wrap">
+<div fxLayout="row wrap" *ngIf="language$ | async">
   <h3 fxFlex="100">
     {{ 'user.title' | translate }}
   </h3>

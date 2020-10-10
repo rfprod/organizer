@@ -1,8 +1,7 @@
 export const LANG_EN_NAME = 'en';
 
 export const LANG_EN_TRANSLATIONS = {
-  title: 'Passwords Organizer',
-  description: 'Passwords storage with optional encryption',
+  title: 'Organizer',
 
   language: 'Language',
 
@@ -19,6 +18,11 @@ export const LANG_EN_TRANSLATIONS = {
   forgetMyAddress: 'Forget my address',
 
   logout: 'Log out',
+
+  chat: {
+    title: 'Chat',
+    devices: 'Media devices',
+  },
 
   form: {
     clear: 'Clear',

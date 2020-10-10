@@ -1,8 +1,7 @@
 export const LANG_RU_NAME = 'ru';
 
 export const LANG_RU_TRANSLATIONS = {
-  title: 'Органайзер Паролей',
-  description: 'Хранилище паролей с возможным шифрованием',
+  title: 'Органайзер',
 
   language: 'Язык',
 
@@ -19,6 +18,11 @@ export const LANG_RU_TRANSLATIONS = {
   forgetMyAddress: 'Забудь мой адрес',
 
   logout: 'Выход',
+
+  chat: {
+    title: 'Чат',
+    devices: 'Медиа устройства',
+  },
 
   form: {
     clear: 'Очистить',

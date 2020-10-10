@@ -5,7 +5,7 @@
   fxLayoutGap="10px"
   *ngIf="selectedLanguage$ | async as selectedLanguage"
 >
-  <div matTooltip="{{ 'description' | translate }}" matTooltipPosition="after">
+  <div>
     <mat-icon class="material-icons" [fxHide.sm]="true" [fxHide.md]="true" [fxHide.lg]="true">
       lock
     </mat-icon>
@@ -54,6 +54,22 @@
       <mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-columns"></mat-icon>
       {{ 'summary' | translate }}
     </button>
+
+    <button
+      mat-button
+      [routerLink]="['chat']"
+      routerLinkActive
+      #rlaIndex="routerLinkActive"
+      [disabled]="rlaIndex.isActive"
+      [color]="rlaIndex.isActive ? 'accent' : null"
+      [fxHide.xs]="true"
+      [fxHide.sm]="true"
+      *ngIf="$any(isLoggedIn$ | async)"
+    >
+      <mat-icon class="material-icons-fas" fontSet="far" fontIcon="fa-comments"></mat-icon>
+      {{ 'chat.title' | translate }}
+    </button>
+
     <button
       mat-button
       [routerLink]="['data']"
@@ -125,6 +141,19 @@
           <mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-columns"></mat-icon>
           {{ 'summary' | translate }}
         </button>
+
+        <button
+          mat-menu-item
+          [routerLink]="['chat']"
+          routerLinkActive
+          #rlaIndex="routerLinkActive"
+          [disabled]="rlaIndex.isActive"
+          *ngIf="$any(isLoggedIn$ | async)"
+        >
+          <mat-icon class="material-icons-fas" fontSet="far" fontIcon="fa-comments"></mat-icon>
+          {{ 'chat.title' | translate }}
+        </button>
+
         <button
           mat-menu-item
           [routerLink]="['data']"
