@@ -103,7 +103,9 @@ module.exports = function (app, expressWs, cwd, fs, SrvInfo, appData, cryptoUtil
    */
   app.ws('/api/app-diag/dynamic', ws => {
     console.log('websocket opened /app-diag/dynamic');
+
     let sender = null;
+
     ws.on('message', msg => {
       const message = JSON.parse(msg);
       function sendData() {
@@ -124,16 +126,18 @@ module.exports = function (app, expressWs, cwd, fs, SrvInfo, appData, cryptoUtil
       }
     });
     ws.on('close', () => {
-      console.log('Persistent websocket: Client disconnected.');
+      console.log('/api/app-diag/dynamic: Client disconnected.');
       if (ws._socket) {
         ws._socket.setKeepAlive(true);
       }
       clearInterval(sender);
     });
     ws.on('error', error => {
-      console.log('/api/app-diag/dynamic, error', error);
+      console.log('/api/app-diag/dynamic: error', error);
     });
   });
+
+  const chatSockets = expressWs.getWss('/api/chat');
 
   /**
    * Chat socket.
@@ -142,32 +146,46 @@ module.exports = function (app, expressWs, cwd, fs, SrvInfo, appData, cryptoUtil
    * @code {200}
    */
   app.ws('/api/chat', ws => {
-    console.log('websocket opened /chat');
-    let sender = null;
-    /*
+    console.log('/api/chat: client connected: chatSockets', chatSockets.clients.size);
+
     chatSockets.clients.forEach(client => {
-      console.log('client.id', client.id);
-      client.send({ user: 'system', text: `user connected ${client.id}` }, err => {
-        if (err) throw err;
-      });
+      client.send(
+        JSON.stringify({
+          sender: 'System',
+          text: `Client connected. Clients: ${chatSockets.clients.size}`,
+        }),
+        err => {
+          if (err) throw err;
+        },
+      );
     });
-    console.log('chatSockets', chatSockets);
-    */
 
     ws.on('message', message => {
-      const chatSockets = expressWs.getWss('/api/chat');
       chatSockets.clients.forEach(client => {
         client.send(message, err => {
           if (err) throw err;
         });
       });
     });
+
     ws.on('close', () => {
-      console.log('Persistent websocket: Client disconnected.');
+      console.log('/api/chat: client disconnected: chatSockets', chatSockets.clients.size);
+      chatSockets.clients.forEach(client => {
+        client.send(
+          JSON.stringify({
+            sender: 'System',
+            text: `Client disconnected. Clients: ${chatSockets.clients.size}`,
+          }),
+          err => {
+            if (err) throw err;
+          },
+        );
+      });
       if (ws._socket) {
         ws._socket.setKeepAlive(true);
       }
     });
+
     ws.on('error', error => {
       console.log('/api/chat, error', error);
     });
