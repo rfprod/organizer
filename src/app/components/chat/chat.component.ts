@@ -6,11 +6,16 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { BehaviorSubject } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 import { AppTranslateService } from '../../modules/translate/translate.service';
+import { AppWebsocketService } from '../../services/websocket.service';
 import { NAVIGATOR, TNavigator } from '../../utils/injection-tokens';
 
+@UntilDestroy()
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
@@ -24,14 +29,48 @@ export class AppChatComponent implements OnInit {
 
   public readonly mediaDevices$ = this.mediaDevices.asObservable();
 
+  private readonly messages = new BehaviorSubject<Record<string, unknown>[]>([]);
+
+  public readonly messages$ = this.messages.asObservable();
+
+  /**
+   * Websocket connection.
+   */
+  private readonly ws = this.websocket.sockets.chat$.pipe(
+    tap(
+      message => {
+        this.messages.next([...this.messages.value, message]);
+      },
+      error => {
+        console.error('socket$, error', error);
+      },
+      () => console.warn('socket$, completed'),
+    ),
+  );
+
   constructor(
+    private readonly websocket: AppWebsocketService,
     private readonly translate: AppTranslateService,
+    private readonly fb: FormBuilder,
     @Inject(NAVIGATOR) private readonly nav: TNavigator,
   ) {}
 
   @ViewChild('video') public video!: ElementRef<HTMLVideoElement>;
 
+  public readonly form = this.fb.group({
+    sender: ['user', Validators.compose([Validators.required])],
+    text: ['', Validators.compose([Validators.required])],
+  });
+
+  public sendMessage(): void {
+    if (this.form.valid) {
+      this.websocket.sockets.chat$.next(this.form.value);
+    }
+  }
+
   public ngOnInit(): void {
+    void this.ws.pipe(untilDestroyed(this)).subscribe();
+
     if (typeof this.nav !== 'undefined') {
       if (Boolean(this.nav.mediaDevices) && Boolean(navigator.mediaDevices.enumerateDevices)) {
         navigator.mediaDevices.enumerateDevices().then(
@@ -45,7 +84,7 @@ export class AppChatComponent implements OnInit {
           },
         );
       }
-      // init webRTC
+
       if (typeof this.nav.getUserMedia !== 'undefined') {
         this.nav.getUserMedia(
           {

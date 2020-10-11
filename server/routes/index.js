@@ -129,8 +129,39 @@ module.exports = function (app, cwd, fs, SrvInfo, appData, cryptoUtils) {
       }
       clearInterval(sender);
     });
-    ws.on('error', () => {
-      console.log('Persistent websocket: ERROR');
+    ws.on('error', error => {
+      console.log('/api/app-diag/dynamic, error', error);
+    });
+  });
+
+  /**
+   * Chat socket.
+   * @name Chat
+   * @path {WS} /api/chat
+   * @code {200}
+   */
+  app.ws('/api/chat', ws => {
+    console.log('websocket opened /chat, send msg', ws._socket);
+    ws.send({ user: 'system', text: `user connected ${ws._socket.id}` }, err => {
+      if (err) throw err;
+    });
+    let sender = null;
+    ws.on('open', event => {
+      console.log('CHAT opened', event);
+    });
+    ws.on('message', message => {
+      ws.send(message, err => {
+        if (err) throw err;
+      });
+    });
+    ws.on('close', () => {
+      console.log('Persistent websocket: Client disconnected.');
+      if (ws._socket) {
+        ws._socket.setKeepAlive(true);
+      }
+    });
+    ws.on('error', error => {
+      console.log('/api/chat, error', error);
     });
   });
 
