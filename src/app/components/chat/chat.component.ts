@@ -55,7 +55,7 @@ export class AppChatComponent implements OnInit {
     @Inject(NAVIGATOR) private readonly nav: TNavigator,
   ) {}
 
-  @ViewChild('video') public video!: ElementRef<HTMLVideoElement>;
+  @ViewChild('video') public video?: ElementRef<HTMLVideoElement>;
 
   public readonly form = this.fb.group({
     sender: ['user', Validators.compose([Validators.required])],
@@ -99,7 +99,9 @@ export class AppChatComponent implements OnInit {
             audio: true,
           },
           stream => {
-            this.video.nativeElement.srcObject = stream;
+            if (typeof this.video !== 'undefined') {
+              this.video.nativeElement.srcObject = stream;
+            }
           },
           error => {
             console.error('getUserMedia error:', error);

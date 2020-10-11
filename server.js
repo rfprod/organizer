@@ -240,7 +240,7 @@ const appData = {
  */
 const cryptoUtils = require('./server/utils/crypto-utils')(crypto, jwt, keypair);
 
-routes(app, cwd, fs, SrvInfo, appData, cryptoUtils);
+routes(app, expressWs, cwd, fs, SrvInfo, appData, cryptoUtils);
 
 /**
  * @name port
