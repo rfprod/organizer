@@ -4,13 +4,14 @@
  * Server Routes module
  * @module app/routes/index
  * @param {object} app Express application
+ * @param {object} expressWs Express websocket
  * @param {object} cwd Current working directory
  * @param {object} fs Filesystem access module
  * @param {object} SrvInfo Server information
  * @param {object} appData User data
  * @param {object} cryptoUtils Cryptographic utility
  */
-module.exports = function (app, cwd, fs, SrvInfo, appData, cryptoUtils) {
+module.exports = function (app, expressWs, cwd, fs, SrvInfo, appData, cryptoUtils) {
   /**
    * Serves Application root (index page).
    * @name Public index
@@ -141,17 +142,24 @@ module.exports = function (app, cwd, fs, SrvInfo, appData, cryptoUtils) {
    * @code {200}
    */
   app.ws('/api/chat', ws => {
-    console.log('websocket opened /chat, send msg', ws._socket);
-    ws.send({ user: 'system', text: `user connected ${ws._socket.id}` }, err => {
-      if (err) throw err;
-    });
+    console.log('websocket opened /chat');
     let sender = null;
-    ws.on('open', event => {
-      console.log('CHAT opened', event);
-    });
-    ws.on('message', message => {
-      ws.send(message, err => {
+    /*
+    chatSockets.clients.forEach(client => {
+      console.log('client.id', client.id);
+      client.send({ user: 'system', text: `user connected ${client.id}` }, err => {
         if (err) throw err;
+      });
+    });
+    console.log('chatSockets', chatSockets);
+    */
+
+    ws.on('message', message => {
+      const chatSockets = expressWs.getWss('/api/chat');
+      chatSockets.clients.forEach(client => {
+        client.send(message, err => {
+          if (err) throw err;
+        });
       });
     });
     ws.on('close', () => {

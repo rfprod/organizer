@@ -14,6 +14,8 @@ import { AppDataComponent } from './components/data/data.component';
 import { AppNavComponent } from './components/navbar/navbar.component';
 import { AppRootComponent } from './components/root/root.component';
 import { AppSummaryComponent } from './components/summary/summary.component';
+import { AppAutofocusDirective } from './directives/autofocus/autofocus.directive';
+import { AppAutoscrollDirective } from './directives/autoscroll/autoscroll.directive';
 import { AppMaterialModule } from './modules/material/material.module';
 import { AppTranslateModule } from './modules/translate/translate.module';
 import { NAVIGATOR, WINDOW } from './utils/injection-tokens';
@@ -30,6 +32,8 @@ import { getNavigator, getWindow } from './utils/providers';
     AppAuthComponent,
     AppDataComponent,
     AppChatComponent,
+    AppAutoscrollDirective,
+    AppAutofocusDirective,
   ],
   imports: [
     BrowserModule,
