@@ -13,8 +13,8 @@ export class AppAutofocusDirective implements OnInit, OnChanges {
 
   constructor(private readonly el: ElementRef) {}
 
-  @Input() public set autofocus(state: boolean) {
-    this.autofocusState = state;
+  @Input() public set autofocus(state: string) {
+    this.autofocusState = state ? true : false;
   }
 
   public ngOnInit(): void {

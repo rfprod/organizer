@@ -30,9 +30,9 @@ describe('AppAutofocusDirective', () => {
 
   it('should have variables and methods defined', () => {
     expect(directive.el.nativeElement.autofocus).toBeTruthy();
-    expect(directive.autofocusState).toEqual(jasmine.any(Boolean));
-    expect(directive.ngOnInit).toEqual(jasmine.any(Function));
-    expect(directive.ngOnChanges).toEqual(jasmine.any(Function));
+    expect(directive.autofocusState).toEqual(expect.any(Boolean));
+    expect(directive.ngOnInit).toEqual(expect.any(Function));
+    expect(directive.ngOnChanges).toEqual(expect.any(Function));
   });
 
   it('ngOnInit should call directive renderer invokeElementMethod if autofocus condition is met', () => {
