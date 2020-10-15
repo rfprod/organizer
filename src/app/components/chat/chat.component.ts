@@ -1,11 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  Inject,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -56,8 +49,6 @@ export class AppChatComponent implements OnInit {
       iceCandidatePoolSize: number;
     };
     peerConnection: RTCPeerConnection | null;
-    localStream: MediaStream | null;
-    remoteStream: MediaStream;
     roomId: string;
   } = {
     servers: {
@@ -69,10 +60,16 @@ export class AppChatComponent implements OnInit {
       iceCandidatePoolSize: 10,
     },
     peerConnection: null,
-    localStream: null,
-    remoteStream: new MediaStream(),
     roomId: 'T1vgzF95VyHhCewCbWG6',
   };
+
+  private readonly localVideoStream = new BehaviorSubject<MediaStream>(new MediaStream());
+
+  public readonly localVideoStream$ = this.localVideoStream.asObservable();
+
+  private readonly remoteVideoStream = new BehaviorSubject<MediaStream>(new MediaStream());
+
+  public readonly remoteVideoStream$ = this.remoteVideoStream.asObservable();
 
   constructor(
     private readonly websocket: AppWebsocketService,
@@ -81,10 +78,6 @@ export class AppChatComponent implements OnInit {
     private readonly firestore: AngularFirestore,
     @Inject(NAVIGATOR) private readonly nav: TNavigator,
   ) {}
-
-  @ViewChild('localVideo') public localVideo?: ElementRef<HTMLVideoElement>;
-
-  @ViewChild('remoteVideo') public remoteVideo?: ElementRef<HTMLVideoElement>;
 
   public readonly form = this.fb.group({
     sender: ['user', Validators.compose([Validators.required])],
@@ -132,14 +125,12 @@ export class AppChatComponent implements OnInit {
             this.registerPeerConnectionListeners();
 
             const peerConnection = this.webRtcConfig.peerConnection;
-            const localStream = this.webRtcConfig.localStream;
-            const remoteStream = this.webRtcConfig.remoteStream;
+            const localStream = this.localVideoStream.value;
+            const remoteStream = this.remoteVideoStream.value;
 
-            if (localStream !== null) {
-              localStream.getTracks().forEach(track => {
-                peerConnection.addTrack(track, localStream);
-              });
-            }
+            localStream.getTracks().forEach(track => {
+              peerConnection.addTrack(track, localStream);
+            });
 
             // Code for collecting ICE candidates below
 
@@ -190,15 +181,12 @@ export class AppChatComponent implements OnInit {
             audio: true,
           },
           stream => {
-            if (typeof this.localVideo !== 'undefined' && typeof this.remoteVideo !== 'undefined') {
-              this.webRtcConfig.localStream = stream;
-              this.localVideo.nativeElement.srcObject = stream;
-              this.remoteVideo.nativeElement.srcObject = this.webRtcConfig.remoteStream;
-              this.joinRoom();
-            }
+            this.localVideoStream.next(stream);
+            this.joinRoom();
           },
           error => {
             console.error('getUserMedia error:', error);
+            this.joinRoom();
           },
         );
       }

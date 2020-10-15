@@ -2,12 +2,24 @@
   <h3 fxFlex="100">{{ 'chat.title' | translate }}</h3>
 
   <div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="center start">
-    <div fxFlex.lt-sm="100" fxFlex fxLayout="row" fxLayoutAlign="center center">
-      <video #localVideo autoplay muted></video>
+    <div
+      fxFlex.lt-sm="100"
+      fxFlex
+      fxLayout="row"
+      fxLayoutAlign="center center"
+      *ngIf="localVideoStream$ | async"
+    >
+      <video [srcObject]="localVideoStream$ | async" autoplay muted></video>
     </div>
 
-    <div fxFlex.lt-sm="100" fxFlex fxLayout="row" fxLayoutAlign="center center">
-      <video #remoteVideo autoplay></video>
+    <div
+      fxFlex.lt-sm="100"
+      fxFlex
+      fxLayout="row"
+      fxLayoutAlign="center center"
+      *ngIf="remoteVideoStream$ | async"
+    >
+      <video [srcObject]="remoteVideoStream$ | async" autoplay></video>
     </div>
 
     <div
