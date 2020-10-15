@@ -68,7 +68,18 @@ const app = express();
  * @summary Websocket for Express application
  * @description Websocket for Express application
  */
-const expressWs = require('express-ws')(app); // eslint-disable-line no-unused-vars
+const expressWs = require('express-ws')(app);
+
+/**
+ * @name spawn
+ * @constant
+ * @summary Child process spawner
+ * @description Child process spawner
+ */
+const spawn = require('child_process').spawn;
+
+const pem = require('pem');
+const https = require('https');
 
 /**
  * @name jwt
@@ -257,7 +268,23 @@ const port = process.env.PORT || 8080;
 function terminator(sig) {
   if (typeof sig === 'string') {
     console.log(`\n${Date(Date.now())}: Received signal ${sig} - terminating app...\n`);
-    process.exit(0);
+    /**
+     * Reset client env variables if dev argument is passed.
+     */
+    if (sig === 'exit' && process.argv[2] === 'dev') {
+      /**
+       * Resets client environment variables configuration to default values.
+       */
+      const envResetter = spawn('npm', ['run', 'env:client:reset'], {
+        stdio: 'inherit',
+        detached: true,
+      });
+      envResetter.on('close', code => {
+        process.exit(0);
+      });
+    } else {
+      process.exit(0);
+    }
   }
 }
 
@@ -288,6 +315,21 @@ function terminator(sig) {
   });
 })();
 
-app.listen(port, () => {
-  console.log(`\n# > START > NO IP > Node.js listening on port ${port}...\n`);
+pem.createCertificate({ days: 1, selfSigned: true }, function (err, keys) {
+  const options = {
+    key: keys.serviceKey,
+    cert: keys.certificate,
+  };
+
+  /**
+   * @note TODO
+   * Use https locally.
+   */
+  // https.createServer(options, app).listen(8080);
+
+  app.listen(port, () => {
+    console.log(`\n# > START > NO IP > Node.js listening on port ${port}...\n`);
+  });
+
+  console.log('serving on https://localhost:8080');
 });

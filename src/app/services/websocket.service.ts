@@ -23,6 +23,7 @@ export class AppWebsocketService implements OnDestroy {
   private readonly endpoints = {
     dynamicServerData: '/api/app-diag/dynamic',
     chat: '/api/chat',
+    stream: '/api/stream',
   };
 
   /**
@@ -32,9 +33,9 @@ export class AppWebsocketService implements OnDestroy {
     dynamicServerData$: new WebSocketSubject<
       { name: string; value: number }[] | Record<string, string>
     >(this.generateUrl(this.endpoints.dynamicServerData)),
-    chat$: new WebSocketSubject<Record<string, unknown> | Record<string, string>>(
-      this.generateUrl(this.endpoints.chat),
-    ),
+    chat$: new WebSocketSubject<
+      Record<string, unknown> | Record<string, string> | { sender: string; text: string }
+    >(this.generateUrl(this.endpoints.chat)),
   };
 
   constructor(@Inject(WINDOW) public window: Window) {}

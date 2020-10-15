@@ -3,7 +3,11 @@
 
   <div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="center start">
     <div fxFlex.lt-sm="100" fxFlex fxLayout="row" fxLayoutAlign="center center">
-      <video #video autoplay muted></video>
+      <video #localVideo autoplay muted></video>
+    </div>
+
+    <div fxFlex.lt-sm="100" fxFlex fxLayout="row" fxLayoutAlign="center center">
+      <video #remoteVideo autoplay></video>
     </div>
 
     <div
@@ -13,7 +17,11 @@
       fxLayoutAlign="stretch start"
       [ngStyle]="{ 'margin-left': '16px' }"
     >
-      <div fxFlex="100" appAutoscroll [ngStyle]="{ 'max-height': '200px', overflow: 'auto' }">
+      <div
+        fxFlex="100"
+        appAutoscroll
+        [ngStyle]="{ height: '200px', 'max-height': '200px', overflow: 'auto' }"
+      >
         <div [ngStyle]="{ height: '100%' }">
           <ng-container *ngFor="let message of messages$ | async">
             <div [ngStyle]="{ padding: '8px' }">
