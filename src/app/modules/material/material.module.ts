@@ -50,7 +50,7 @@ import {
 import { MatTreeModule } from '@angular/material/tree';
 import { HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 
-import { AppHammerGestureConfig } from './hammerjs-gesture.config.js';
+import { AppHammerGestureConfig } from './hammerjs-gesture.config';
 
 /**
  * Returns mat tooltip options.
