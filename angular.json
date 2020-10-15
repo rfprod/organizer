@@ -43,7 +43,13 @@
             }
           },
           "options": {
-            "allowedCommonJsDependencies": ["node_modules/hammerjs/hammer.js"],
+            "allowedCommonJsDependencies": [
+              "hammerjs",
+              "firebase/app",
+              "@firebase/database",
+              "@firebase/auth",
+              "@angular/fire/firestore"
+            ],
             "aot": true,
             "assets": ["src/favicon.ico", "src/assets"],
             "budgets": [

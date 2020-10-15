@@ -3,5 +3,5 @@ export function getWindow() {
 }
 
 export function getNavigator() {
-  return typeof window.navigator !== 'undefined' ? window.navigator : void 0;
+  return window.navigator as Navigator | undefined;
 }

@@ -1,0 +1,70 @@
+{
+  "hosting": {
+    "public": "dist",
+    "database": {
+      "rules": "firebase-database.rules.json"
+    },
+    "ignore": [
+      "firebase.json",
+      "firebase-database.rules.json",
+      "**/node_modules/**",
+      ".editorconfig",
+      ".eslintignore",
+      ".eslintrc.js",
+      ".eslintrc.angular.js",
+      ".gitignore",
+      ".editorconfig",
+      "cypress/**",
+      "shell/**",
+      "**/*.md",
+      "logs/**"
+    ],
+    "headers": [
+      {
+        "source": "**",
+        "headers": [
+          {
+            "key": "Access-Control-Allow-Origin",
+            "value": "https://organizer-833bc.firebaseapp.com https://organizer-833bc.web.app"
+          },
+          {
+            "key": "Access-Control-Allow-Methods",
+            "value": "GET,PUT,POST,DELETE,OPTIONS,HEAD"
+          }
+        ]
+      },
+      {
+        "source": "**/*.@(jpg|jpeg|gif|png|svg)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=7200"
+          }
+        ]
+      },
+      {
+        "source": "/",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, no-cache, no-store, must-ravalidate, max-age=0"
+          },
+          {
+            "key": "Expires",
+            "value": "-1"
+          },
+          {
+            "key": "Pragma",
+            "value": "no-cache"
+          }
+        ]
+      }
+    ],
+    "rewrites": [
+      {
+        "source": "**/*",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

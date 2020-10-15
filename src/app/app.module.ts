@@ -1,12 +1,16 @@
 import { APP_BASE_HREF, LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
+import { AngularFireModule } from '@angular/fire';
+import { AngularFireAuthModule } from '@angular/fire/auth';
+import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIconRegistry } from '@angular/material/icon';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppAuthComponent } from './components/auth/auth.component';
 import { AppChatComponent } from './components/chat/chat.component';
@@ -44,6 +48,9 @@ import { getNavigator, getWindow } from './utils/providers';
     HttpClientModule,
     AppMaterialModule.forRoot(),
     AppTranslateModule.forRoot(),
+    AngularFireModule.initializeApp(environment.firebase, 'organizer-833bc'),
+    AngularFireDatabaseModule,
+    AngularFireAuthModule,
     AppRoutingModule,
   ],
   providers: [
