@@ -17,7 +17,7 @@
       fxFlex
       fxLayout="row"
       fxLayoutAlign="center center"
-      *ngIf="remoteVideoStream$ | async"
+      *ngIf="(remoteVideoStream$ | async) && videoRoomPeersValueChanges | async"
     >
       <video [srcObject]="remoteVideoStream$ | async" autoplay></video>
     </div>
@@ -48,7 +48,7 @@
       </div>
 
       <div fxFlex="100" fxLayout="row">
-        <form fxFlex [formGroup]="form" (submit)="sendMessage()">
+        <form fxFlex [formGroup]="form" (submit)="sendChatMessage()">
           <mat-form-field appearance="standard">
             <mat-label>New message</mat-label>
             <input
@@ -63,7 +63,7 @@
               [ngStyle]="{ cursor: 'pointer' }"
               type="submit"
               color="warn"
-              (click)="sendMessage()"
+              (click)="sendChatMessage()"
             >
               send
             </mat-icon>
