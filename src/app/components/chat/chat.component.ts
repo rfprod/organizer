@@ -136,41 +136,6 @@ export class AppChatComponent implements OnInit {
       }),
     );
 
-  private readonly acceptOffer$ = this.videoRoomPeers$.pipe(
-    filter(peers => typeof peers[0] !== 'undefined' && peers[0].sdp?.type === 'offer'),
-    first(),
-    switchMap(peers => {
-      console.warn('connectStreams: peer', peers[0]);
-      return from(
-        this.peerConnection.setRemoteDescription(new RTCSessionDescription(peers[0].sdp ?? void 0)),
-      );
-    }),
-    switchMap(() => from(this.peerConnection.createAnswer())),
-    switchMap(answer => {
-      console.warn('answer', answer);
-      return from(this.peerConnection.setLocalDescription(answer)).pipe(mapTo(answer));
-    }),
-    switchMap(answer => this.sendVideoRoomAnswer(answer)),
-    switchMap(() => this.videoRoomPeers$),
-    filter(
-      peers =>
-        typeof peers[1] !== 'undefined' &&
-        peers[1].sdp?.type === 'answer' &&
-        peers[1].sender !== this.webRtcConfig.senderId,
-    ),
-    switchMap(peers => {
-      console.warn('answerStream: peer', peers[1]);
-      if (peers[1].sdp?.type === 'answer') {
-        return from(
-          this.peerConnection.setRemoteDescription(
-            new RTCSessionDescription(peers[1].sdp ?? void 0),
-          ),
-        );
-      }
-      return of(peers);
-    }),
-  );
-
   constructor(
     private readonly websocket: AppWebsocketService,
     private readonly translate: AppTranslateService,
@@ -206,7 +171,6 @@ export class AppChatComponent implements OnInit {
         switchMap(answer => this.sendVideoRoomAnswer(answer)),
       )
       .subscribe();
-    void this.acceptOffer$.pipe(first()).subscribe();
   }
 
   public sendChatMessage(): void {
