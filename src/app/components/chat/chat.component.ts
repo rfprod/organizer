@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/cor
 import { AngularFirestore } from '@angular/fire/firestore';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { BehaviorSubject, from } from 'rxjs';
-import { filter, first, map, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, from, of } from 'rxjs';
+import { filter, first, map, mapTo, switchMap, tap } from 'rxjs/operators';
 
 import { AppTranslateService } from '../../modules/translate/translate.service';
 import { AppWebsocketService } from '../../services/websocket.service';
@@ -63,7 +63,7 @@ export class AppChatComponent implements OnInit {
     ),
   );
 
-  protected webRtcConfig: {
+  public readonly webRtcConfig: {
     servers: {
       iceServers: [{ urls: string[] }];
       iceCandidatePoolSize: number;
@@ -83,6 +83,18 @@ export class AppChatComponent implements OnInit {
     senderId: getSenderId(),
   };
 
+  public readonly form = this.fb.group({
+    sender: [`user-${this.webRtcConfig.senderId}`, Validators.compose([Validators.required])],
+    text: ['', Validators.compose([Validators.required])],
+  });
+
+  public readonly roomRef$ = from(
+    this.firestore.collection('rooms').doc(this.webRtcConfig.roomId).get(),
+  ).pipe(
+    filter(roomSnapshot => roomSnapshot.exists),
+    first(),
+  );
+
   private readonly peerConnection = new RTCPeerConnection(this.webRtcConfig.servers);
 
   private readonly localVideoStream = new BehaviorSubject<MediaStream>(new MediaStream());
@@ -93,7 +105,15 @@ export class AppChatComponent implements OnInit {
 
   public readonly remoteVideoStream$ = this.remoteVideoStream.asObservable();
 
-  private readonly videoRoomPeers$ = new BehaviorSubject<IRtcPeer[]>([]);
+  private readonly videoRoomPeers = new BehaviorSubject<IRtcPeer[]>([]);
+
+  public readonly videoRoomPeers$ = this.videoRoomPeers.asObservable();
+
+  public readonly offers$ = this.videoRoomPeers$.pipe(
+    map(peers =>
+      peers.filter(item => item.type === 'offer' && item.sender !== this.webRtcConfig.senderId),
+    ),
+  );
 
   public readonly videoRoomPeersValueChanges = this.firestore
     .collection<TFirestoreRooms>('rooms')
@@ -102,7 +122,7 @@ export class AppChatComponent implements OnInit {
     .pipe(
       filter(room => typeof room !== 'undefined'),
       map(room => {
-        console.warn('room', room);
+        console.warn('videoRoomPeersValueChanges', room);
         const peers = room?.peers
           .filter(peer => Boolean(peer.sdp))
           .map(peer => {
@@ -111,48 +131,43 @@ export class AppChatComponent implements OnInit {
             const processed: IRtcPeer = { ...peer, sdp };
             return processed;
           }) as IRtcPeer[];
-        this.videoRoomPeers$.next(peers);
+        this.videoRoomPeers.next(peers);
         return peers;
       }),
     );
 
-  private readonly offerStream$ = this.videoRoomPeers$.pipe(
-    filter(peers => peers.length === 1 && peers[0].sdp?.type === 'offer'),
+  private readonly acceptOffer$ = this.videoRoomPeers$.pipe(
+    filter(peers => typeof peers[0] !== 'undefined' && peers[0].sdp?.type === 'offer'),
     first(),
-    tap(peers => {
-      console.warn('offerStream, peer', peers[0]);
-      this.peerConnection
-        .setRemoteDescription(new RTCSessionDescription(peers[0].sdp ?? void 0))
-        .then(() => this.peerConnection.createAnswer())
-        .then(
-          answer => {
-            console.warn('answer', answer);
-            return this.peerConnection.setLocalDescription(answer).then(() => {
-              void this.sendVideoRoomAnswer(answer).subscribe();
-            });
-          },
-          error => {
-            console.error('error getting remote stream', error);
-          },
-        );
+    switchMap(peers => {
+      console.warn('connectStreams: peer', peers[0]);
+      return from(
+        this.peerConnection.setRemoteDescription(new RTCSessionDescription(peers[0].sdp ?? void 0)),
+      );
     }),
-  );
-
-  private readonly answerStream$ = this.videoRoomPeers$.pipe(
-    filter(peers => peers.length === 1 + 1 && peers[1].sdp?.type === 'answer'),
-    first(),
-    tap(peers => {
-      console.warn('answerStream, peer', peers[1]);
+    switchMap(() => from(this.peerConnection.createAnswer())),
+    switchMap(answer => {
+      console.warn('answer', answer);
+      return from(this.peerConnection.setLocalDescription(answer)).pipe(mapTo(answer));
+    }),
+    switchMap(answer => this.sendVideoRoomAnswer(answer)),
+    switchMap(() => this.videoRoomPeers$),
+    filter(
+      peers =>
+        typeof peers[1] !== 'undefined' &&
+        peers[1].sdp?.type === 'answer' &&
+        peers[1].sender !== this.webRtcConfig.senderId,
+    ),
+    switchMap(peers => {
+      console.warn('answerStream: peer', peers[1]);
       if (peers[1].sdp?.type === 'answer') {
-        this.peerConnection
-          .setRemoteDescription(new RTCSessionDescription(peers[1].sdp ?? void 0))
-          .then(
-            () => void 0,
-            error => {
-              console.error('error getting remote stream', error);
-            },
-          );
+        return from(
+          this.peerConnection.setRemoteDescription(
+            new RTCSessionDescription(peers[1].sdp ?? void 0),
+          ),
+        );
       }
+      return of(peers);
     }),
   );
 
@@ -164,10 +179,35 @@ export class AppChatComponent implements OnInit {
     @Inject(NAVIGATOR) private readonly nav: TNavigator,
   ) {}
 
-  public readonly form = this.fb.group({
-    sender: ['user', Validators.compose([Validators.required])],
-    text: ['', Validators.compose([Validators.required])],
-  });
+  public createOffer() {
+    void this.roomRef$
+      .pipe(
+        filter(roomSnapshot => roomSnapshot.exists),
+        first(),
+        switchMap(roomSnapshot => {
+          console.warn('Got room:', roomSnapshot);
+
+          return this.sendVideoRoomOffer(roomSnapshot);
+        }),
+      )
+      .subscribe();
+  }
+
+  public acceptOffer(peer: IRtcPeer) {
+    void from(
+      this.peerConnection.setRemoteDescription(new RTCSessionDescription(peer.sdp ?? void 0)),
+    )
+      .pipe(
+        switchMap(() => from(this.peerConnection.createAnswer())),
+        switchMap(answer => {
+          console.warn('answer', answer);
+          return from(this.peerConnection.setLocalDescription(answer)).pipe(mapTo(answer));
+        }),
+        switchMap(answer => this.sendVideoRoomAnswer(answer)),
+      )
+      .subscribe();
+    void this.acceptOffer$.pipe(first()).subscribe();
+  }
 
   public sendChatMessage(): void {
     if (this.form.valid) {
@@ -175,43 +215,65 @@ export class AppChatComponent implements OnInit {
     }
   }
 
-  public sendVideoRoomOffer() {
+  // eslint-disable-next-line max-lines-per-function
+  public sendVideoRoomOffer(
+    room: firebase.firestore.DocumentSnapshot<firebase.firestore.DocumentData>,
+  ) {
+    console.warn('sendVideoRoomOffer: room:', room);
     return this.videoRoomPeers$.pipe(
       first(),
-      switchMap(peers => {
-        console.warn('peers', peers);
-        const existingPeers = [...(peers.length > 1 + 1 ? [] : peers)]
-          .filter(peer => !(peer.type === 'offer' && peer.sender === this.webRtcConfig.senderId))
-          .map(peer => {
-            const sdp = peer.sdp !== null ? JSON.stringify(peer.sdp) : null;
-            const processed: IRtcPeerDto = { ...peer, sdp };
-            return processed;
-          });
-        console.warn('existingPeers', existingPeers);
+      map(peers => {
+        const existingPeers = [...(peers.length > 1 + 1 + 1 ? [] : peers)].map(peer => {
+          const sdp = peer.sdp !== null ? JSON.stringify(peer.sdp) : null;
+          const processed: IRtcPeerDto = { ...peer, sdp };
+          return processed;
+        });
+        console.warn('sendVideoRoomOffer: existingPeers', existingPeers);
+        const offerExists =
+          typeof existingPeers.find(
+            item => item.type === 'offer' && item.sender === this.webRtcConfig.senderId,
+          ) !== 'undefined';
+        console.warn('sendVideoRoomOffer: offerExists', offerExists);
+        return { peers, existingPeers, offerExists };
+      }),
+      switchMap(({ peers, existingPeers, offerExists }) => {
         return from(
-          this.firestore
-            .collection<TFirestoreRooms>('rooms')
-            .doc<IFirestoreRoom>(this.webRtcConfig.roomId)
-            .update({
-              peers: [
-                ...existingPeers,
-                {
-                  sender: this.webRtcConfig.senderId,
-                  type: 'offer',
-                  sdp:
-                    this.peerConnection.localDescription !== null
-                      ? JSON.stringify(this.peerConnection.localDescription)
-                      : null,
-                },
-              ],
-            })
-            .then(
-              () => void 0,
-              error => {
-                console.error('sendVideoStreamMessage, error', error);
-              },
-            ),
-        );
+          this.peerConnection.createOffer().then(
+            offer => this.peerConnection.setLocalDescription(offer),
+            error => {
+              console.error('Peer connection: Error creating offer', error);
+            },
+          ),
+        ).pipe(mapTo({ peers, existingPeers, offerExists }));
+      }),
+      switchMap(({ peers, existingPeers, offerExists }) => {
+        console.warn('sendVideoRoomOffer: peers', peers);
+        return offerExists
+          ? of(null)
+          : from(
+              this.firestore
+                .collection<TFirestoreRooms>('rooms')
+                .doc<IFirestoreRoom>(this.webRtcConfig.roomId)
+                .update({
+                  peers: [
+                    ...existingPeers,
+                    {
+                      sender: this.webRtcConfig.senderId,
+                      type: 'offer',
+                      sdp:
+                        this.peerConnection.localDescription !== null
+                          ? JSON.stringify(this.peerConnection.localDescription)
+                          : null,
+                    },
+                  ],
+                })
+                .then(
+                  result => result,
+                  error => {
+                    console.error('sendVideoRoomOffer: error', error);
+                  },
+                ),
+            );
       }),
     );
   }
@@ -220,15 +282,15 @@ export class AppChatComponent implements OnInit {
     return this.videoRoomPeers$.pipe(
       first(),
       switchMap(peers => {
-        console.warn('peers', peers);
-        const existingPeers = [...(peers.length > 1 + 1 ? [] : peers)]
+        console.warn('sendVideoRoomAnswer: peers', peers);
+        const existingPeers = [...(peers.length > 1 + 1 + 1 ? [] : peers)]
           .filter(peer => !(peer.type === 'answer' && peer.sender === this.webRtcConfig.senderId))
           .map(peer => {
             const sdp = peer.sdp !== null ? JSON.stringify(peer.sdp) : null;
             const processed: IRtcPeerDto = { ...peer, sdp };
             return processed;
           });
-        console.warn('existingPeers', existingPeers);
+        console.warn('sendVideoRoomAnswer: existingPeers', existingPeers);
         return from(
           this.firestore
             .collection<TFirestoreRooms>('rooms')
@@ -246,7 +308,7 @@ export class AppChatComponent implements OnInit {
             .then(
               () => void 0,
               error => {
-                console.error('sendVideoStreamMessage, error', error);
+                console.error('sendVideoRoomAnswer: error', error);
               },
             ),
         );
@@ -255,89 +317,42 @@ export class AppChatComponent implements OnInit {
   }
 
   public registerPeerConnectionListeners() {
-    this.peerConnection.addEventListener('icegatheringstatechange', () => {
-      console.warn(`ICE gathering state changed: ${this.peerConnection.iceGatheringState}`);
+    this.peerConnection.addEventListener('icegatheringstatechange', event => {
+      console.warn(`ICE gathering state changed: ${this.peerConnection.iceGatheringState}`, event);
     });
 
-    this.peerConnection.addEventListener('connectionstatechange', () => {
-      console.warn(`Connection state change: ${this.peerConnection.connectionState}`);
+    this.peerConnection.addEventListener('connectionstatechange', event => {
+      console.warn(`Connection state change: ${this.peerConnection.connectionState}`, event);
     });
 
-    this.peerConnection.addEventListener('signalingstatechange', () => {
-      console.warn(`Signaling state change: ${this.peerConnection.signalingState}`);
+    this.peerConnection.addEventListener('signalingstatechange', event => {
+      console.warn(`Signaling state change: ${this.peerConnection.signalingState}`, event);
     });
 
-    this.peerConnection.addEventListener('iceconnectionstatechange ', () => {
-      console.warn(`ICE connection state change: ${this.peerConnection.iceConnectionState}`);
+    this.peerConnection.addEventListener('iceconnectionstatechange ', event => {
+      console.warn(`ICE connection state change: ${this.peerConnection.iceConnectionState}`, event);
     });
 
     this.peerConnection.addEventListener('icecandidate', event => {
-      console.warn(`onicecandidate: ${this.peerConnection.iceGatheringState}`, 'event', event);
+      console.warn(`ICE Candidate: ${this.peerConnection.iceConnectionState}`, event);
     });
 
     this.peerConnection.addEventListener('track', event => {
-      console.warn(`track: ${this.peerConnection.iceGatheringState}`, 'event', event);
-    });
-
-    this.peerConnection.addEventListener('ondatachannel', event => {
-      console.warn(`ondatachannel: ${this.peerConnection.iceGatheringState}`, 'event', event);
+      console.warn(`Track, ${this.peerConnection.iceConnectionState}:`, event.streams[0]);
+      const remoteStream = this.remoteVideoStream.value;
+      event.streams[0].getTracks().forEach(track => {
+        console.warn('Add a track to the remoteStream:', track);
+        remoteStream.addTrack(track);
+      });
+      this.remoteVideoStream.next(remoteStream);
     });
   }
 
-  public joinRoom(roomId = this.webRtcConfig.roomId) {
-    const roomRef = this.firestore.collection('rooms').doc(roomId);
-    void from(roomRef.get())
-      .pipe(
-        filter(roomSnapshot => roomSnapshot.exists),
-        first(),
-        switchMap(roomSnapshot => {
-          console.warn('Got room:', roomSnapshot);
-
-          return from(
-            this.peerConnection.createOffer().then(
-              offer => this.peerConnection.setLocalDescription(offer),
-              error => {
-                console.error('Peer connection: Error creating offer', error);
-              },
-            ),
-          );
-        }),
-        switchMap(offer => this.sendVideoRoomOffer()),
-        map(() => {
-          this.registerPeerConnectionListeners();
-
-          const localStream = this.localVideoStream.value;
-          const remoteStream = this.remoteVideoStream.value;
-
-          localStream.getTracks().forEach(track => {
-            this.peerConnection.addTrack(track, localStream);
-          });
-
-          // Code for collecting ICE candidates below
-
-          // Code for collecting ICE candidates above
-
-          this.peerConnection.addEventListener('track', event => {
-            console.warn('Got remote track:', event.streams[0]);
-            event.streams[0].getTracks().forEach(track => {
-              console.warn('Add a track to the remoteStream:', track);
-              remoteStream.addTrack(track);
-            });
-            this.remoteVideoStream.next(remoteStream);
-          });
-
-          // Code for creating SDP answer below
-
-          // Code for creating SDP answer above
-
-          // Listening for remote ICE candidates below
-
-          // Listening for remote ICE candidates above
-        }),
-        switchMap(() => this.offerStream$),
-        switchMap(() => this.answerStream$),
-      )
-      .subscribe();
+  public setupLocalStream(stream: MediaStream) {
+    this.localVideoStream.next(stream);
+    this.localVideoStream.value.getTracks().forEach(track => {
+      this.peerConnection.addTrack(track, this.localVideoStream.value);
+    });
   }
 
   public ngOnInit(): void {
@@ -364,12 +379,11 @@ export class AppChatComponent implements OnInit {
             audio: true,
           },
           stream => {
-            this.localVideoStream.next(stream);
-            this.joinRoom();
+            this.setupLocalStream(stream);
+            this.registerPeerConnectionListeners();
           },
           error => {
             console.error('getUserMedia error:', error);
-            this.joinRoom();
           },
         );
       }
