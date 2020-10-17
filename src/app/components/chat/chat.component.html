@@ -1,18 +1,26 @@
 <div fxLayout="row wrap" fxLayoutAlign="start stretch" *ngIf="language$ | async">
   <h3 fxFlex="100">
-    {{ 'chat.title' | translate }}
-  </h3>
-
-  <h3 fxFlex="100">
-    Room {{ webRtcConfig.roomId }}
-    <button mat-button (click)="createOffer()">Create offer</button>
+    Room {{ webRtcConfig.roomId }}&nbsp;
+    <button mat-stroked-button color="primary" (click)="createOffer()">Create offer</button>
   </h3>
 
   <h4 fxFlex="100">
-    Offers
-    <button *ngFor="let offer of offers$ | async" mat-button (click)="acceptOffer(offer)">
-      Accept offer
+    Offers &nbsp;
+    <button
+      mat-stroked-button
+      color="primary"
+      *ngFor="let offer of offers$ | async"
+      (click)="acceptOffer(offer)"
+    >
+      Accept offer ({{ offer.sender }})
     </button>
+  </h4>
+
+  <h4 fxFlex="100" [ngStyle]="{ 'max-width': '100%' }">
+    ICE Candidates
+    <div class="clamp-flex" *ngFor="let candidate of iceCandidates$ | async">
+      &bull; {{ candidate.candidate }}
+    </div>
   </h4>
 
   <div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="center start">
@@ -35,62 +43,64 @@
     >
       <video [srcObject]="remoteVideoStream$ | async" autoplay></video>
     </div>
+  </div>
+
+  <mat-divider [ngStyle]="{ margin: '16px 0' }" fxFlex="100"></mat-divider>
+
+  <div
+    fxFlex="100"
+    fxLayout="row wrap"
+    fxLayoutAlign="stretch start"
+    [ngStyle]="{ 'margin-left': '16px' }"
+  >
+    <h4 fxFlex="100">
+      {{ 'chat.title' | translate }}
+    </h4>
 
     <div
       fxFlex="100"
-      fxLayout="row wrap"
-      fxLayoutAlign="stretch start"
-      [ngStyle]="{ 'margin-left': '16px' }"
+      appAutoscroll
+      [ngStyle]="{ height: '200px', 'max-height': '200px', overflow: 'auto' }"
     >
-      <h4 fxFlex="100">
-        {{ 'chat.title' | translate }}
-      </h4>
+      <div [ngStyle]="{ height: '100%' }">
+        <ng-container *ngFor="let message of messages$ | async">
+          <div [ngStyle]="{ padding: '8px' }">
+            <span class="mat-body-2">{{ message.sender }}:</span>
 
-      <div
-        fxFlex="100"
-        appAutoscroll
-        [ngStyle]="{ height: '200px', 'max-height': '200px', overflow: 'auto' }"
-      >
-        <div [ngStyle]="{ height: '100%' }">
-          <ng-container *ngFor="let message of messages$ | async">
-            <div [ngStyle]="{ padding: '8px' }">
-              <span class="mat-body-2">{{ message.sender }}:</span>
+            <span class="mat-body-1" [ngStyle]="{ 'overflow-wrap': 'break-word' }">
+              &nbsp;{{ message.text }}
+            </span>
+          </div>
 
-              <span class="mat-body-1" [ngStyle]="{ 'overflow-wrap': 'break-word' }">
-                &nbsp;{{ message.text }}
-              </span>
-            </div>
-
-            <mat-divider></mat-divider>
-          </ng-container>
-        </div>
+          <mat-divider></mat-divider>
+        </ng-container>
       </div>
+    </div>
 
-      <div fxFlex="100" fxLayout="row">
-        <form fxFlex [formGroup]="form" (submit)="sendChatMessage()">
-          <mat-form-field appearance="standard">
-            <mat-label>New message</mat-label>
-            <input
-              formControlName="text"
-              autofocus="true"
-              appAutofocus
-              matInput
-              placeholder="Message text"
-            />
-            <mat-icon
-              matSuffix
-              [ngStyle]="{ cursor: 'pointer' }"
-              type="submit"
-              color="warn"
-              (click)="sendChatMessage()"
-            >
-              send
-            </mat-icon>
+    <div fxFlex="100" fxLayout="row">
+      <form fxFlex [formGroup]="form" (submit)="sendChatMessage()">
+        <mat-form-field appearance="standard">
+          <mat-label>New message</mat-label>
+          <input
+            formControlName="text"
+            autofocus="true"
+            appAutofocus
+            matInput
+            placeholder="Message text"
+          />
+          <mat-icon
+            matSuffix
+            [ngStyle]="{ cursor: 'pointer' }"
+            type="submit"
+            color="warn"
+            (click)="sendChatMessage()"
+          >
+            send
+          </mat-icon>
 
-            <mat-hint>Input message text, and hit Enter or the highlighted send button.</mat-hint>
-          </mat-form-field>
-        </form>
-      </div>
+          <mat-hint>Input message text, and hit Enter or the highlighted send button.</mat-hint>
+        </mat-form-field>
+      </form>
     </div>
   </div>
 
