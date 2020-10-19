@@ -29,6 +29,7 @@
       fxFlex="100"
       fxLayout="row"
       fxLayoutAlign="center center"
+      [ngStyle]="{ margin: '5px' }"
       *ngIf="localVideoStream$ | async"
     >
       <video [srcObject]="localVideoStream$ | async" autoplay muted></video>
@@ -39,6 +40,7 @@
       fxFlex="100"
       fxLayout="row"
       fxLayoutAlign="center center"
+      [ngStyle]="{ margin: '5px' }"
       *ngIf="(remoteVideoStream$ | async) && videoRoomPeersValueChanges | async"
     >
       <video [srcObject]="remoteVideoStream$ | async" autoplay></video>

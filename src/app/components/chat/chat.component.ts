@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/cor
 import { AngularFirestore } from '@angular/fire/firestore';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { BehaviorSubject, from, of } from 'rxjs';
+import { BehaviorSubject, combineLatest, from, Observable, of } from 'rxjs';
 import { filter, first, map, mapTo, switchMap, tap } from 'rxjs/operators';
 
 import { AppTranslateService } from '../../modules/translate/translate.service';
@@ -26,9 +26,10 @@ interface IRtcPeer {
   sdp: RTCSessionDescription | null;
 }
 
-interface IFirestoreRoom<T = IRtcPeerDto> {
+interface IFirestoreRoom<T1 = IRtcPeerDto, T2 = string> {
   name: string;
-  peers: T[];
+  peers: T1[];
+  ice?: T2[];
 }
 
 type TFirestoreRooms = IFirestoreRoom[];
@@ -136,6 +137,20 @@ export class AppChatComponent implements OnInit {
             return processed;
           }) as IRtcPeer[];
         this.videoRoomPeers.next(peers);
+
+        if (typeof room?.ice !== 'undefined') {
+          const ice = room.ice.map(item => new RTCIceCandidate(JSON.parse(item)));
+          this.iceCandidates.next(ice);
+        }
+
+        const answer = room?.peers.find(
+          item => item.type === 'answer' && item.sender !== this.webRtcConfig.senderId,
+        );
+        if (typeof answer !== 'undefined' && answer.sdp !== null) {
+          const andwerSdp = JSON.parse(answer.sdp) as RTCSessionDescriptionInit;
+          void this.receiveVideoRoomAnswer(andwerSdp).subscribe();
+        }
+
         return peers;
       }),
     );
@@ -183,6 +198,13 @@ export class AppChatComponent implements OnInit {
       this.peerConnection.setRemoteDescription(new RTCSessionDescription(peer.sdp ?? void 0)),
     )
       .pipe(
+        switchMap(() => {
+          const observables: Observable<void>[] = [];
+          for (const candidate of this.iceCandidates.value) {
+            observables.push(from(this.peerConnection.addIceCandidate(candidate)));
+          }
+          return combineLatest(observables);
+        }),
         switchMap(() => from(this.peerConnection.createAnswer())),
         switchMap(answer => {
           console.warn('answer', answer);
@@ -301,14 +323,17 @@ export class AppChatComponent implements OnInit {
                 },
               ],
             })
-            .then(
-              () => void 0,
-              error => {
-                console.error('sendVideoRoomAnswer: error', error);
-              },
-            ),
+            .catch(error => {
+              console.error('sendVideoRoomAnswer: error', error);
+            }),
         );
       }),
+    );
+  }
+
+  public receiveVideoRoomAnswer(answer: RTCSessionDescriptionInit) {
+    return from(
+      this.peerConnection.setRemoteDescription(new RTCSessionDescription(answer ?? void 0)),
     );
   }
 
@@ -326,9 +351,27 @@ export class AppChatComponent implements OnInit {
   /**
    * Registers peer connection event listeners with respective action handlers.
    */
+  // eslint-disable-next-line max-lines-per-function
   private registerPeerConnectionListeners() {
     this.peerConnection.addEventListener('icegatheringstatechange', event => {
       console.warn(`ICE gathering state changed: ${this.peerConnection.iceGatheringState}`, event);
+
+      const ice = this.iceCandidates.value.map(item => JSON.stringify(item));
+      switch (this.peerConnection.iceGatheringState) {
+        case 'complete':
+          void from(
+            this.firestore
+              .collection<TFirestoreRooms>('rooms')
+              .doc<IFirestoreRoom>(this.webRtcConfig.roomId)
+              .update({ ice })
+              .catch(error => {
+                console.error('registerPeerConnectionListeners: error', error);
+              }),
+          ).subscribe();
+          break;
+        default:
+          break;
+      }
     });
 
     this.peerConnection.addEventListener('connectionstatechange', event => {
@@ -348,11 +391,6 @@ export class AppChatComponent implements OnInit {
       if (event.candidate !== null) {
         const candidate = new RTCIceCandidate(event.candidate);
         this.iceCandidates.next([...this.iceCandidates.value, candidate]);
-        /*
-        this.peerConnection.addIceCandidate(candidate).catch(error => {
-          console.error('peerConnection.addIceCandidate:', error);
-        });
-        */
       }
     });
 
