@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 /**
  * Dummy component.
+ *
  * @description For usage in unit tests where applicable.
  */
 @Component({

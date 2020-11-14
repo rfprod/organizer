@@ -25,6 +25,7 @@ export const newTestBedMetadata: NewTestBedMetadata = (metadata?: TestModuleMeta
 export type TestBedConfigGetter = (metadata: TestModuleMetadata) => TestModuleMetadata;
 /**
  * TestBed configuration getter.
+ *
  * @param metadata additional test bed metadata
  */
 export const getTestBedConfig: TestBedConfigGetter = (

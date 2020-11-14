@@ -63,6 +63,7 @@ export class AppDataComponent implements OnInit {
 
   /**
    * Filters search query setter.
+   *
    * @param val search value to be set
    */
   public set searchQuery(val: string) {
@@ -83,6 +84,7 @@ export class AppDataComponent implements OnInit {
 
   /**
    * Filters search value setter.
+   *
    * @param val sort value to be set
    */
   public set sortByCriterion(val: string) {
@@ -164,6 +166,7 @@ export class AppDataComponent implements OnInit {
 
   /**
    * Deletes user password.
+   *
    * @param id local model array index
    */
   public deletePassword(id: number): void {
@@ -218,10 +221,11 @@ export class AppDataComponent implements OnInit {
 
   /**
    * Resolves if DOM element should be hidden or not.
+   *
    * @param index element array index
    */
-  public hideElement$ = (index: number) => {
-    return this.userService.user$.pipe(
+  public hideElement$ = (index: number) =>
+    this.userService.user$.pipe(
       map(user => {
         if (typeof user.status !== 'undefined' && user.status.passwords > 0) {
           const result = Boolean(user.passwords[index].name.includes(this.searchValue));
@@ -230,10 +234,10 @@ export class AppDataComponent implements OnInit {
         return false;
       }),
     );
-  };
 
   /**
    * Sorts data model by property.
+   *
    * @param val property which values should be used to sort model
    */
   private performSorting(val: string): void {

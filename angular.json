@@ -10,7 +10,6 @@
           "configurations": {
             "electron": {
               "buildOptimizer": true,
-              "extractCss": true,
               "extractLicenses": true,
               "fileReplacements": [
                 {
@@ -27,7 +26,6 @@
             },
             "production": {
               "buildOptimizer": true,
-              "extractCss": true,
               "extractLicenses": true,
               "fileReplacements": [
                 {
@@ -44,7 +42,6 @@
           },
           "options": {
             "allowedCommonJsDependencies": [
-              "hammerjs",
               "firebase/app",
               "@firebase/database",
               "@firebase/auth",
@@ -158,7 +155,6 @@
             "collectCoverage": true,
             "jestConfig": "src/jest.config.js",
             "passWithNoTests": true,
-            "scripts": [],
             "setupFile": "src/test-setup.ts",
             "styles": [
               "node_modules/roboto-fontface/css/roboto/roboto-fontface.css",

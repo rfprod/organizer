@@ -63,7 +63,7 @@ if (!Boolean(reset)) {
 /**
  * Writes environment file.
  */
-writeFile(targetPath, envConfigFile, function (err) {
+writeFile(targetPath, envConfigFile, err => {
   if (err !== null) {
     console.log(err);
   }

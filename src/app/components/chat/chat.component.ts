@@ -9,10 +9,10 @@ import { AppTranslateService } from '../../modules/translate/translate.service';
 import { AppWebsocketService } from '../../services/websocket.service';
 import { NAVIGATOR, TNavigator } from '../../utils/injection-tokens';
 
-function getSenderId() {
+const getSenderId = () => {
   const multiplier = 1000000000;
   return Math.floor(Math.random() * multiplier);
-}
+};
 
 interface IRtcPeerDto {
   sender: number;
@@ -191,6 +191,7 @@ export class AppChatComponent implements OnInit {
 
   /**
    * Accepts video call offer.
+   *
    * @param peer RTC peer
    */
   public acceptOffer(peer: IRtcPeer) {
@@ -217,20 +218,19 @@ export class AppChatComponent implements OnInit {
 
   /**
    * Sends video room connection offer.
+   *
    * @param room room snapshot
    */
   // eslint-disable-next-line max-lines-per-function
   private sendVideoRoomOffer(
-    room: firebase.firestore.DocumentSnapshot<firebase.firestore.DocumentData>,
+    room: firebase.default.firestore.DocumentSnapshot<firebase.default.firestore.DocumentData>,
   ) {
     console.warn('sendVideoRoomOffer: room:', room);
     return this.videoRoomPeers$.pipe(
       first(),
       map(peers => {
         const existingPeers = [...(peers.length < 1 ? [] : peers)]
-          .filter(peer => {
-            return !(peer.type === 'offer' && peer.sender === this.webRtcConfig.senderId);
-          })
+          .filter(peer => !(peer.type === 'offer' && peer.sender === this.webRtcConfig.senderId))
           .map(peer => {
             const sdp = peer.sdp !== null ? JSON.stringify(peer.sdp) : null;
             const processed: IRtcPeerDto = { ...peer, sdp };
@@ -246,16 +246,16 @@ export class AppChatComponent implements OnInit {
 
         return { peers, existingPeers, offerExists };
       }),
-      switchMap(({ peers, existingPeers, offerExists }) => {
-        return from(
+      switchMap(({ peers, existingPeers, offerExists }) =>
+        from(
           this.peerConnection.createOffer().then(
             offer => this.peerConnection.setLocalDescription(offer),
             error => {
               console.error('Peer connection: Error creating offer', error);
             },
           ),
-        ).pipe(mapTo({ peers, existingPeers, offerExists }));
-      }),
+        ).pipe(mapTo({ peers, existingPeers, offerExists })),
+      ),
       switchMap(({ peers, existingPeers, offerExists }) => {
         console.warn('sendVideoRoomOffer: peers', peers);
         return offerExists
@@ -290,6 +290,7 @@ export class AppChatComponent implements OnInit {
 
   /**
    * Sends video room connection answer.
+   *
    * @param answer connection answer
    */
   private sendVideoRoomAnswer(answer: RTCSessionDescriptionInit) {
@@ -299,9 +300,7 @@ export class AppChatComponent implements OnInit {
         console.warn('sendVideoRoomAnswer: peers', peers);
 
         const existingPeers = [...(peers.length < 1 ? [] : peers)]
-          .filter(peer => {
-            return !(peer.type === 'answer' && peer.sender === this.webRtcConfig.senderId);
-          })
+          .filter(peer => !(peer.type === 'answer' && peer.sender === this.webRtcConfig.senderId))
           .map(peer => {
             const sdp = peer.sdp !== null ? JSON.stringify(peer.sdp) : null;
             const processed: IRtcPeerDto = { ...peer, sdp };
@@ -339,6 +338,7 @@ export class AppChatComponent implements OnInit {
 
   /**
    * Sets up local video stream and adds it to the peer connection.
+   *
    * @param stream local media stream
    */
   private setupVideoStream(stream: MediaStream) {
