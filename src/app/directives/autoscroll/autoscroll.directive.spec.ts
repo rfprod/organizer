@@ -22,7 +22,7 @@ describe('AppAutoscrollDirective', () => {
           fixture = TestBed.createComponent(DummyComponent);
           debugElement = fixture.debugElement.query(By.directive(AppAutoscrollDirective));
           directive = debugElement.injector.get(AppAutoscrollDirective);
-          fixture.detectChanges();
+          // fixture.detectChanges();
         });
     }),
   );
