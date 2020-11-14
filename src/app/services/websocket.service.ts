@@ -42,6 +42,7 @@ export class AppWebsocketService implements OnDestroy {
 
   /**
    * Generates websocket url.
+   *
    * @param endpoint endpoint key
    */
   public generateUrl(endpoint: string): string {

@@ -44,6 +44,7 @@ export class AppNavComponent implements OnInit {
 
   /**
    * Selects language.
+   *
    * @param key language key
    */
   public selectLanguage(key: SUPPORTED_LANGUAGE_KEY): void {
@@ -62,6 +63,7 @@ export class AppNavComponent implements OnInit {
 
   /**
    * Sets datepicker locale depending on currently selected language.
+   *
    * @param key language key
    */
   private setDatepickersLocale(key: string): void {

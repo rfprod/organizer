@@ -7,17 +7,18 @@
 module.exports = {
   root: true,
   parser: '@typescript-eslint/parser', // https://github.com/typescript-eslint/typescript-eslint
-  extends: [
-    'eslint:recommended',
-    'plugin:@typescript-eslint/recommended',
-    'plugin:prettier/recommended',
-    'plugin:@angular-eslint/recommended',
-  ],
   parserOptions: {
     ecmaVersion: 2020,
     sourceType: 'module',
-    project: './tsconfig.base.json',
+    project: './tsconfig.json',
   },
+  extends: [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
+    'prettier/@typescript-eslint',
+    'plugin:prettier/recommended',
+    'plugin:@angular-eslint/recommended',
+  ],
   plugins: [
     'prettier',
     '@typescript-eslint', // https://github.com/typescript-eslint/typescript-eslint

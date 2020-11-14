@@ -12,28 +12,24 @@ export const setupJestJsdomGlobalMocks: () => void = () => {
    */
   setupLocalStorageMock();
 
-  window.matchMedia = jest.fn().mockImplementation(query => {
-    return {
-      matches: false,
-      media: query,
-      onchange: null,
-      addListener: jest.fn(),
-      removeListener: jest.fn(),
-    };
-  });
+  window.matchMedia = jest.fn().mockImplementation(query => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
+  }));
 
-  window.resizeTo = jest.fn().mockImplementation((width: number, height: number) => {
-    return { width, height };
-  });
+  window.resizeTo = jest
+    .fn()
+    .mockImplementation((width: number, height: number) => ({ width, height }));
 
   Object.defineProperty(window, 'getComputedStyle', {
-    value: () => {
-      return {
-        display: 'none',
-        appearance: ['-webkit-appearance'],
-        getPropertyValue: (): null => null,
-      };
-    },
+    value: () => ({
+      display: 'none',
+      appearance: ['-webkit-appearance'],
+      getPropertyValue: (): null => null,
+    }),
   });
 
   Object.defineProperty(window.URL, 'createObjectURL', {
@@ -63,21 +59,17 @@ export const setupJestJsdomGlobalMocks: () => void = () => {
   });
 
   Object.defineProperty(document.body.style, 'transform', {
-    value: () => {
-      return {
-        enumerable: true,
-        configurable: true,
-      };
-    },
+    value: () => ({
+      enumerable: true,
+      configurable: true,
+    }),
   });
 
-  function mutationObserver(...args: any[]) {
-    return {
-      observe: jest.fn(),
-      takeRecords: jest.fn(),
-      disconnect: jest.fn(),
-    };
-  }
+  const mutationObserver = (...args: any[]) => ({
+    observe: jest.fn(),
+    takeRecords: jest.fn(),
+    disconnect: jest.fn(),
+  });
 
   Object.defineProperty(global, 'MutationObserver', {
     value: mutationObserver,

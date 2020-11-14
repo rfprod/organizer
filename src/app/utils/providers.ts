@@ -1,7 +1,3 @@
-export function getWindow() {
-  return window;
-}
+export const getWindow = () => window;
 
-export function getNavigator() {
-  return window.navigator as Navigator | undefined;
-}
+export const getNavigator = () => window.navigator as Navigator | undefined;

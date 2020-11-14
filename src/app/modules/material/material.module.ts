@@ -55,23 +55,21 @@ import { AppHammerGestureConfig } from './hammerjs-gesture.config';
 /**
  * Returns mat tooltip options.
  */
-export function matTooltipOptions(): MatTooltipDefaultOptions {
+export const matTooltipOptions = (): MatTooltipDefaultOptions => {
   const options: MatTooltipDefaultOptions = {
     showDelay: 1000,
     hideDelay: 1000,
     touchendHideDelay: 1000,
   };
   return options;
-}
+};
 
 /**
  * Material moment date adapter options factory.
  */
-export function matMomentDateAdapterOptionsFactory(): MatMomentDateAdapterOptions {
-  return {
-    useUtc: false,
-  };
-}
+export const matMomentDateAdapterOptionsFactory = (): MatMomentDateAdapterOptions => ({
+  useUtc: false,
+});
 
 const CUSTOM_DATE_FORMATS = {
   parse: {

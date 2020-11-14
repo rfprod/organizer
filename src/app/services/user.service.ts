@@ -69,6 +69,7 @@ export class AppUserService {
 
   /**
    * Updates user model.
+   *
    * @param newValues new model values object
    */
   public saveUser(newValues: Partial<IAppUser>): void {
