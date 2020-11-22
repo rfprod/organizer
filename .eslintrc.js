@@ -305,7 +305,8 @@ module.exports = {
     'prefer-spread': 'error',
     'prefer-promise-reject-errors': 'error',
     'prettier/prettier': 'error',
-    'simple-import-sort/sort': 'error',
+    'simple-import-sort/imports': 'error',
+    'simple-import-sort/exports': 'error',
     'sort-imports': 'off', // handled by simple-import-sort/sort
     radix: 'error',
     'require-atomic-updates': 'error',
@@ -346,7 +347,8 @@ module.exports = {
     {
       files: '**/test-setup.ts',
       rules: {
-        'simple-import-sort/sort': 'off',
+        'simple-import-sort/imports': 'error',
+        'simple-import-sort/exports': 'error',
       },
     },
     {

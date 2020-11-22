@@ -1,10 +1,5 @@
 import { OverlayModule } from '@angular/cdk/overlay';
 import { ModuleWithProviders, NgModule, Provider } from '@angular/core';
-import {
-  MAT_MOMENT_DATE_ADAPTER_OPTIONS,
-  MatMomentDateAdapterOptions,
-  MatMomentDateModule,
-} from '@angular/material-moment-adapter';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
@@ -48,6 +43,11 @@ import {
   MatTooltipModule,
 } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
+import {
+  MAT_MOMENT_DATE_ADAPTER_OPTIONS,
+  MatMomentDateAdapterOptions,
+  MatMomentDateModule,
+} from '@angular/material-moment-adapter';
 import { HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 
 import { AppHammerGestureConfig } from './hammerjs-gesture.config';

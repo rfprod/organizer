@@ -5,8 +5,8 @@ import { of } from 'rxjs';
 import { concatMap, first, map, tap } from 'rxjs/operators';
 
 import { AppTranslateService } from '../../modules/translate/translate.service';
-import { AppUserApiService } from '../../services/user-api.service';
 import { AppUserService, IAppUser } from '../../services/user.service';
+import { AppUserApiService } from '../../services/user-api.service';
 
 @Component({
   selector: 'app-data',
