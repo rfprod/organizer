@@ -4,8 +4,8 @@ import { Router } from '@angular/router';
 import { concatMap, first, tap } from 'rxjs/operators';
 
 import { AppTranslateService } from '../../modules/translate/translate.service';
-import { AppUserApiService } from '../../services/user-api.service';
 import { AppUserService } from '../../services/user.service';
+import { AppUserApiService } from '../../services/user-api.service';
 
 @Component({
   selector: 'app-auth',

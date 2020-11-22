@@ -17,8 +17,8 @@ import { getRandomColor } from 'src/app/utils/ui.utils';
 import { AppTranslateService } from '../../modules/translate/translate.service';
 import { AppPublicDataService } from '../../services/public-data.service';
 import { AppServerStaticDataService } from '../../services/server-static-data.service';
-import { AppUserApiService } from '../../services/user-api.service';
 import { AppUserService } from '../../services/user.service';
+import { AppUserApiService } from '../../services/user-api.service';
 import { AppWebsocketService } from '../../services/websocket.service';
 
 interface IChartDataNode {
