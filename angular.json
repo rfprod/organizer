@@ -49,6 +49,7 @@
             ],
             "aot": true,
             "assets": ["src/favicon.ico", "src/assets"],
+            "baseHref": "/",
             "budgets": [
               {
                 "maximumError": "10mb",
@@ -144,7 +145,6 @@
             }
           },
           "options": {
-            "baseHref": "/",
             "browserTarget": "organizer:build",
             "proxyConfig": "proxy.conf.json"
           }
