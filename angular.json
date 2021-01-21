@@ -52,8 +52,8 @@
             "baseHref": "/",
             "budgets": [
               {
-                "maximumError": "10mb",
-                "maximumWarning": "5mb",
+                "maximumError": "12mb",
+                "maximumWarning": "8mb",
                 "type": "initial"
               },
               {
