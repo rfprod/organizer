@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers */
 import {
   ChangeDetectionStrategy,
   Component,
@@ -116,22 +115,26 @@ export class AppSummaryComponent implements OnInit, OnDestroy {
       const divisor = 2;
       const radius = Math.min(width, height) / divisor;
 
+      const arcOuterRadiusSubtractor = 10;
+      const innerRadius = 50;
       const createArc = arc<PieArcDatum<IChartDataNode>>()
-        .outerRadius(radius - 10)
-        .innerRadius(50)
+        .outerRadius(radius - arcOuterRadiusSubtractor)
+        .innerRadius(innerRadius)
         .context(context);
 
+      const labelRadiusSubtractor = 40;
       const createLabel = arc<PieArcDatum<IChartDataNode>>()
-        .outerRadius(radius - 40)
-        .innerRadius(radius - 40)
+        .outerRadius(radius - labelRadiusSubtractor)
+        .innerRadius(radius - labelRadiusSubtractor)
         .context(context);
 
       const createPieChart = pie<IChartDataNode>().value(datum => datum.y);
 
       context.translate(width / divisor, height / divisor);
 
+      const dateDivisor = 160000000;
       const arcs = createPieChart(
-        this.appUsageData.value.concat([{ key: 'aaa', y: new Date().getTime() % 160000000 }]),
+        this.appUsageData.value.concat([{ key: 'aaa', y: new Date().getTime() % dateDivisor }]),
       );
 
       arcs.forEach((datum, i) => {

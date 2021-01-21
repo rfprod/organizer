@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { writeFile } from 'fs';
 import { argv } from 'yargs';
 
@@ -39,8 +38,6 @@ if (!Boolean(reset)) {
   /**
    * Load environment variables.
    */
-  // eslint-disable-next-line max-len
-  // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
   require('dotenv').config();
 
   /**

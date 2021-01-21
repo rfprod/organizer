@@ -217,35 +217,39 @@ export class AppChatComponent implements OnInit {
   }
 
   /**
+   * Maps video room peers.
+   * @param peers video room peers
+   */
+  private videoRoomPeersMapper(peers: IRtcPeer[]) {
+    const existingPeers = [...(peers.length < 1 ? [] : peers)]
+      .filter(peer => !(peer.type === 'offer' && peer.sender === this.webRtcConfig.senderId))
+      .map(peer => {
+        const sdp = peer.sdp !== null ? JSON.stringify(peer.sdp) : null;
+        const processed: IRtcPeerDto = { ...peer, sdp };
+        return processed;
+      });
+    console.warn('sendVideoRoomOffer: existingPeers', existingPeers);
+
+    const offerExists =
+      typeof existingPeers.find(
+        item => item.type === 'offer' && item.sender === this.webRtcConfig.senderId,
+      ) !== 'undefined';
+    console.warn('sendVideoRoomOffer: offerExists', offerExists);
+
+    return { peers, existingPeers, offerExists };
+  }
+
+  /**
    * Sends video room connection offer.
-   *
    * @param room room snapshot
    */
-  // eslint-disable-next-line max-lines-per-function
   private sendVideoRoomOffer(
     room: firebase.default.firestore.DocumentSnapshot<firebase.default.firestore.DocumentData>,
   ) {
     console.warn('sendVideoRoomOffer: room:', room);
     return this.videoRoomPeers$.pipe(
       first(),
-      map(peers => {
-        const existingPeers = [...(peers.length < 1 ? [] : peers)]
-          .filter(peer => !(peer.type === 'offer' && peer.sender === this.webRtcConfig.senderId))
-          .map(peer => {
-            const sdp = peer.sdp !== null ? JSON.stringify(peer.sdp) : null;
-            const processed: IRtcPeerDto = { ...peer, sdp };
-            return processed;
-          });
-        console.warn('sendVideoRoomOffer: existingPeers', existingPeers);
-
-        const offerExists =
-          typeof existingPeers.find(
-            item => item.type === 'offer' && item.sender === this.webRtcConfig.senderId,
-          ) !== 'undefined';
-        console.warn('sendVideoRoomOffer: offerExists', offerExists);
-
-        return { peers, existingPeers, offerExists };
-      }),
+      map(peers => this.videoRoomPeersMapper(peers)),
       switchMap(({ peers, existingPeers, offerExists }) =>
         from(
           this.peerConnection.createOffer().then(
@@ -351,7 +355,6 @@ export class AppChatComponent implements OnInit {
   /**
    * Registers peer connection event listeners with respective action handlers.
    */
-  // eslint-disable-next-line max-lines-per-function
   private registerPeerConnectionListeners() {
     this.peerConnection.addEventListener('icegatheringstatechange', event => {
       console.warn(`ICE gathering state changed: ${this.peerConnection.iceGatheringState}`, event);

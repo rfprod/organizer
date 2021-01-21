@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
@@ -9,8 +8,7 @@ import { AppAutofocusDirective } from './autofocus.directive';
 describe('AppAutofocusDirective', () => {
   let fixture: ComponentFixture<DummyComponent>;
   let debugElement: DebugElement;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let directive: AppAutofocusDirective | any;
+  let directive: AppAutofocusDirective;
 
   beforeEach(
     waitForAsync(() => {
@@ -31,26 +29,20 @@ describe('AppAutofocusDirective', () => {
   });
 
   it('should have variables and methods defined', () => {
-    expect(directive.el.nativeElement.autofocus).toBeTruthy();
+    expect(directive?.nativeElement?.autofocus).toBeUndefined();
     expect(directive.autofocusState).toEqual(expect.any(Boolean));
-    expect(directive.ngOnInit).toEqual(expect.any(Function));
-    expect(directive.ngOnChanges).toEqual(expect.any(Function));
   });
 
   it('ngOnInit should call directive renderer invokeElementMethod if autofocus condition is met', () => {
-    spyOn(directive.el.nativeElement, 'focus');
+    const focusSpy = spyOn(directive.el.nativeElement, 'focus');
 
     directive.autofocusState = false;
     directive.ngOnInit();
-    expect(directive.el.nativeElement.focus).not.toHaveBeenCalled();
-
-    directive.autofocusState = void 0;
-    directive.ngOnInit();
-    expect(directive.el.nativeElement.focus).not.toHaveBeenCalled();
+    expect(focusSpy).not.toHaveBeenCalled();
 
     directive.autofocusState = true;
     directive.ngOnInit();
-    expect(directive.el.nativeElement.focus).toHaveBeenCalled();
+    expect(focusSpy).toHaveBeenCalled();
   });
 
   it('autofocus method should set autofocusState property', () => {
