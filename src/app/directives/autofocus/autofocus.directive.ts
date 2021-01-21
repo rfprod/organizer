@@ -7,13 +7,13 @@ import { Directive, ElementRef, Input, OnChanges, OnInit, SimpleChanges } from '
   selector: '[appAutofocus]',
 })
 export class AppAutofocusDirective implements OnInit, OnChanges {
-  private autofocusState = false;
+  public autofocusState = false;
 
-  private nativeElement?: HTMLElement;
+  public nativeElement?: HTMLElement;
 
-  constructor(private readonly el: ElementRef) {}
+  constructor(public readonly el: ElementRef) {}
 
-  @Input() public set autofocus(state: string) {
+  @Input() public set autofocus(state: boolean) {
     this.autofocusState = state ? true : false;
   }
 

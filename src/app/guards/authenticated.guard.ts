@@ -16,7 +16,6 @@ export class AppAuthenticatedGuard implements CanActivate {
       first(),
       map(user => {
         if (!user.token && Boolean(user?.status?.initialized)) {
-          // eslint-disable-next-line no-alert
           window.alert('to access data you need to log in first');
           return this.router.createUrlTree(['login']);
         }

@@ -1,17 +1,9 @@
 import { setupLocalStorageMock } from './local-storage.mock';
 
 /**
- * Sets up Jest global mocks
- * which should be used in each app and lib in test-setup.ts files
- * because jest is using jsdom which is lacking some globals.
+ * Sets up window match media mock.
  */
-// eslint-disable-next-line max-lines-per-function
-export const setupJestJsdomGlobalMocks: () => void = () => {
-  /**
-   * Sets up local storage mock.
-   */
-  setupLocalStorageMock();
-
+function setupWindowMatchMediaMock() {
   window.matchMedia = jest.fn().mockImplementation(query => ({
     matches: false,
     media: query,
@@ -19,11 +11,21 @@ export const setupJestJsdomGlobalMocks: () => void = () => {
     addListener: jest.fn(),
     removeListener: jest.fn(),
   }));
+}
 
+/**
+ * Sets up window resize to mock.
+ */
+function setupWindowResizeToMock() {
   window.resizeTo = jest
     .fn()
     .mockImplementation((width: number, height: number) => ({ width, height }));
+}
 
+/**
+ * Sets up window get computed style mock.
+ */
+function setupWindowGetComputedStyleMock() {
   Object.defineProperty(window, 'getComputedStyle', {
     value: () => ({
       display: 'none',
@@ -31,40 +33,78 @@ export const setupJestJsdomGlobalMocks: () => void = () => {
       getPropertyValue: (): null => null,
     }),
   });
+}
 
+/**
+ * Sets up window create object url mock.
+ */
+function setupWindowCreateObjectUrlMock() {
   Object.defineProperty(window.URL, 'createObjectURL', {
     value: jest.fn(),
     writable: false,
   });
+}
 
+/**
+ * Sets up window CSS mock.
+ */
+function setupWindowCssMock() {
+  Object.defineProperty(window, 'CSS', { value: null });
+}
+
+/**
+ * Sets up global fetch mock.
+ */
+function setupGlobalFetchMock() {
   Object.defineProperty(global, 'fetch', {
     value: jest.fn(async () => {
-      const promise: Promise<unknown> = new Promise((resolve: () => void) => {
+      const promise: Promise<void> = new Promise((resolve: () => void) => {
         resolve();
       });
       return promise;
     }),
     writable: false,
   });
+}
 
+/**
+ * Sets up global URL mock.
+ */
+function setupGlobalUrlMock() {
   Object.defineProperty(global, 'URL', {
     value: window.URL,
     writable: true,
   });
+}
 
-  Object.defineProperty(window, 'CSS', { value: null });
-
+/**
+ * Sets up global document doctype mock.
+ */
+function setupGlobalDocumentDoctypeMock() {
   Object.defineProperty(document, 'doctype', {
     value: '<!DOCTYPE html>',
   });
+}
 
+/**
+ * Sets up global document.body.style transform mock.
+ */
+function setupGlobalDocumentBodyStyleTransformMock() {
   Object.defineProperty(document.body.style, 'transform', {
     value: () => ({
       enumerable: true,
       configurable: true,
     }),
   });
+}
 
+/**
+ * Sets up global mutation observer mock.
+ */
+function setupGlobalMutationObserverMock() {
+  /**
+   * Mutation observer.
+   */
   const mutationObserver = (...args: any[]) => ({
     observe: jest.fn(),
     takeRecords: jest.fn(),
@@ -75,6 +115,35 @@ export const setupJestJsdomGlobalMocks: () => void = () => {
     value: mutationObserver,
     writable: false,
   });
+}
+
+/**
+ * Sets up Jest global mocks
+ * which should be used in each app and lib in test-setup.ts files
+ * because jest is using jsdom which is lacking some globals.
+ */
+export const setupJestJsdomGlobalMocks: () => void = () => {
+  setupLocalStorageMock();
+
+  setupWindowMatchMediaMock();
+
+  setupWindowResizeToMock();
+
+  setupWindowGetComputedStyleMock();
+
+  setupWindowCreateObjectUrlMock();
+
+  setupWindowCssMock();
+
+  setupGlobalFetchMock();
+
+  setupGlobalUrlMock();
+
+  setupGlobalDocumentDoctypeMock();
+
+  setupGlobalDocumentBodyStyleTransformMock();
+
+  setupGlobalMutationObserverMock();
 
   /**
    * Override some console methods for testing environment.
