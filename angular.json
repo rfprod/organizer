@@ -42,6 +42,7 @@
           },
           "options": {
             "allowedCommonJsDependencies": [
+              "hammerjs",
               "firebase/app",
               "@firebase/database",
               "@firebase/auth",
