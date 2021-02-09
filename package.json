@@ -24,7 +24,7 @@
     "e2e:headless": "ng e2e --headless --watch=false",
     "env:client:reset": "npx ts-node -O '{ \"module\": \"commonjs\", \"typeRoots\": [\"node_modules/@types\"] }' src/set-env.ts --reset=true && ng lint --fix",
     "env:client:set": "npx ts-node -O '{ \"module\": \"commonjs\", \"typeRoots\": [\"node_modules/@types\"] }' src/set-env.ts",
-    "postinstall": "npx sort-package-json && npx electron-builder install-app-deps && npm run ngcc",
+    "postinstall": "husky install && npx sort-package-json && npx electron-builder install-app-deps && npm run ngcc",
     "install:global": "bash shell/install.sh global",
     "install:project": "bash shell/install.sh project",
     "lint": "ng run organizer:lint && ng run organizer:e2e-lint",
