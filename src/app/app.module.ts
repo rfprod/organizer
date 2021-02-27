@@ -22,6 +22,7 @@ import { AppAutofocusDirective } from './directives/autofocus/autofocus.directiv
 import { AppAutoscrollDirective } from './directives/autoscroll/autoscroll.directive';
 import { AppMaterialModule } from './modules/material/material.module';
 import { AppTranslateModule } from './modules/translate/translate.module';
+import { AppWorkspacesModule } from './modules/workspaces/workspaces.module';
 import { NAVIGATOR, WINDOW } from './utils/injection-tokens';
 import { getNavigator, getWindow } from './utils/providers';
 
@@ -52,6 +53,7 @@ import { getNavigator, getWindow } from './utils/providers';
     AngularFireDatabaseModule,
     AngularFireAuthModule,
     AppRoutingModule,
+    AppWorkspacesModule,
   ],
   providers: [
     { provide: APP_BASE_HREF, useValue: '/' },

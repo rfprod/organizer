@@ -9,6 +9,8 @@ export const LANG_EN_TRANSLATIONS = {
 
   summary: 'Summary',
 
+  workspaces: 'Workspaces',
+
   generateKeypair: 'Generate RSA keypair',
 
   login: 'Log in',

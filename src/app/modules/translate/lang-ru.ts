@@ -9,6 +9,8 @@ export const LANG_RU_TRANSLATIONS = {
 
   summary: 'Сводка',
 
+  workspaces: 'Рабочие поверхности',
+
   generateKeypair: 'Сгенерировать пару RSA-ключей',
 
   login: 'Вход в систему',

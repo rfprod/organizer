@@ -57,6 +57,21 @@
 
     <button
       mat-button
+      [routerLink]="['workspaces']"
+      routerLinkActive
+      #rlaWorkspace="routerLinkActive"
+      [disabled]="rlaWorkspace.isActive"
+      [color]="rlaWorkspace.isActive ? 'accent' : null"
+      [fxHide.xs]="true"
+      [fxHide.sm]="true"
+      *ngIf="$any(isLoggedIn$ | async)"
+    >
+      <mat-icon class="material-icons">dashboard</mat-icon>
+      {{ 'workspaces' | translate }}
+    </button>
+
+    <button
+      mat-button
       [routerLink]="['chat']"
       routerLinkActive
       #rlaIndex="routerLinkActive"
@@ -140,6 +155,18 @@
         >
           <mat-icon class="material-icons-fas" fontSet="fas" fontIcon="fa-columns"></mat-icon>
           {{ 'summary' | translate }}
+        </button>
+
+        <button
+          mat-menu-item
+          [routerLink]="['workspaces']"
+          routerLinkActive
+          #rlaWorkspace="routerLinkActive"
+          [disabled]="rlaWorkspace.isActive"
+          *ngIf="$any(isLoggedIn$ | async)"
+        >
+          <mat-icon class="material-icons">dashboard</mat-icon>
+          {{ 'workspaces' | translate }}
         </button>
 
         <button

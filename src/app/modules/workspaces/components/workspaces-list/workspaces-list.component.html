@@ -1,0 +1,10 @@
+<ng-container *ngIf="widgets$ | async as widgets">
+  <mat-card *ngFor="let widget of widgets">
+    <mat-card-header>
+      {{ widget.title }}
+    </mat-card-header>
+    <mat-card-content>
+      {{ widget.message }}
+    </mat-card-content>
+  </mat-card>
+</ng-container>
