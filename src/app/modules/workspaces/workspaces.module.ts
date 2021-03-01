@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AppMaterialModule } from '../material/material.module';
 import { AppWorkspaceComponent } from './components/workspace/workspace.component';
+import { AppWorkspaceWidgetComponent } from './components/workspace-widget/workspace-widget.component';
 import { AppWorkspacesListComponent } from './components/workspaces-list/workspaces-list.component';
 import { AppWorkspacesRoutingModule } from './workspaces-routing.module';
 
@@ -17,6 +18,6 @@ import { AppWorkspacesRoutingModule } from './workspaces-routing.module';
     HttpClientModule,
     AppWorkspacesRoutingModule,
   ],
-  declarations: [AppWorkspacesListComponent, AppWorkspaceComponent],
+  declarations: [AppWorkspacesListComponent, AppWorkspaceWidgetComponent, AppWorkspaceComponent],
 })
 export class AppWorkspacesModule {}

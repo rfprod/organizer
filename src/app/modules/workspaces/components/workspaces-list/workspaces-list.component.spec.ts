@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { AppMaterialModule } from 'src/app/modules/material/material.module';
 
 import { AppWorkspacesListComponent } from './workspaces-list.component';
 
@@ -9,6 +10,7 @@ describe('AppWorkspacesListComponent', () => {
   beforeEach(
     waitForAsync(() => {
       void TestBed.configureTestingModule({
+        imports: [AppMaterialModule],
         declarations: [AppWorkspacesListComponent],
       })
         .compileComponents()

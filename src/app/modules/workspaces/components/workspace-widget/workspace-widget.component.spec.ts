@@ -1,21 +1,21 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { AppMaterialModule } from 'src/app/modules/material/material.module';
 
-import { AppWorkspaceComponent } from './workspace.component';
+import { AppWorkspaceWidgetComponent } from './workspace-widget.component';
 
-describe('AppWorkspaceComponent', () => {
-  let component: AppWorkspaceComponent;
-  let fixture: ComponentFixture<AppWorkspaceComponent>;
+describe('AppWorkspaceWidgetComponent', () => {
+  let component: AppWorkspaceWidgetComponent;
+  let fixture: ComponentFixture<AppWorkspaceWidgetComponent>;
 
   beforeEach(
     waitForAsync(() => {
       void TestBed.configureTestingModule({
         imports: [AppMaterialModule],
-        declarations: [AppWorkspaceComponent],
+        declarations: [AppWorkspaceWidgetComponent],
       })
         .compileComponents()
         .then(() => {
-          fixture = TestBed.createComponent(AppWorkspaceComponent);
+          fixture = TestBed.createComponent(AppWorkspaceWidgetComponent);
           component = fixture.componentInstance;
           fixture.detectChanges();
         });
@@ -23,7 +23,7 @@ describe('AppWorkspaceComponent', () => {
   );
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AppWorkspaceComponent);
+    fixture = TestBed.createComponent(AppWorkspaceWidgetComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,10 +1,11 @@
 <ng-container *ngIf="widgets$ | async as widgets">
-  <mat-card *ngFor="let widget of widgets">
-    <mat-card-header>
-      {{ widget.title }}
-    </mat-card-header>
-    <mat-card-content>
-      {{ widget.message }}
-    </mat-card-content>
-  </mat-card>
+  <app-workspace-widget
+    fxFlex="0 1 auto"
+    *ngFor="let widget of widgets"
+    [data]="widget"
+    (editWorkspace)="editHandler($event)"
+    (deleteWorkspace)="deleteHandler($event)"
+    (openWorkspace)="openHandler($event)"
+  >
+  </app-workspace-widget>
 </ng-container>
