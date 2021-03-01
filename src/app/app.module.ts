@@ -9,6 +9,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIconRegistry } from '@angular/material/icon';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NgxsFormPluginModule } from '@ngxs/form-plugin';
+import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
+import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
+import { NgxsModule } from '@ngxs/store';
 
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
@@ -22,6 +26,7 @@ import { AppAutofocusDirective } from './directives/autofocus/autofocus.directiv
 import { AppAutoscrollDirective } from './directives/autoscroll/autoscroll.directive';
 import { AppMaterialModule } from './modules/material/material.module';
 import { AppTranslateModule } from './modules/translate/translate.module';
+import { AppWorkspacesModule } from './modules/workspaces/workspaces.module';
 import { NAVIGATOR, WINDOW } from './utils/injection-tokens';
 import { getNavigator, getWindow } from './utils/providers';
 
@@ -46,12 +51,17 @@ import { getNavigator, getWindow } from './utils/providers';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    NgxsModule.forRoot([]),
+    NgxsRouterPluginModule.forRoot(),
+    NgxsFormPluginModule.forRoot(),
+    NgxsLoggerPluginModule.forRoot({ disabled: environment.production }),
     AppMaterialModule.forRoot(),
     AppTranslateModule.forRoot(),
     AngularFireModule.initializeApp(environment.firebase, 'organizer-833bc'),
     AngularFireDatabaseModule,
     AngularFireAuthModule,
     AppRoutingModule,
+    AppWorkspacesModule,
   ],
   providers: [
     { provide: APP_BASE_HREF, useValue: '/' },

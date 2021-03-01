@@ -13,6 +13,12 @@ export const APP_ROUTES: Routes = [
   { path: 'chat', component: AppChatComponent, canActivate: [AppAuthenticatedGuard] },
   { path: 'data', component: AppDataComponent, canActivate: [AppAuthenticatedGuard] },
   { path: 'summary', component: AppSummaryComponent, canActivate: [AppAuthenticatedGuard] },
+  {
+    path: 'workspaces',
+    canActivate: [AppAuthenticatedGuard],
+    loadChildren: () =>
+      import('./modules/workspaces/workspaces.module').then(mod => mod.AppWorkspacesModule),
+  },
   { path: '', redirectTo: 'auth', pathMatch: 'full' },
   { path: '**', redirectTo: 'auth' },
 ];
