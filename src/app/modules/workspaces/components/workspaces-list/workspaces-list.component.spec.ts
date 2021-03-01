@@ -1,6 +1,12 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { BrowserTestingModule } from '@angular/platform-browser/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
+import { NgxsModule } from '@ngxs/store';
+import { DummyComponent } from 'src/app/mocks/components/dummy.component';
 import { AppMaterialModule } from 'src/app/modules/material/material.module';
 
+import { AppWorkspaceWidgetComponent } from '../workspace-widget/workspace-widget.component';
 import { AppWorkspacesListComponent } from './workspaces-list.component';
 
 describe('AppWorkspacesListComponent', () => {
@@ -10,8 +16,19 @@ describe('AppWorkspacesListComponent', () => {
   beforeEach(
     waitForAsync(() => {
       void TestBed.configureTestingModule({
-        imports: [AppMaterialModule],
-        declarations: [AppWorkspacesListComponent],
+        imports: [
+          BrowserTestingModule,
+          RouterTestingModule.withRoutes([
+            {
+              path: 'workspaces',
+              component: DummyComponent,
+            },
+          ]),
+          NgxsModule.forRoot([]),
+          NgxsRouterPluginModule.forRoot(),
+          AppMaterialModule.forRoot(),
+        ],
+        declarations: [AppWorkspacesListComponent, AppWorkspaceWidgetComponent],
       })
         .compileComponents()
         .then(() => {

@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { BrowserTestingModule } from '@angular/platform-browser/testing';
 import { AppMaterialModule } from 'src/app/modules/material/material.module';
 
 import { AppWorkspaceWidgetComponent } from './workspace-widget.component';
@@ -10,7 +11,7 @@ describe('AppWorkspaceWidgetComponent', () => {
   beforeEach(
     waitForAsync(() => {
       void TestBed.configureTestingModule({
-        imports: [AppMaterialModule],
+        imports: [BrowserTestingModule, AppMaterialModule.forRoot()],
         declarations: [AppWorkspaceWidgetComponent],
       })
         .compileComponents()
@@ -21,12 +22,6 @@ describe('AppWorkspaceWidgetComponent', () => {
         });
     }),
   );
-
-  beforeEach(() => {
-    fixture = TestBed.createComponent(AppWorkspaceWidgetComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
 
   it('should create', () => {
     expect(component).toBeTruthy();
