@@ -1,5 +1,7 @@
 # Organizer
 
+Project development has been discontinued in this repository, it was moved to this [monorepository](https://github.com/upgraded-enigma/upgraded-enigma).
+
 ![PR validation](https://github.com/rfprod/organizer/workflows/PR%20validation/badge.svg)
 ![Master](https://github.com/rfprod/organizer/workflows/Master/badge.svg)
 
